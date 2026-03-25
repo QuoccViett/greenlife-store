@@ -1,6 +1,10 @@
 import { useState } from "react"
 import { useSelector } from "react-redux"
 import { Link, useNavigate } from 'react-router-dom'
+import {
+    IconLeaf, IconCart, IconUser, IconSearch,
+    IconMenu, IconClose, IconChevronDown, IconHome
+} from './icons/index'
 
 
 const categories = [
@@ -77,7 +81,7 @@ const Navbar = () => {
 
                     <Link to='/' className="flex items-center gap-2 flex-shrink-0">
                         <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                            <span className="text-white text-sm font-bold">G</span>
+                            <IconLeaf className="w-5 h-5 text-white" />
                         </div>
                         <span className="text-green-700 font-bold text-lg hidden sm:block">Green Life</span>
                     </Link>
@@ -93,6 +97,7 @@ const Navbar = () => {
                                 className="flex-1 px-4 py-2 text-sm outline-none"
                             />
                             <button type="submit" className="bg-green-600 px-4 text-white text-sm hover:bg-green-700">
+                                <IconSearch className="w-4 h-4 pr-2" />
                                 Search
                             </button>
                         </div>
@@ -101,10 +106,8 @@ const Navbar = () => {
 
                     <div className="flex items-center gap-4">
 
-                        <Link to='/cart' className='relative'>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
+                        <Link to='/cart' className='relative p-2 hover:bg-gray-200 rounded-full transition'>
+                            <IconCart className="w-6 h-6 text-gray-700" />
                             {totalItems > 0 && (
                                 <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                                     {totalItems}
@@ -114,26 +117,26 @@ const Navbar = () => {
 
 
                         {userInfo ? (
-                            <Link to='/profile' className='text-sm text-gray-700 hover:text-green-600 hidden sm:block'>
+                            <Link to='/profile' className='hidden sm:flex items-center gap-1.5 text-sm text-gray-700 hover:text-green-600 transition font-medium'>
+                                <IconUser className="w-4 h-4" />
                                 {userInfo.name}
                             </Link>
                         ) : (
-                            <Link to='/login' className="text-sm bg-green-600 text-white px-4 py-2 rounded hover:gb-green-700 hidden sm:block">
+                            <Link to='/login' className="hidden sm:flex items-center gap-1.5 text-sm bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition">
+                                <IconUser className="w-4 h-4" />
                                 Login
                             </Link>
                         )}
 
 
                         {userInfo?.role === 'admin' && (
-                            <Link to='/admin' className="text-sm text-green-600 font-medium hidden sm:block">
+                            <Link to='/admin' className="hidden sm:block text-sm text-white bg-green-800 px-3 py-1.5 rounded-full hover:bg-green-900 transition">
                                 Admin
                             </Link>
                         )}
 
                         <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
+                            {menuOpen ? <IconClose className="w-5 h-5 text-gray-700" /> : <IconMenu className="w-5 h-5 text-gray-700" />}
                         </button>
                     </div>
                 </div>
@@ -141,12 +144,13 @@ const Navbar = () => {
                 <div className="hidden md:block border-t border-gray-100 bg-white">
                     <div className=" px-4 flex items-center justify-center gap-1">
                         <Link to='/' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
-                            Home
+                            <IconHome className="w-4 h-4 pr-2" />
+                            <span>Home</span>
                         </Link>
                         {categories.map(cat => (
                             <div
                                 key={cat.slug}
-                                className="relative group"
+                                className="relative group "
                                 onMouseEnter={() => setActiveDropdown(cat.slug)}
                                 onMouseLeave={() => setActiveDropdown(null)}
                             >
@@ -154,7 +158,8 @@ const Navbar = () => {
                                     to={`/product?category=${cat.slug}`}
                                     className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap"
                                 >
-                                    {cat.name}
+                                    <span>{cat.name}</span>
+                                    <IconChevronDown className="w-3 h-3 mt-0.5 pl-2" />
                                 </Link>
 
                                 {activeDropdown === cat.slug && (
@@ -163,13 +168,13 @@ const Navbar = () => {
                                             <Link
                                                 key={sub.slug}
                                                 to={`/products?category=${sub.slug}`}
-                                                className="block px-4 py-2 text-sm text-gray-600 hover:bg-green-50 hover:underline "
+                                                className="block px-4 py-2 text-sm text-gray-600 hover:bg-green-50 hover:underline text-left "
                                             >
                                                 {sub.name}
                                             </Link>
                                         ))}
 
-                                        <Link to='/products' className="ml-auto px-4 py-3 text-sm text-gray-600 hover:underline whitespace-nowrap">
+                                        <Link to='/products' className="block ml-auto px-4 py-2 text-left text-sm text-gray-600 hover:bg-green-50 hover:underline whitespace-nowrap">
                                             All Products
                                         </Link>
                                     </div>
@@ -189,7 +194,7 @@ const Navbar = () => {
                                 placeholder="Search..."
                                 className="flex-1 px-4 py-2 text-sm outline-none"
                             />
-                            <button type="submit" className="bg-green-600 px-4 text-white text-sm">Tim</button>
+                            <button type="submit" className="bg-green-600 px-4 text-white text-sm"><IconSearch className="w-4 h-4" /></button>
                         </form>
 
                         <Link
@@ -197,6 +202,7 @@ const Navbar = () => {
                             className="block px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-100 hover:text-green-700 whitespace-nowrap"
                             onClick={() => setMenuOpen(false)}
                         >
+                            <IconHome className="w-4 h-4 pr-2 text-green-600" />
                             Home
                         </Link>
 
@@ -226,11 +232,13 @@ const Navbar = () => {
 
                         {userInfo ? (
                             <Link to='/profile' className="text-sm text-gray-700" onClick={() => setMenuOpen(false)}>
-                                {userInfo.name}
+                                <IconUser className="w-4 h-4" />
+                                <span>{userInfo.name}</span>
                             </Link>
                         ) : (
                             <Link to='/login' className="text-sm text-gray-700" onClick={() => setMenuOpen(false)}>
-                                Login
+                                <IconUser className="w-4 h-4 pr-2" />
+                                <span>Login</span>
                             </Link>
                         )}
 
