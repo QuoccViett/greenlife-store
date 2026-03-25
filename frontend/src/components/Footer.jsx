@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { IconLeaf, IconMail, IconPhone, IconMapPin, IconFacebook, IconInstagram } from './icons/index'
 
 const Footer = () => {
     return (
@@ -8,14 +9,22 @@ const Footer = () => {
                     <div>
                         <div className="flex items-center gap-2 mb-3">
                             <div className="w-8 h-8 !bg-green-700 rounded-full flex items-center justify-center">
-                                <span className="text-white text-sm font-bold">G</span>
+                                <IconLeaf className="w-5 h-5 text-white" />
                             </div>
                             <span className="text-white font-bold text-lg">Green Life</span>
                         </div>
                         <p className="text-sm text-white leading-relaxed text-left">
-                            An environmentally friendly store. 
+                            An environmentally friendly store.<br/>
                             Live green - live healthy - live sustainably.
                         </p>
+                        <div className="flex gap-3 mt-4">
+                            <a href="https://www.facebook.com/" target="_blank" className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center hover:bg-green-600">
+                                <IconFacebook className="w-4 h-4" />
+                            </a>
+                            <a href="https://www.instagram.com/" target="_blank" className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center hover:bg-green-600">
+                                <IconInstagram className="w-4 h-4" />
+                            </a>
+                        </div>
                     </div>
 
 
@@ -43,19 +52,21 @@ const Footer = () => {
                     <div className="text-left">
                         <h3 className="text-white font-semibold mb-3">Get In Touch</h3>
                         <ul className="space-y-2 text-sm text-white">
-                            <li>Email: </li>
-                            <li>Hotline: </li>
-                            <li>TP. Ho Chi Minh, Viet Nam</li>
+                            <li className="flex items-center gap-2">
+                                <IconMail className="w-4 h-4 flex-shrink-0" />
+                                <span>Email:</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <IconPhone className="w-4 h-4 flex-shrink-0" />
+                                <span>Hotline:</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <IconMapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                <span>TP. Ho Chi Minh, Viet Nam</span>
+                            </li>
                         </ul>
 
-                        <div className="flex gap-3 mt-4">
-                            <a href="https://www.facebook.com/" target="_blank" className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center hover:bg-green-600">
-                                <span className="text-xs font-bold">f</span>
-                            </a>
-                            <a href="https://www.instagram.com/" target="_blank" className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center hover:bg-green-600">
-                                <span className="text-xs font-bold">in</span>
-                            </a>
-                        </div>
+
                     </div>
 
 
