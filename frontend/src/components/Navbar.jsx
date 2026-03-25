@@ -80,7 +80,7 @@ const Navbar = () => {
                 <div className=" px-4 py-3 flex items-center justify-between gap-4">
 
                     <Link to='/' className="flex items-center gap-2 flex-shrink-0">
-                        <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                        <div className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center">
                             <IconLeaf className="w-5 h-5 text-white" />
                         </div>
                         <span className="text-green-700 font-bold text-lg hidden sm:block">Green Life</span>
@@ -96,7 +96,7 @@ const Navbar = () => {
                                 placeholder="Search For Products..."
                                 className="flex-1 px-4 py-2 text-sm outline-none"
                             />
-                            <button type="submit" className="bg-green-600 px-4 text-white text-sm hover:bg-green-700">
+                            <button type="submit" className="bg-green-700 px-4 text-white text-sm hover:bg-green-700">
                                 <IconSearch className="w-4 h-4 pr-2" />
                                 Search
                             </button>
@@ -122,7 +122,7 @@ const Navbar = () => {
                                 {userInfo.name}
                             </Link>
                         ) : (
-                            <Link to='/login' className="hidden sm:flex items-center gap-1.5 text-sm bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition">
+                            <Link to='/login' className="hidden sm:flex items-center gap-1.5 text-sm bg-green-700 text-white px-4 py-2 rounded-full hover:bg-green-800 transition">
                                 <IconUser className="w-4 h-4" />
                                 Login
                             </Link>
