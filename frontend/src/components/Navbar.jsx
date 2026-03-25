@@ -1,7 +1,251 @@
-import React from "react";
+import { useState } from "react"
+import { useSelector } from "react-redux"
+import { Link, useNavigate } from 'react-router-dom'
+
+
+const categories = [
+    {
+        name: 'Eco Home & Living',
+        slug: 'eco-home-living',
+        sub: [
+            { name: 'Bamboo Products', slug: 'bamboo-products' },
+            { name: 'Kitchen Tools', slug: 'kitchen-tools' },
+            { name: 'Cleaning Supplies', slug: 'cleaning-supplies' },
+        ]
+    },
+    {
+        name: 'Personal Care',
+        slug: 'personal-care',
+        sub: [
+            { name: 'Skincare', slug: 'skincare' },
+            { name: 'Soap', slug: 'soap' },
+            { name: 'Shampoo Bars', slug: 'shampoo-bar' },
+        ]
+    },
+    {
+        name: 'Reusable Bags',
+        slug: 'reusable-bags',
+        sub: [
+            { name: 'Tote Bags', slug: 'tote-bags' },
+            { name: 'Shopping Bags', slug: 'shopping-bags' },
+        ]
+    },
+    {
+        name: 'Zero Waste',
+        slug: 'zero-waste',
+        sub: [
+            { name: 'Straws', slug: 'straws' },
+            { name: 'Food Wraps', slug: 'food-wraps' },
+            { name: 'Storage', slug: 'storage' },
+        ]
+    },
+    {
+        name: 'Daily Essentials',
+        slug: 'daily-essentials',
+        sub: [
+            { name: 'Water Bottles', slug: 'water-bottles' },
+            { name: 'Lunch Boxes', slug: 'lunch-boxes' },
+        ]
+    },
+
+]
+
 
 const Navbar = () => {
-  return <div></div>;
-};
+    const [menuOpen, setMenuOpen] = useState(false)
+    const [searchText, setSearchText] = useState('')
+    const [activeDropdown, setActiveDropdown] = useState(null)
+    const navigate = useNavigate()
+    const cartItems = useSelector(state => state.cart.items)
+    const { userInfo } = useSelector(state => state.auth)
 
-export default Navbar;
+    const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0)
+
+    const handleSearch = (e) => {
+        e.preventDefault()
+        if (searchText.trim()) {
+            navigate(`/products?search=${searchText}`)
+            setSearchText('')
+        }
+    }
+
+
+    return (
+        <nav className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
+            <div className="w-full px-6">
+                <div className=" px-4 py-3 flex items-center justify-between gap-4">
+
+                    <Link to='/' className="flex items-center gap-2 flex-shrink-0">
+                        <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                            <span className="text-white text-sm font-bold">G</span>
+                        </div>
+                        <span className="text-green-700 font-bold text-lg hidden sm:block">Green Life</span>
+                    </Link>
+
+
+                    <form onSubmit={handleSearch} className="flex-1 max-w-xl hidden md:flex">
+                        <div className="flex w-full border border-gray-300 rounded-full overflow-hidden">
+                            <input
+                                type="text"
+                                value={searchText}
+                                onChange={e => setSearchText(e.target.value)}
+                                placeholder="Search For Products..."
+                                className="flex-1 px-4 py-2 text-sm outline-none"
+                            />
+                            <button type="submit" className="bg-green-600 px-4 text-white text-sm hover:bg-green-700">
+                                Search
+                            </button>
+                        </div>
+                    </form>
+
+
+                    <div className="flex items-center gap-4">
+
+                        <Link to='/cart' className='relative'>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            {totalItems > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                    {totalItems}
+                                </span>
+                            )}
+                        </Link>
+
+
+                        {userInfo ? (
+                            <Link to='/profile' className='text-sm text-gray-700 hover:text-green-600 hidden sm:block'>
+                                {userInfo.name}
+                            </Link>
+                        ) : (
+                            <Link to='/login' className="text-sm bg-green-600 text-white px-4 py-2 rounded hover:gb-green-700 hidden sm:block">
+                                Login
+                            </Link>
+                        )}
+
+
+                        {userInfo?.role === 'admin' && (
+                            <Link to='/admin' className="text-sm text-green-600 font-medium hidden sm:block">
+                                Admin
+                            </Link>
+                        )}
+
+                        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div className="hidden md:block border-t border-gray-100 bg-white">
+                    <div className=" px-4 flex items-center justify-center gap-1">
+                        <Link to='/' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
+                            Home
+                        </Link>
+                        {categories.map(cat => (
+                            <div
+                                key={cat.slug}
+                                className="relative group"
+                                onMouseEnter={() => setActiveDropdown(cat.slug)}
+                                onMouseLeave={() => setActiveDropdown(null)}
+                            >
+                                <Link
+                                    to={`/product?category=${cat.slug}`}
+                                    className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap"
+                                >
+                                    {cat.name}
+                                </Link>
+
+                                {activeDropdown === cat.slug && (
+                                    <div className="absolute top-full left-0 bg-white shadow-lg rounded-b-lg border border-gray-100 py-2 min-w-48 z-50">
+                                        {cat.sub.map(sub => (
+                                            <Link
+                                                key={sub.slug}
+                                                to={`/products?category=${sub.slug}`}
+                                                className="block px-4 py-2 text-sm text-gray-600 hover:bg-green-50 hover:underline "
+                                            >
+                                                {sub.name}
+                                            </Link>
+                                        ))}
+
+                                        <Link to='/products' className="ml-auto px-4 py-3 text-sm text-gray-600 hover:underline whitespace-nowrap">
+                                            All Products
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {menuOpen && (
+                    <div className="md:hidden px-4 pb-4 flex flex-col gap-3 border-t border-gray-100">
+                        <form onSubmit={handleSearch} className="flex border border-gray-300 rounded-full overflow-hidden">
+                            <input
+                                type="text"
+                                value={searchText}
+                                onChange={e => setSearchText(e.target.value)}
+                                placeholder="Search..."
+                                className="flex-1 px-4 py-2 text-sm outline-none"
+                            />
+                            <button type="submit" className="bg-green-600 px-4 text-white text-sm">Tim</button>
+                        </form>
+
+                        <Link
+                            to='/'
+                            className="block px-4 py-2 text-sm font-medium text-gray-700 border-b border-gray-100 hover:text-green-700 whitespace-nowrap"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            Home
+                        </Link>
+
+                        {categories.map(cat => (
+                            <div key={cat.slug} className="border-b border-gray-100 ">
+                                <Link
+                                    to={`/product?category=${cat.slug}`}
+                                    className="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap"
+                                    onClick={() => setMenuOpen(false)}
+                                >
+                                    {cat.name}
+                                </Link>
+                                {/* <div className="pl-3 flex flex-col gap-1">
+                                {cat.sub.map(sub => (
+                                    <Link 
+                                        key={sub.slug}
+                                        to={`/products?category=${sub.slug}`}
+                                        className="text-sm text-gray-50 hover:text-green-600"
+                                    >
+                                        - {sub.name}
+                                    </Link>
+                                ))}
+                            </div> */}
+                            </div>
+                        ))}
+
+
+                        {userInfo ? (
+                            <Link to='/profile' className="text-sm text-gray-700" onClick={() => setMenuOpen(false)}>
+                                {userInfo.name}
+                            </Link>
+                        ) : (
+                            <Link to='/login' className="text-sm text-gray-700" onClick={() => setMenuOpen(false)}>
+                                Login
+                            </Link>
+                        )}
+
+                        {userInfo?.role === 'admin' && (
+                            <Link to='/admin' className="text-sm text-gray-700 font-medium" onClick={() => setMenuOpen(false)}>
+                                Admin
+                            </Link>
+                        )
+
+                        }
+                    </div>
+                )}
+            </div>
+        </nav>
+    )
+}
+
+export default Navbar
