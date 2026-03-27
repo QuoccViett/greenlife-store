@@ -3,7 +3,7 @@ import { IconLeaf, IconMail, IconPhone, IconMapPin, IconFacebook, IconInstagram 
 
 const Footer = () => {
     return (
-        <footer className="w-full bg-green-800 text-green-100 mt-16">
+        <footer className="w-full bg-green-800 text-green-100">
             <div className="w-full">
                 <div className=" px-4 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
                     <div>

@@ -7,9 +7,13 @@ const getProducts = async (req, res) => {
         const { category, search, featured } = req.query
         
         let filter = {}
-        if (category) filter.category = category
         if (featured) filter.isFeatured = true
         if (search) filter.name = { $regex: search, $options: 'i' }
+        if (category) {
+            const Category = require('../models/Category')
+            const cat = await Category.findOne({ slug: category })
+            if (cat) filter.category = cat._id
+        }
 
         const products = await Product.find(filter).populate('category', 'name slug')
         res.json(products)

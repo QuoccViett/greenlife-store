@@ -7,6 +7,8 @@ import {
   IconBottle, IconArrowRight, IconLeaf,
   IconMail
 } from '../components/icons'
+import ProductCard from '../components/ProductCard'
+import SkeletonCard from '../components/SkeletonCard'
 
 const API = import.meta.env.VITE_API_URL
 
@@ -66,59 +68,10 @@ const categories = [
     },
 ]
 
-const ProductCard = ({product}) => (
-    <Link
-        to={`/products/${product._id}`}
-        className='group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition'
-    >
-        <div className='aspect-square bg-gray-50 overflow-hidden'>
-            <img 
-                src={product.image || 'https://placehold.co/400x400/e8f5e9/2e7d32?text=GreenLife'}
-                alt={product.name}
-                className='w-full h-full object-cover group-hover:scale-105 transition duration-300'
-            />
-        </div>
-        <div className='p-4'>
-            <p className='text-sm text-green-600 font-medium mb-1 uppercase tracking-wide'>
-                {product.category?.name || 'GreenLife'}
-            </p>
-            <h3 className='text-sm font-semibold text-gray-800 line-clamp-2 mb-2'>{product.name}</h3>
-            <div className='flex items-center gap-2'>
-                { product.salePrice ? (
-                    <>
-                        <span className='text-green-700 font-bold'>
-                            {product.salePrice.toLocaleString('en-US')}$
-                        </span>
-                        <span className='text-gray-400 text-sm line-through'>
-                            {product.price.toLocaleString('en-US')}$
-                        </span>
-                    </>
-                ) : (
-                    <span className='text-green-700 font-bold'>
-                        {product.price.toLocaleString('en-US')}$
-                    </span>
-                )
-                }
-            </div>
-        </div>
-    </Link>
-)
-
-const SkeletonCard = () => {
-    <div className='bg-white rounded-2xl border border-gray-100 overflow-hidden animate-pulse'>
-        <div className='aspect-square bg-gray-200'/>
-        <div className='p-4 space-y-2'>
-            <div className='h-3 bg-gray-200 rounded w-1/2'/>
-            <div className='h-4 bg-gray-200 rounded w-full'/>
-            <div className='h-4 bg-gray-200 rounded w-2/3'/>
-        </div>
-    </div>
-}
-
 const HomePage = () => {
 
-    const [ loading, setLoading ] = useState([])
-    const [ featured, setFeatured ] = useState(true)
+    const [ loading, setLoading ] = useState(true)
+    const [ featured, setFeatured ] = useState([])
     const [newest, setNewest] = useState([])
     const [email, setEmail] = useState('')
  
