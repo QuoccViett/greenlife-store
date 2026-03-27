@@ -22,11 +22,11 @@ const Footer = () => {
                     <div className="text-left">
                         <h3 className="text-white font-semibold mb-3">Company</h3>
                         <ul className="space-y-2 text-sm text-white">
-                            <li><Link to='/products?category=eco-home-living' className="hover:text-gray-300 trainsition">Eco Home & Living</Link></li>
-                            <li><Link to='/products?category=personal-care' className="hover:text-gray-300 trainsition">Personal Care</Link></li>
-                            <li><Link to='/products?category=reusable-bags' className="hover:text-gray-300 trainsition">Reusable Bags</Link></li>
-                            <li><Link to='/products?category=zero-waste' className="hover:text-gray-300 trainsition">Zero Waste</Link></li>
-                            <li><Link to='/products?category=daily-essentials' className="hover:text-gray-300 trainsition">Daily Essentials</Link></li>
+                            <li><Link to='/products?category=eco-home-living' className="hover:text-gray-300 transition">Eco Home & Living</Link></li>
+                            <li><Link to='/products?category=personal-care' className="hover:text-gray-300 transition">Personal Care</Link></li>
+                            <li><Link to='/products?category=reusable-bags' className="hover:text-gray-300 transition">Reusable Bags</Link></li>
+                            <li><Link to='/products?category=zero-waste' className="hover:text-gray-300 transition">Zero Waste</Link></li>
+                            <li><Link to='/products?category=daily-essentials' className="hover:text-gray-300 transition">Daily Essentials</Link></li>
                         </ul>
                     </div>
 
@@ -43,8 +43,8 @@ const Footer = () => {
                     <div className="text-left">
                         <h3 className="text-white font-semibold mb-3">Get In Touch</h3>
                         <ul className="space-y-2 text-sm text-white">
-                            <li>Email: </li>
-                            <li>Hotline: </li>
+                            <li>Email: <a href="mailto:support@greenlife.vn" className="hover:text-gray-300">support@greenlife.vn</a></li>
+                            <li>Hotline: <a href="tel:+84123456789" className="hover:text-gray-300">+84 (0) 123 456 789</a></li>
                             <li>TP. Ho Chi Minh, Viet Nam</li>
                         </ul>
 

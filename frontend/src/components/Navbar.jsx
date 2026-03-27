@@ -189,7 +189,7 @@ const Navbar = () => {
                                 placeholder="Search..."
                                 className="flex-1 px-4 py-2 text-sm outline-none"
                             />
-                            <button type="submit" className="bg-green-600 px-4 text-white text-sm">Tim</button>
+                            <button type="submit" className="bg-green-600 px-4 text-white text-sm">Search</button>
                         </form>
 
                         <Link
