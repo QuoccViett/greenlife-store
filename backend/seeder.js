@@ -52,6 +52,32 @@ const subCategories = [
         parent: 'eco-home-living'
     },
     {
+        name: 'Skincare',
+        slug: 'skincare',
+        parent: 'personal-care'
+    },
+    {
+        name: 'Soap',
+        slug: 'soap',
+        parent: 'personal-care'
+    },
+    {
+        name: 'Shampoo Bars',
+        slug: 'shampoo-bars',
+        parent: 'personal-care'
+    },
+
+    {
+        name: 'Tote Bags',
+        slug: 'tote-bags',
+        parent: 'reusable-bags'
+    },
+    {
+        name: 'Shopping Bags',
+        slug: 'shopping-bags',
+        parent: 'reusable-bags'
+    },
+    {
         name: 'Straws',
         slug: 'straws',
         parent: 'zero-waste'

@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router-dom"
 import { Link } from 'react-router-dom'
-import { IconFilter, IconSliders, IconArrowRight, IconTag, IconTruck, IconRecycle, IconRefresh,IconShield } from '../components/icons'
+import { IconFilter, IconSliders, IconArrowRight, IconTag, IconTruck, IconRecycle, IconRefresh, IconShield } from '../components/icons'
 import { useEffect, useState } from "react"
 import ProductCard from "../components/ProductCard"
 import SkeletonCard from "../components/SkeletonCard"
@@ -17,43 +17,83 @@ const categories = [
         name: 'Eco Home & Living',
         slug: 'eco-home-living',
         sub: [
-            'bamboo-products',
-            'kitchen-tools',
-            'cleaning-supplies'
+            {
+                name: 'Bamboo Products',
+                slug: 'bamboo-products',
+            },
+            {
+                name: 'Kitchen Tools',
+                slug: 'kitchen-tools',
+            },
+            {
+                name: 'Cleaning Supplies',
+                slug: 'cleaning-supplies',
+            },
+
         ]
     },
     {
         name: 'Personal Care',
         slug: 'personal-care',
         sub: [
-            'skincare',
-            'soap',
-            'shampoo-bars'
+            {
+                name: 'Skincare',
+                slug: 'skincare',
+            },
+            {
+                name: 'Soap',
+                slug: 'soap',
+            },
+            {
+                name: 'Shampoo Bars',
+                slug: 'shampoo-bars',
+            },
         ]
     },
     {
         name: 'Reusable Bags',
         slug: 'reusable-bags',
         sub: [
-            'tote-bags',
-            'shopping-bags',
+            {
+                name: 'Tote Bags',
+                slug: 'tote-bags',
+            },
+            {
+                name: 'Shopping Bags',
+                slug: 'shopping-bags',
+            },
         ]
     },
     {
         name: 'Zero Waste',
         slug: 'zero-waste',
         sub: [
-            'straws',
-            'food-wraps',
-            'storage'
+            {
+                name: 'Straws',
+                slug: 'straws',
+            },
+            {
+                name: 'Food Wraps',
+                slug: 'food-wraps',
+            },
+            {
+                name: 'Storage',
+                slug: 'storage',
+            },
         ]
     },
     {
         name: 'Daily Essentials',
         slug: 'daily-essentials',
         sub: [
-            'water-bottles',
-            'lunch-boxes',
+            {
+                name: 'Water Bottles',
+                slug: 'water-bottles',
+            },
+            {
+                name: 'Lunch Boxes',
+                slug: 'lunch-boxes',
+            },
         ]
     },
 ]
@@ -132,7 +172,7 @@ const ProductsPage = () => {
     const search = searchParams.get('search') || ''
     const sub = searchParams.get('sub') || ''
     const banner = categoryBanners[category] || categoryBanners['']
-    
+
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true)
@@ -155,14 +195,14 @@ const ProductsPage = () => {
 
     const filtered = products
         .filter(p => (p.salePrice || p.price) >= priceRange[0] && (p.salePrice || p.price) <= priceRange[1])
-        .sort((a,b) => {
+        .sort((a, b) => {
             if (sortBy === 'price-asc') return (a.salePrice || a.price) - (b.salePrice || b.price)
             if (sortBy === 'price-desc') return (b.salePrice || b.price) - (a.salePrice || a.price)
             return new Date(b.createdAt) - new Date(a.createdAt)
         })
 
 
-    const paginated = filtered.slice((page-1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+    const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
     const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
 
     const gridClass = {
@@ -178,11 +218,35 @@ const ProductsPage = () => {
             <section className={`w-full bg-gradient-to-br ${banner.bg} text-white py-12`}>
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex items-center gap-2 text-green-300 text-sm mb-2">
+                        {}
                         <Link to='/' className='hover:text-white transition'>
                             Home
                         </Link>
-                        <span>/</span>
-                        <span className="text-white">{banner.title}</span>
+                        {!sub ?
+                            <>
+                                <span>/</span>
+                                <span className="text-white">{banner.title}</span>
+                            </>
+                        : 
+                            <>
+                                <span>/</span>
+                                <Link to={`/products?category=${category}`} className='hover:text-white transition'>
+                                    {banner.title}
+                                </Link>
+                                <span>/</span>
+                                {categories.map((cat) => (
+                                    cat.sub && cat.sub.map(subItem => (
+                                        <span
+                                            key={subItem.slug}
+                                            className="text-white"
+                                        >
+                                            {sub === subItem.slug ? subItem.name : ''}
+                                        </span>
+                                    ))
+                                ))}
+                            </>
+                            
+                        }
                     </div>
                     <div className="text-center">
                         <h1 className="text-3xl font-bold mb-2">{banner.title}</h1>
@@ -207,22 +271,39 @@ const ProductsPage = () => {
 
                         <div>
                             <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                                <IconFilter className="!w-4 !h-4 text-green-600"/>
+                                <IconFilter className="!w-4 !h-4 text-green-600" />
                                 Category
                             </h3>
                             <ul className="space-y-1">
                                 {categories.map(cat => (
                                     <li key={cat.slug}>
-                                        <button 
-                                            onClick={() => setSearchParams(cat.slug ? { category : cat.slug } : {})}
-                                            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${
-                                                category === cat.slug
-                                                    ? 'bg-green-600 text-white font-medium'
-                                                    : 'text-gray-600 hover:bg-green-50 hover:text-green-700' 
-                                            }`}
+                                        <button
+                                            onClick={() => setSearchParams(cat.slug ? { category: cat.slug } : {})}
+                                            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${category === cat.slug && sub === ''
+                                                ? 'bg-green-600 text-white font-medium'
+                                                : 'text-gray-600 hover:bg-green-50 hover:text-green-700'
+                                                }`}
                                         >
                                             {cat.name}
                                         </button>
+                                        {cat.sub &&
+                                            <ul className="ml-4 space-y-1">
+                                                {cat.sub.map(subSlug => (
+                                                    <li key={subSlug.slug}>
+                                                        <button
+                                                            onClick={() => setSearchParams(subSlug.slug ? { category: cat.slug, sub: subSlug.slug } : {})}
+                                                            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition 
+                                                                ${sub === subSlug.slug
+                                                                    ? 'bg-green-600 text-white font-medium'
+                                                                    : 'text-gray-600 hover:bg-green-50 hover:text-green-700'}
+                                                                `}
+                                                        >
+                                                            {subSlug.name}
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        }
                                     </li>
                                 ))}
                             </ul>
@@ -230,12 +311,12 @@ const ProductsPage = () => {
 
                         <div>
                             <h3>
-                                <IconSliders className="!w-4 !h-4 text-green-600 mr-4"/>
+                                <IconSliders className="!w-4 !h-4 text-green-600 mr-4" />
                                 Price Range
                             </h3>
                             <div>
-                                <input 
-                                    type="range" 
+                                <input
+                                    type="range"
                                     min={0}
                                     max={10000}
                                     value={priceRange[1]}
@@ -273,19 +354,19 @@ const ProductsPage = () => {
                             Show <span className="font-medium text-gray-800">{paginated.length}</span> / <span className="font-medium text-gray-800">{filtered.length}</span> Product
                         </p>
                         <div className="flex items-center gap-2">
-                            <button 
+                            <button
                                 onClick={() => setSidebarOpen(true)}
                                 className="lg:hidden flex items-center gap-1.5 border border-gray-300 px-3 py-1.5 rounded-lg text-sm text-gray-700 hover:bg-green-500 transition"
                             >
-                                <IconFilter className="!w-4 !h-4"/>
+                                <IconFilter className="!w-4 !h-4" />
                                 Filter
                             </button>
 
                             <div className="flex border border-gray-300 rounded-lg overflow-hidden">
-                                {[2, 3, 4].map( c => (
+                                {[2, 3, 4].map(c => (
                                     <button
                                         key={c}
-                                        onClick={() => setCols(c)} 
+                                        onClick={() => setCols(c)}
                                         className={`px-3 py-1.5 text-sm transition ${cols === c ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
                                     >
                                         {c}
@@ -296,14 +377,14 @@ const ProductsPage = () => {
                     </div>
 
 
-                    { loading ? (
+                    {loading ? (
                         <div className={`grid ${gridClass[cols]} gap-4`}>
-                            {[...Array(8)].map((_, i) => <SkeletonCard key={i}/>)}
+                            {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
                         </div>
-                    
+
                     ) : paginated.length > 0 ? (
                         <div className={`grid ${gridClass[cols]} gap-4`}>
-                            {paginated.map(p => <ProductCard key={p._id} product={p}/>)}
+                            {paginated.map(p => <ProductCard key={p._id} product={p} />)}
                         </div>
                     ) : (
                         <div className="text-center py-20">
@@ -316,7 +397,7 @@ const ProductsPage = () => {
                     {totalPages > 1 && (
                         <div className="flex justify-center items-center gap-2 mt-10">
                             <button
-                                onClick={() => setPage(p => Math.max(1, p-1))}
+                                onClick={() => setPage(p => Math.max(1, p - 1))}
                                 disabled={page - 1}
                                 className="px-4 py-2 border border-gray-300 rounded text-sm text-gray-600 hover:border-green-500 disabled:opacity-40 disabled:cursor-not-allowed transition"
                             >
@@ -331,7 +412,7 @@ const ProductsPage = () => {
                                     {i + 1}
                                 </button>
                             ))}
-                            <button 
+                            <button
                                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                                 disabled={page === totalPages}
                                 className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:border-green-500 disabled:opacity-40 disabled:cursor-not-allowed transition"
@@ -360,7 +441,7 @@ const ProductsPage = () => {
                                     {categories.map(cat => (
                                         <li key={cat.slug}>
                                             <button
-                                                onClick={() => { setSearchParams(cat.slug ? { categories: cat.slug } : {}); setSidebarOpen(false)}}
+                                                onClick={() => { setSearchParams(cat.slug ? { categories: cat.slug } : {}); setSidebarOpen(false) }}
                                                 className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${category === cat.slug ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-green-50'}`}
                                             >
                                                 {cat.name}
@@ -372,13 +453,13 @@ const ProductsPage = () => {
 
                             <div>
                                 <h4 className="font-medium text-gray-700 mb-3">Price Range</h4>
-                                <input 
+                                <input
                                     type="range"
                                     min='0'
                                     max='1000'
                                     value={priceRange[1]}
                                     onChange={e => setPriceRange([0, Number(e.target.value)])}
-                                    className="w-full accent-green-600" 
+                                    className="w-full accent-green-600"
                                 />
                                 <div className="flex justify-between text-xs text-gray-500 mt-1">
                                     <span className="text-green-700 font-medium">$0</span>
