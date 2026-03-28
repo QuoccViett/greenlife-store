@@ -7,6 +7,7 @@ const categorySchema = new mongoose.Schema({
     slug: { type: String, c: true, unique: true },
     description: { type: String },
     image: { type: String },
+    parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', default: null } 
 }, { timestamps: true })
 
 module.exports = mongoose.model('Category', categorySchema)

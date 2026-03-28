@@ -11,6 +11,17 @@ const getCategories = async (req, res) => {
     }
 }
 
+const getSubCategory = async (req, res) => {
+    try {
+        const { slug } = req.params
+        const category = await Category.findOne({ slug })
+        if (!category) return res.status(404).json({ message: 'Khong tim thay san pham'})
+        res.json(category.sub)
+    } catch (err) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
 const createCategory = async (req, res) => {
     try {
         const { name, slug, description, image } = req.body
@@ -44,4 +55,4 @@ const deleteCategory = async (req, res) => {
     }
 }
 
-module.exports = {getCategories, createCategory, updateCategory, deleteCategory}
+module.exports = {getCategories, getSubCategory, createCategory, updateCategory, deleteCategory}

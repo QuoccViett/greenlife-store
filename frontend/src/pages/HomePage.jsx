@@ -157,7 +157,7 @@ const HomePage = () => {
                     {categories.map(cat => (
                         <Link 
                             key={cat.slug}
-                            to={`/products/category=${cat.slug}`}
+                            to={`/products?category=${cat.slug}`}
                             className='flex flex-col items-center gap-3 p-5 bg-green-100 rounded-2xl hover:bg-green-200 transition group text-center'
                         >
                             <div className='w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm group-hover:shadow-md transition'>
