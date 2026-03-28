@@ -130,6 +130,7 @@ const ProductsPage = () => {
 
     const category = searchParams.get('category') || ''
     const search = searchParams.get('search') || ''
+    const sub = searchParams.get('sub') || ''
     const banner = categoryBanners[category] || categoryBanners['']
     
     useEffect(() => {
@@ -138,6 +139,7 @@ const ProductsPage = () => {
             try {
                 let url = `${API}/products?`
                 if (category) url += `category=${category}&`
+                if (sub) url += `sub=${sub}&`
                 if (search) url += `search=${search}&`
                 const res = await axios.get(url)
                 setProducts(res.data)
@@ -149,7 +151,7 @@ const ProductsPage = () => {
             }
         }
         fetchProducts()
-    }, [category, search])
+    }, [category, sub, search])
 
     const filtered = products
         .filter(p => (p.salePrice || p.price) >= priceRange[0] && (p.salePrice || p.price) <= priceRange[1])

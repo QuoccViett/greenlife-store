@@ -35,6 +35,49 @@ const categories = [
     },
 ]
 
+const subCategories = [
+    {
+        name: 'Bamboo Products',
+        slug: 'bamboo-products',
+        parent: 'eco-home-living'
+    },
+    {
+        name: 'Cleaning Supplies',
+        slug: 'cleaning-supplies',
+        parent: 'eco-home-living'
+    },
+    {
+        name: 'Kitchen Tools',
+        slug: 'kitchen-tools',
+        parent: 'eco-home-living'
+    },
+    {
+        name: 'Straws',
+        slug: 'straws',
+        parent: 'zero-waste'
+    },
+    {
+        name: 'Food Wraps',
+        slug: 'food-wraps',
+        parent: 'zero-waste'
+    },
+    {
+        name: 'Storage',
+        slug: 'storage',
+        parent: 'zero-waste'
+    },
+    {
+        name: 'Water Bottles',
+        slug: 'water-bottles',
+        parent: 'daily-essentials'
+    },
+    {
+        name: 'Lunch Boxes',
+        slug: 'lunch-boxes',
+        parent: 'daily-essentials'
+    },
+]
+
 const seedDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI)
@@ -50,6 +93,16 @@ const seedDB = async () => {
 
         const getCat = (slug) => createdCategories.find(c => c.slug === slug)._id
 
+        const createdSubCategories = await Category.insertMany(
+            subCategories.map(sub => ({
+                name: sub.name,
+                slug: sub.slug,
+                parent: getCat(sub.parent),
+            }))
+        )
+        console.log('Category sub created:', createdSubCategories.length)
+
+        const getSub = (slug) => createdSubCategories.find(s => s.slug === slug)?._id
 
         const hashedPassword = await bcrypt.hash('admin123', 10)
         await User.create({
@@ -73,6 +126,7 @@ const seedDB = async () => {
                 stock: 60,
                 image: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600',
                 category: getCat('eco-home-living'),
+                sub: getSub('bamboo-products'),
                 isFeatured: true,
                 sold: 120,
             },
@@ -83,6 +137,7 @@ const seedDB = async () => {
                 stock: 120,
                 image: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=600',
                 category: getCat('eco-home-living'),
+                sub: getSub('cleaning-supplies'),
                 isFeatured: false,
                 sold: 300,
             },
@@ -93,6 +148,7 @@ const seedDB = async () => {
                 stock: 80,
                 image: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600',
                 category: getCat('eco-home-living'),
+                sub: getSub('cleaning-supplies'),
                 isFeatured: false,
                 sold: 210,
             },
@@ -103,6 +159,7 @@ const seedDB = async () => {
                 stock: 50,
                 image: 'https://images.unsplash.com/photo-1606788075761-6f3c6b4d7b2f?w=600',
                 category: getCat('eco-home-living'),
+                sub: getSub('kitchen-tools'),
                 isFeatured: true,
                 sold: 90,
             },
@@ -113,6 +170,7 @@ const seedDB = async () => {
                 stock: 70,
                 image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600',
                 category: getCat('eco-home-living'),
+                sub: getSub('kitchen-tools'),
                 isFeatured: false,
                 sold: 140,
             },
@@ -123,6 +181,7 @@ const seedDB = async () => {
                 stock: 150,
                 image: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=600',
                 category: getCat('eco-home-living'),
+                sub: getSub('cleaning-supplies'),
                 isFeatured: false,
                 sold: 260,
             },
@@ -133,6 +192,7 @@ const seedDB = async () => {
                 stock: 90,
                 image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600',
                 category: getCat('eco-home-living'),
+                sub: getSub('cleaning-supplies'),
                 isFeatured: false,
                 sold: 130,
             },
@@ -143,6 +203,7 @@ const seedDB = async () => {
                 stock: 60,
                 image: 'https://images.unsplash.com/photo-1616628182506-2c7b6b2d4c9c?w=600',
                 category: getCat('eco-home-living'),
+                sub: getSub('bamboo-products'),
                 isFeatured: true,
                 sold: 95,
             },
@@ -153,6 +214,7 @@ const seedDB = async () => {
                 stock: 110,
                 image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600',
                 category: getCat('eco-home-living'),
+                sub: getSub('cleaning-supplies'),
                 isFeatured: false,
                 sold: 175,
             },
@@ -163,6 +225,7 @@ const seedDB = async () => {
                 stock: 40,
                 image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600',
                 category: getCat('eco-home-living'),
+                sub: getSub('kitchen-tools'),
                 isFeatured: true,
                 sold: 80,
             },
@@ -175,6 +238,7 @@ const seedDB = async () => {
                 stock: 300,
                 image: 'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600',
                 category: getCat('personal-care'),
+                sub: getSub('skincare'),
                 isFeatured: true,
                 sold: 500,
             },
@@ -185,6 +249,7 @@ const seedDB = async () => {
                 stock: 200,
                 image: 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=600',
                 category: getCat('personal-care'),
+                sub: getSub('skincare'),
                 isFeatured: false,
                 sold: 260,
             },
@@ -195,6 +260,7 @@ const seedDB = async () => {
                 stock: 90,
                 image: 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=600',
                 category: getCat('personal-care'),
+                sub: getSub('skincare'),
                 isFeatured: true,
                 sold: 180,
             },
@@ -205,6 +271,7 @@ const seedDB = async () => {
                 stock: 120,
                 image: 'https://images.unsplash.com/photo-1631390563490-7ee95d82d668?w=600',
                 category: getCat('personal-care'),
+                sub: getSub('shampoo-bar'),
                 isFeatured: true,
                 sold: 210,
             },
@@ -215,6 +282,7 @@ const seedDB = async () => {
                 stock: 200,
                 image: 'https://images.unsplash.com/photo-1600857062241-98e5dba7f20c?w=600',
                 category: getCat('personal-care'),
+                sub: getSub('soap'),
                 isFeatured: false,
                 sold: 340,
             },
@@ -225,6 +293,7 @@ const seedDB = async () => {
                 stock: 130,
                 image: 'https://images.unsplash.com/photo-1598970434795-0c54fe7c0642?w=600',
                 category: getCat('personal-care'),
+                sub: getSub('skincare'),
                 isFeatured: false,
                 sold: 150,
             },
@@ -235,6 +304,7 @@ const seedDB = async () => {
                 stock: 100,
                 image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600',
                 category: getCat('personal-care'),
+                sub: getSub('skincare'),
                 isFeatured: false,
                 sold: 120,
             },
@@ -245,6 +315,7 @@ const seedDB = async () => {
                 stock: 220,
                 image: 'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=600',
                 category: getCat('personal-care'),
+                sub: getSub('skincare'),
                 isFeatured: false,
                 sold: 190,
             },
@@ -255,6 +326,7 @@ const seedDB = async () => {
                 stock: 80,
                 image: 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=600',
                 category: getCat('personal-care'),
+                sub: getSub('skincare'),
                 isFeatured: true,
                 sold: 110,
             },
@@ -265,6 +337,7 @@ const seedDB = async () => {
                 stock: 140,
                 image: 'https://images.unsplash.com/photo-1600180758890-6b94519a8ba6?w=600',
                 category: getCat('personal-care'),
+                sub: getSub('skincare'),
                 isFeatured: false,
                 sold: 130,
             },
@@ -278,6 +351,7 @@ const seedDB = async () => {
                 stock: 250,
                 image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600',
                 category: getCat('reusable-bags'),
+                sub: getSub('tote-bags'),
                 isFeatured: true,
                 sold: 420,
             },
@@ -288,6 +362,7 @@ const seedDB = async () => {
                 stock: 300,
                 image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600',
                 category: getCat('reusable-bags'),
+                sub: getSub('shopping-bags'),
                 isFeatured: true,
                 sold: 350,
             },
@@ -298,6 +373,7 @@ const seedDB = async () => {
                 stock: 180,
                 image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600',
                 category: getCat('reusable-bags'),
+                sub: getSub('shopping-bags'),
                 isFeatured: false,
                 sold: 270,
             },
@@ -308,6 +384,7 @@ const seedDB = async () => {
                 stock: 150,
                 image: 'https://images.unsplash.com/photo-1597484662317-9bd52c3c6f4b?w=600',
                 category: getCat('reusable-bags'),
+                sub: getSub('shopping-bags'),
                 isFeatured: false,
                 sold: 200,
             },
@@ -318,6 +395,7 @@ const seedDB = async () => {
                 stock: 120,
                 image: 'https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=600',
                 category: getCat('reusable-bags'),
+                sub: getSub('shopping-bags'),
                 isFeatured: false,
                 sold: 95,
             },
@@ -328,6 +406,7 @@ const seedDB = async () => {
                 stock: 90,
                 image: 'https://images.unsplash.com/photo-1606788075761-6f3c6b4d7b2f?w=600',
                 category: getCat('reusable-bags'),
+                sub: getSub('shopping-bags'),
                 isFeatured: true,
                 sold: 140,
             },
@@ -338,6 +417,7 @@ const seedDB = async () => {
                 stock: 200,
                 image: 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=600',
                 category: getCat('reusable-bags'),
+                sub: getSub('shopping-bags'),
                 isFeatured: false,
                 sold: 180,
             },
@@ -348,6 +428,7 @@ const seedDB = async () => {
                 stock: 170,
                 image: 'https://images.unsplash.com/photo-1526178613658-3f1622045557?w=600',
                 category: getCat('reusable-bags'),
+                sub: getSub('tote-bags'),
                 isFeatured: false,
                 sold: 150,
             },
@@ -358,6 +439,7 @@ const seedDB = async () => {
                 stock: 100,
                 image: 'https://images.unsplash.com/photo-1602526219047-1f1a1d9c9b5b?w=600',
                 category: getCat('reusable-bags'),
+                sub: getSub('shopping-bags'),
                 isFeatured: false,
                 sold: 80,
             },
@@ -368,6 +450,7 @@ const seedDB = async () => {
                 stock: 140,
                 image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600',
                 category: getCat('reusable-bags'),
+                sub: getSub('shopping-bags'),
                 isFeatured: true,
                 sold: 220,
             },
@@ -380,6 +463,7 @@ const seedDB = async () => {
                 stock: 300,
                 image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600',
                 category: getCat('zero-waste'),
+                sub: getSub('straws'),
                 isFeatured: true,
                 sold: 600,
             },
@@ -390,6 +474,7 @@ const seedDB = async () => {
                 stock: 120,
                 image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600',
                 category: getCat('zero-waste'),
+                sub: getSub('food-wraps'),
                 isFeatured: true,
                 sold: 200,
             },
@@ -400,6 +485,7 @@ const seedDB = async () => {
                 stock: 140,
                 image: 'https://images.unsplash.com/photo-1606813902913-38e31be8751f?w=600',
                 category: getCat('zero-waste'),
+                sub: getSub('storage'),
                 isFeatured: false,
                 sold: 160,
             },
@@ -410,6 +496,7 @@ const seedDB = async () => {
                 stock: 200,
                 image: 'https://images.unsplash.com/photo-1598520106830-8c45c2035460?w=600',
                 category: getCat('zero-waste'),
+                sub: getSub('storage'),
                 isFeatured: false,
                 sold: 300,
             },
@@ -420,6 +507,7 @@ const seedDB = async () => {
                 stock: 130,
                 image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600',
                 category: getCat('zero-waste'),
+                sub: getSub('storage'),
                 isFeatured: true,
                 sold: 220,
             },
@@ -430,6 +518,7 @@ const seedDB = async () => {
                 stock: 200,
                 image: 'https://images.unsplash.com/photo-1612538498456-e861df91d4d0?w=600',
                 category: getCat('zero-waste'),
+                sub: getSub('straws'),
                 isFeatured: false,
                 sold: 190,
             },
@@ -440,6 +529,7 @@ const seedDB = async () => {
                 stock: 160,
                 image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600',
                 category: getCat('zero-waste'),
+                sub: getSub('storage'),
                 isFeatured: false,
                 sold: 140,
             },
@@ -450,6 +540,7 @@ const seedDB = async () => {
                 stock: 180,
                 image: 'https://images.unsplash.com/photo-1601314167099-232775b3d6fd?w=600',
                 category: getCat('zero-waste'),
+                sub: getSub('storage'),
                 isFeatured: true,
                 sold: 250,
             },
@@ -460,6 +551,7 @@ const seedDB = async () => {
                 stock: 220,
                 image: 'https://images.unsplash.com/photo-1600857062241-98e5dba7f20c?w=600',
                 category: getCat('zero-waste'),
+                sub: getSub('storage'),
                 isFeatured: false,
                 sold: 210,
             },
@@ -470,6 +562,7 @@ const seedDB = async () => {
                 stock: 150,
                 image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600',
                 category: getCat('zero-waste'),
+                sub: getSub('storage'),
                 isFeatured: false,
                 sold: 170,
             },
@@ -483,6 +576,7 @@ const seedDB = async () => {
                 stock: 120,
                 image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600',
                 category: getCat('daily-essentials'),
+                sub: getSub('water-bottles'),
                 isFeatured: true,
                 sold: 400,
             },
@@ -493,6 +587,7 @@ const seedDB = async () => {
                 stock: 90,
                 image: 'https://images.unsplash.com/photo-1611601322175-ef8ec8c85f01?w=600',
                 category: getCat('daily-essentials'),
+                sub: getSub('lunch-boxes'),
                 isFeatured: true,
                 sold: 230,
             },
@@ -503,6 +598,7 @@ const seedDB = async () => {
                 stock: 70,
                 image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600',
                 category: getCat('daily-essentials'),
+                sub: getSub('water-bottles'),
                 isFeatured: false,
                 sold: 150,
             },
@@ -513,6 +609,7 @@ const seedDB = async () => {
                 stock: 140,
                 image: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=600',
                 category: getCat('daily-essentials'),
+                sub: getSub('water-bottles'),
                 isFeatured: true,
                 sold: 210,
             },
@@ -523,6 +620,7 @@ const seedDB = async () => {
                 stock: 110,
                 image: 'https://images.unsplash.com/photo-1571942676516-bcab84649e44?w=600',
                 category: getCat('daily-essentials'),
+                sub: getSub('lunch-boxes'),
                 isFeatured: false,
                 sold: 130,
             },
@@ -533,6 +631,7 @@ const seedDB = async () => {
                 stock: 100,
                 image: 'https://images.unsplash.com/photo-1606788075761-6f3c6b4d7b2f?w=600',
                 category: getCat('daily-essentials'),
+                sub: getSub('lunch-boxes'),
                 isFeatured: false,
                 sold: 120,
             },
@@ -543,6 +642,7 @@ const seedDB = async () => {
                 stock: 160,
                 image: 'https://images.unsplash.com/photo-1601314167099-232775b3d6fd?w=600',
                 category: getCat('daily-essentials'),
+                sub: getSub('lunch-boxes'),
                 isFeatured: true,
                 sold: 180,
             },
@@ -553,6 +653,7 @@ const seedDB = async () => {
                 stock: 200,
                 image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600',
                 category: getCat('daily-essentials'),
+                sub: getSub('lunch-boxes'),
                 isFeatured: false,
                 sold: 160,
             },
@@ -563,6 +664,7 @@ const seedDB = async () => {
                 stock: 300,
                 image: 'https://images.unsplash.com/photo-1584634731339-252c581abfc5?w=600',
                 category: getCat('daily-essentials'),
+                sub: getSub('lunch-boxes'),
                 isFeatured: false,
                 sold: 220,
             },
@@ -573,11 +675,13 @@ const seedDB = async () => {
                 stock: 70,
                 image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600',
                 category: getCat('daily-essentials'),
+                sub: getSub('lunch-boxes'),
                 isFeatured: true,
                 sold: 95,
             },
+
         ]
-        
+
         await Product.insertMany(products)
         console.log(`Created ${products.length} products`)
         console.log('Seeding completed!')

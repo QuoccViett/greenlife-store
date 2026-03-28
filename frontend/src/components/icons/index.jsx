@@ -5,7 +5,7 @@ import {
   faRecycle, faShieldHalved, faRotateLeft, faEnvelope,
   faPhone, faLocationDot, faArrowRight, faBottleWater,
   faSeedling, faBagShopping, faBoxOpen, faStar,
-  faTag, faHeart, faFilter, faSliders
+  faTag, faHeart, faFilter, faSliders, faStore
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faFacebook, faInstagram
@@ -34,6 +34,8 @@ export const IconTag = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faT
 export const IconHeart = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faHeart} className={className} />
 export const IconFilter = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faFilter} className={className} />
 export const IconSliders = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faSliders} className={className} />
+export const IconStore = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faStore} className={className} />
+
 
 export const IconEcoHome = ({ className = "w-7 h-7" }) => <FontAwesomeIcon icon={faHouse} className={className} />
 export const IconPersonalCare = ({ className = "w-7 h-7" }) => <FontAwesomeIcon icon={faLeaf} className={className} />

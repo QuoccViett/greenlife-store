@@ -3,7 +3,8 @@ import { useSelector } from "react-redux"
 import { Link, useNavigate } from 'react-router-dom'
 import {
     IconLeaf, IconCart, IconUser, IconSearch,
-    IconMenu, IconClose, IconChevronDown, IconHome
+    IconMenu, IconClose, IconChevronDown, IconHome,
+    IconStore
 } from './icons/index'
 
 
@@ -144,8 +145,12 @@ const Navbar = () => {
                 <div className="hidden md:block border-t border-gray-100 bg-white">
                     <div className=" px-4 flex items-center justify-center gap-1">
                         <Link to='/' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
-                            <IconHome className="w-4 h-4 pr-2" />
+                            <IconHome className="!w-4 !h-4 pr-2" />
                             <span>Home</span>
+                        </Link>
+                        <Link to='/products' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
+                            <IconStore className="!w-4 !h-4 pr-2" />
+                            <span>Store</span>
                         </Link>
                         {categories.map(cat => (
                             <div
@@ -155,7 +160,7 @@ const Navbar = () => {
                                 onMouseLeave={() => setActiveDropdown(null)}
                             >
                                 <Link
-                                    to={`/product?category=${cat.slug}`}
+                                    to={`/products?category=${cat.slug}`}
                                     className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap"
                                 >
                                     <span>{cat.name}</span>
@@ -167,20 +172,26 @@ const Navbar = () => {
                                         {cat.sub.map(sub => (
                                             <Link
                                                 key={sub.slug}
-                                                to={`/products?category=${sub.slug}`}
+                                                to={`/products?category=${cat.slug}&sub=${sub.slug}`}
                                                 className="block px-4 py-2 text-sm text-gray-600 hover:bg-green-50 hover:underline text-left "
                                             >
                                                 {sub.name}
                                             </Link>
-                                        ))}
 
-                                        <Link to='/products' className="block ml-auto px-4 py-2 text-left text-sm text-gray-600 hover:bg-green-50 hover:underline whitespace-nowrap">
+
+                                        ))}
+                                        
+                                        <Link to={`/products?category=${cat.slug}`} className="block ml-auto px-4 py-2 text-left text-sm text-gray-600 hover:bg-green-50 hover:underline whitespace-nowrap">
                                             All Products
                                         </Link>
+
                                     </div>
                                 )}
                             </div>
                         ))}
+                        <Link to='/about' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
+                            <span>Learn</span>
+                        </Link>
                     </div>
                 </div>
 
@@ -209,7 +220,7 @@ const Navbar = () => {
                         {categories.map(cat => (
                             <div key={cat.slug} className="border-b border-gray-100 ">
                                 <Link
-                                    to={`/product?category=${cat.slug}`}
+                                    to={`/products?category=${cat.slug}`}
                                     className="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap"
                                     onClick={() => setMenuOpen(false)}
                                 >
