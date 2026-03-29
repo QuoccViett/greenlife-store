@@ -3,7 +3,7 @@ import {
   faLeaf, faCartShopping, faUser, faMagnifyingGlass,
   faBars, faXmark, faChevronDown, faHouse, faTruck,
   faRecycle, faShieldHalved, faRotateLeft, faEnvelope,
-  faPhone, faLocationDot, faArrowRight, faBottleWater,
+  faPhone, faLocationDot, faArrowRight, faArrowLeft, faBottleWater,
   faSeedling, faBagShopping, faBoxOpen, faStar,
   faTag, faHeart, faFilter, faSliders, faStore
 } from '@fortawesome/free-solid-svg-icons'
@@ -27,6 +27,7 @@ export const IconMail = ({ className = "w-5 h-5" }) => <FontAwesomeIcon icon={fa
 export const IconPhone = ({ className = "w-5 h-5" }) => <FontAwesomeIcon icon={faPhone} className={className} />
 export const IconMapPin = ({ className = "w-5 h-5" }) => <FontAwesomeIcon icon={faLocationDot} className={className} />
 export const IconArrowRight = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faArrowRight} className={className} />
+export const IconArrowLeft = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faArrowLeft} className={className} />
 export const IconFacebook = ({ className = "w-5 h-5" }) => <FontAwesomeIcon icon={faFacebook} className={className} />
 export const IconInstagram = ({ className = "w-5 h-5" }) => <FontAwesomeIcon icon={faInstagram} className={className} />
 export const IconStar = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faStar} className={className} />

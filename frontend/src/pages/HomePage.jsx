@@ -16,7 +16,7 @@ const benefits = [
     {
         icon: IconTruck,
         title: 'Free Shipping',
-        desc: 'Oreder over 300$'
+        desc: 'Oreder over 20$'
     },
     {
         icon: IconRecycle,
