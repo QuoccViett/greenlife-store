@@ -7,11 +7,12 @@ import ProductsPage from './pages/ProductsPage'
 import ProductDetailPage from './pages/ProductDetailPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import CartPage from './pages/CartPage'
 
 function App() {
   return (
     <div className='min-h-screen flex flex-col'>
-      {/* <Navbar /> */}
+      <Navbar />
       <div className='flex-1'>
         <Routes>
           <Route path='/login' element={<LoginPage/>}/>
@@ -19,9 +20,10 @@ function App() {
           <Route path='/' element={<HomePage/>}/>
           <Route path='/products' element={<ProductsPage/>}/>
           <Route path='/products/:id' element={<ProductDetailPage/>}/>
+          <Route path='/cart' element={<CartPage/>}/>
         </Routes>
       </div>
-      {/* <Footer/> */}
+      <Footer/>
     </div>
   )
 }

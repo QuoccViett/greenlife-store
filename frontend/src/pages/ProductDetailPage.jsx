@@ -94,7 +94,7 @@ const ProductDetailPage = () => {
                     {product?.category && (
                         <>
                             <span>/</span>
-                            <Link to=''>
+                            <Link to={`/products?category=${product?.category.slug}`} className='hover:text-green-600 transition'>
                                 {product?.category.name}
                             </Link>
                         </>
