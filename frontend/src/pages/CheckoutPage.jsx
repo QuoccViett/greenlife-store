@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { IconArrowRight, IconChevronDown, IconShield, IconTruck, IconUser } from '../components/icons'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import axios, { Axios } from 'axios'
+import axios from 'axios'
 import { clearCart } from '../store/cartSlice'
 
 const API = import.meta.env.VITE_API_URL
@@ -30,6 +30,12 @@ const payment = [
     },
 ]
 
+const countries = [
+    'Vietnam', 'United States', 'Japan', 'France', 'Germany',
+    'United Kingdom', 'Canada', 'Australia', 'China', 'India',
+    'Brazil', 'Russia', 'South Korea', 'Italy', 'Spain'
+]
+
 const CheckoutPage = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -47,16 +53,16 @@ const CheckoutPage = () => {
 
 
     const [form, setForm] = useState({
-        fullName: userInfo?.name || '',
+        fullname: userInfo?.name || '',
         phone: '',
         address: '',
-        country: '',
+        city: '',
     })
 
     const handleSubmit = async e => {
         e.preventDefault()
         setError('')
-        if (!form.fullName || !form.phone || !form.address || !form.country) {
+        if (!form.fullname || !form.phone || !form.address || !form.city) {
             setError('Please fill in all the shipping information')
             return
         }
@@ -72,17 +78,26 @@ const CheckoutPage = () => {
             }
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } }
             const { data } = await axios.post(`${API}/orders`, orderData, config)
-
+            console.log("Navigating to order-success", data._id);
             dispatch(clearCart())
-            navigate(`/order-success/${data._id}`)
+            setTimeout(() => {    // delay nhỏ cho Redux update xong
+                navigate(`/order-success/${data._id}`)
+            }, 50)
         } catch (err) {
-            setError(err.reponse?.data?.message || 'Order failed, please try again')
+            setError(err.response?.data?.message || 'Order failed, please try again')
         } finally {
             setLoading(false)
         }
     }
 
     const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value })
+
+
+    if (items.length == 0) {
+        navigate('/cart')
+        return null
+    }
+
 
     return (
         <div className='min-h-screen bg-gray-50'>
@@ -127,8 +142,8 @@ const CheckoutPage = () => {
                                             </div>
                                             <input
                                                 type='text'
-                                                name='fullName'
-                                                value={form.fullName}
+                                                name='fullname'
+                                                value={form.fullname}
                                                 onChange={handleChange}
                                                 placeholder="Enter Recipient's Full Name"
                                                 required
@@ -177,8 +192,8 @@ const CheckoutPage = () => {
                                     <div className='text-left relative'>
                                         <label className='ms-3 text-gray-700 text-sm font-medium'>Country</label>
                                         <select
-                                            name='country'
-                                            value={form.country}
+                                            name='city'
+                                            value={form.city}
                                             onChange={handleChange}
                                             required
                                             className='w-full mt-1.5 px-4 py-3 appearance-none border border-gray-300 rounded-xl outline-none focus:border-gray-500 transition text-gray-700'
@@ -186,13 +201,9 @@ const CheckoutPage = () => {
                                             <option value="">
                                                 Select Country
                                             </option>
-                                            {[
-                                                'Vietnam', 'United States', 'Japan', 'France', 'Germany',
-                                                'United Kingdom', 'Canada', 'Australia', 'China', 'India',
-                                                'Brazil', 'Russia', 'South Korea', 'Italy', 'Spain'
-                                            ].map(country => (
-                                                <option 
-                                                    key={country} 
+                                            {countries.map(country => (
+                                                <option
+                                                    key={country}
                                                     value={country}
                                                 >
                                                     {country}
@@ -201,7 +212,7 @@ const CheckoutPage = () => {
                                         </select>
 
                                         <div className='absolute inset-y-0 z-50 top-7 right-4 flex items-center pointer-events-none text-gray-500'>
-                                            <IconChevronDown className='!w-4 !h-4'/>
+                                            <IconChevronDown className='!w-4 !h-4' />
                                         </div>
                                     </div>
                                 </div>
@@ -292,7 +303,7 @@ const CheckoutPage = () => {
                                     disabled={loading}
                                     className='w-full mt-6 bg-green-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-green-700 
                                                 transition disabled:opacity-60 flex items-center justify-center gap-2'
-                                    >
+                                >
                                     {loading ? 'Placing your order...' : (
                                         <>
                                             <span>Place Order</span>
@@ -302,7 +313,7 @@ const CheckoutPage = () => {
                                 </button>
 
                                 <div className='mt-4 flex items-center gap-2 text-xs text-gray-400 justify-center'>
-                                    <IconShield className='!w-3.5 !h-3.5 text-green-500'/>
+                                    <IconShield className='!w-3.5 !h-3.5 text-green-500' />
                                     <span>Your information is fully secured</span>
                                 </div>
                             </div>
