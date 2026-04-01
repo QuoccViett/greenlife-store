@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { IconCheck, IconClose, IconPen, IconPlus, IconSearch, IconTrash } from "../../components/icons"
+import { IconCheck, IconClose, IconPen, IconPlus, IconSearch, IconTrash, IconChevronDown } from "../../components/icons"
 import axios from "axios"
 import { useSelector } from "react-redux"
 
@@ -16,7 +16,7 @@ const AdminProducts = () => {
     const [editProduct, setEditProduct] = useState(null)
     const [form, setForm] = useState({
         name: '',
-        discription: '',
+        description: '',
         price: '',
         salePrice: '',
         stock: '',
@@ -27,7 +27,6 @@ const AdminProducts = () => {
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
-    const [deleteId, setDeleteId] = useState(null)
 
     useEffect(() => {
         fetchProducts()
@@ -48,6 +47,7 @@ const AdminProducts = () => {
     const fetchCategories = async () => {
         try {
             const { data } = await axios.get(`${API}/categories`)
+            console.log(data)
             setCategories(data)
         } catch (err) {
             console.log(err)
@@ -56,7 +56,7 @@ const AdminProducts = () => {
 
     const openCreate = () => {
         setEditProduct(null)
-        setForm({ name: '', discription: '', price: '', salePrice: '', stock: '', image: '', category: '', isFeatuerd: false })
+        setForm({ name: '', description: '', price: '', salePrice: '', stock: '', image: '', category: '', isFeatuerd: false })
         setShowModal(true)
     }
 
@@ -117,7 +117,7 @@ const AdminProducts = () => {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">Manage Products</h1>
-                    <p className="text-gray-500 text-sm mt-1">{products.length} products</p>
+                    <p className="text-gray-500 text-sm mt-1 text-left !ms-1">Total: {products.length} products</p>
                 </div>
                 <button
                     onClick={openCreate}
@@ -153,11 +153,11 @@ const AdminProducts = () => {
                             <thead className="bg-gray-50 border-b border-gray-100">
                                 <tr>
                                     <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Product</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Categogy</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Price</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Stock</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Featured</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Action</th>
+                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-15">Categogy</th>
+                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-8">Price</th>
+                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-11">Stock</th>
+                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-8">Featured</th>
+                                    <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide pe-10">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
@@ -171,7 +171,7 @@ const AdminProducts = () => {
                                                     alt={product.name}
                                                     className="w-12 h-12 object-cover rounded-lg shrink-0"
                                                 />
-                                                <div>
+                                                <div className="text-left">
                                                     <p>{product.name}</p>
                                                     <p>Items Sole: {product.sole || 0}</p>
                                                 </div>
@@ -241,7 +241,7 @@ const AdminProducts = () => {
                     <div className="absolute inset-0 bg-black/50" onClick={() => setShowModal(false)}></div>
                     <div className="relative bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-bold text-gray-800">
+                            <h2 className="text-lg font-bold text-gray-800 !ms-1">
                                 {editProduct ? 'Edit Product' : 'Add New Product'}
                             </h2>
                             <button
@@ -252,9 +252,9 @@ const AdminProducts = () => {
                             </button>
                         </div>
 
-                        <form onSubmit={handleSave} className="space-y-4">
+                        <form onSubmit={handleSave} className="space-y-4 text-left">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5">Product name *</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Product name *</label>
                                 <input
                                     type="text"
                                     value={form.name}
@@ -265,7 +265,7 @@ const AdminProducts = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5">Description *</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Description *</label>
                                 <textarea
                                     value={form.description}
                                     rows={3}
@@ -276,7 +276,7 @@ const AdminProducts = () => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Price ($) *</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Price ($) *</label>
                                     <input
                                         type="number"
                                         value={form.price}
@@ -288,7 +288,7 @@ const AdminProducts = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Sale Price ($) *</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Sale Price ($) *</label>
                                     <input
                                         type="number"
                                         value={form.salePrice}
@@ -301,9 +301,9 @@ const AdminProducts = () => {
 
                             </div>
 
-                            <div className="grid grid-cols-2">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Stock *</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Stock *</label>
                                     <input
                                         type="number"
                                         value={form.stock}
@@ -314,18 +314,68 @@ const AdminProducts = () => {
                                     />
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Stock *</label>
-                                    <select name="" id="">
+                                <div className="relative">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Category</label>
+                                    <select
+                                        value={form.category}
+                                        onChange={e => setForm({ ...form, category: e.target.value })}
+                                        className="appearance-none w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
+                                    >
+                                        <option
+                                            value=''
 
-                                        
+                                        >
+                                            Select category
+                                        </option>
+                                        {categories.map(cat => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))}
                                     </select>
+                                    <div className='absolute inset-y-0 z-50 top-7 right-4 flex items-center pointer-events-none text-gray-500'>
+                                        <IconChevronDown className='!w-4 !h-4' />
+                                    </div>
                                 </div>
                             </div>
 
-                            
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">URL Picture</label>
+                                <input
+                                    type="text"
+                                    value={form.image}
+                                    onChange={e => setForm({ ...form, image: e.target.value })}
+                                    placeholder="https://..."
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
+                                />
+                                {form.image && (
+                                    <img src={form.image} alt='preview' className="mt-2 w-20 h-20 object-cover rounded-lg" />
+                                )}
+                            </div>
 
-                            
+                            <label className="flex items-center gap-2 cursor-pointer ms-1">
+                                <input
+                                    type="checkbox"
+                                    onChange={e => setForm({ ...form, isFeatuerd: e.target.checked })}
+                                    className="accent-green-600 w-4 h-4 cursor-pointer"
+                                />
+                                <span className="text-sm text-gray-700 ">Featured Product</span>
+                            </label>
+
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                    className="flex-1 border border-gray-300 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={saving}
+                                    className="flex-1 bg-green-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-green-700 transition disabled:opacity-60"
+                                >
+                                    {saving ? 'Saving...' : editProduct ? 'Update' : 'Add New'}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

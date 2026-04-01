@@ -42,13 +42,13 @@ const subCategories = [
         parent: 'eco-home-living'
     },
     {
-        name: 'Cleaning Supplies',
-        slug: 'cleaning-supplies',
+        name: 'Kitchen Tools',
+        slug: 'kitchen-tools',
         parent: 'eco-home-living'
     },
     {
-        name: 'Kitchen Tools',
-        slug: 'kitchen-tools',
+        name: 'Cleaning Supplies',
+        slug: 'cleaning-supplies',
         parent: 'eco-home-living'
     },
     {
