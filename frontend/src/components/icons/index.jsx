@@ -5,7 +5,8 @@ import {
   faRecycle, faShieldHalved, faRotateLeft, faEnvelope,
   faPhone, faLocationDot, faArrowRight, faArrowLeft, faBottleWater,
   faSeedling, faBagShopping, faBoxOpen, faStar,
-  faTag, faHeart, faFilter, faSliders, faStore
+  faTag, faHeart, faFilter, faSliders, faStore, faChartBar,
+  faClipboardList, faDollarSign, faArrowUp, faPlus, faCheck, faPen, faTrash
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faFacebook, faInstagram
@@ -36,6 +37,17 @@ export const IconHeart = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={f
 export const IconFilter = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faFilter} className={className} />
 export const IconSliders = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faSliders} className={className} />
 export const IconStore = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faStore} className={className} />
+export const IconChartBar = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faChartBar} className={className} />
+export const IconClipBoardList = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faClipboardList} className={className} />
+export const IconDollarSign = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faDollarSign} className={className} />
+export const IconArrowUp = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faArrowUp} className={className} />
+export const IconPlus = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faPlus} className={className} />
+export const IconCheck = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faCheck} className={className} />
+export const IconPen = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faPen} className={className} />
+export const IconTrash = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faTrash} className={className} />
+
+
+
 
 
 export const IconEcoHome = ({ className = "w-7 h-7" }) => <FontAwesomeIcon icon={faHouse} className={className} />

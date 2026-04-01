@@ -11,26 +11,53 @@ import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
 import ProfilePage from './pages/ProfilePage'
 import OrderSuccessPage from './pages/OrderSuccessPage'
+import AdminSidebar from './components/admin/AdminSidebar'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminProducts from './pages/admin/AdminProducts'
+
+
+const MainLayout = ({ children }) => (
+  <div className='min-h-screen flex flex-col'>
+    <Navbar />
+    <main className='flex-1'>{children}</main>
+    <Footer />
+  </div>
+)
+
+const AuthLayout = ({ children }) => (
+  <div className='min-h-screen'>{children}</div>
+)
+
+const AdminLayout = ({ children }) => (
+  <div className="min-h-screen bg-gray-50 flex">
+    <AdminSidebar />
+    <div className="flex-1 min-w-0">{children}</div>
+  </div>
+)
+
 
 function App() {
   return (
     <div className='min-h-screen flex flex-col'>
-      <Navbar />
       <div className='flex-1'>
         <Routes>
-          <Route path='/login' element={<LoginPage/>}/>
-          <Route path='/register' element={<RegisterPage/>}/>
-          <Route path='/' element={<HomePage/>}/>
-          <Route path='/products' element={<ProductsPage/>}/>
-          <Route path='/products/:id' element={<ProductDetailPage/>}/>
-          <Route path='/cart' element={<CartPage/>}/>
-          <Route path='/checkout' element={<CheckoutPage/>}/>
-          <Route path='/profile' element={<ProfilePage/>}/>
-          <Route path='/order-success/:id' element={<OrderSuccessPage/>}/>
-          {/* <Route path='/order-success/1' element={<OrderSuccessPage/>}/> */}
+
+          <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
+          <Route path="/register" element={<AuthLayout><RegisterPage /></AuthLayout>} />
+
+          <Route path="/" element={<MainLayout><HomePage /></MainLayout>} />
+          <Route path="/products" element={<MainLayout><ProductsPage /></MainLayout>} />
+          <Route path="/products/:id" element={<MainLayout><ProductDetailPage /></MainLayout>} />
+          <Route path="/cart" element={<MainLayout><CartPage /></MainLayout>} />
+          <Route path="/checkout" element={<MainLayout><CheckoutPage /></MainLayout>} />
+          <Route path="/profile" element={<MainLayout><ProfilePage /></MainLayout>} />
+          <Route path="/order-success/:id" element={<MainLayout><OrderSuccessPage /></MainLayout>} />
+
+          <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+          <Route path='/admin/products' element={<AdminLayout><AdminProducts /></AdminLayout>} />
+
         </Routes>
       </div>
-      <Footer/>
     </div>
   )
 }
