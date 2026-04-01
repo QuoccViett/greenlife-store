@@ -47,7 +47,6 @@ const AdminProducts = () => {
     const fetchCategories = async () => {
         try {
             const { data } = await axios.get(`${API}/categories`)
-            console.log(data)
             setCategories(data)
         } catch (err) {
             console.log(err)

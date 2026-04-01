@@ -43,7 +43,7 @@ const updateOrderStatus = async (req, res) => {
         const orders = await Order.findByIdAndUpdate(
             req.params.id,
             { orderStatus: req.body.orderStatus },
-            { new: true }
+            { returnDocument: 'after' }
         ) 
         if (!orders) return res.status(404).json({massage: 'Khong tim thay trong don hang'})
         res.json(orders)
