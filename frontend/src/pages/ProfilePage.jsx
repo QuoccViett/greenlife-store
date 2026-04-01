@@ -28,6 +28,14 @@ const ProfilePage = () => {
         address: userInfo?.address || '',
     })
 
+    useEffect(() => {
+        setForm({
+            name: userInfo?.name || '',
+            phone: userInfo?.phone || '',
+            address: userInfo?.address || '',
+        })
+    }, [userInfo])
+
 
     const handleLogout = () => {
         dispatch(logout())
@@ -41,7 +49,7 @@ const ProfilePage = () => {
         setSuccess('')
         setLoading(true)
         try {
-            const config = { headers: { Authrization: `Bearer ${userInfo.token}` } }
+            const config = { headers: { Authorization: `Bearer ${userInfo.token}` } }
             const { data } = await axios.put(`${API}/auth/profile`, form, config)
             dispatch(setCredentials({ ...userInfo, ...data }))
             setSuccess('Information Updated Successfully!')
@@ -161,9 +169,9 @@ const ProfilePage = () => {
                                             <input
                                                 type='text'
                                                 name='name'
-                                                value={userInfo?.name}
+                                                value={form?.name}
                                                 onChange={handleChange}
-                                                placeholder='Enter Your Full Name'
+                                                placeholder={'Enter Your Full Name'}
                                                 className='w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-500 focus:border-green-500 transition'
                                             />
                                         </div>
@@ -178,7 +186,7 @@ const ProfilePage = () => {
                                             <input
                                                 type='tel'
                                                 name='phone'
-                                                value={userInfo?.phone}
+                                                value={form?.phone}
                                                 onChange={handleChange}
                                                 placeholder='Enter Your Phone Name'
                                                 className='w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-500 focus:border-green-500 transition'
@@ -195,7 +203,7 @@ const ProfilePage = () => {
                                             <input
                                                 type='text'
                                                 name='address'
-                                                value={userInfo?.address}
+                                                value={form?.address}
                                                 onChange={handleChange}
                                                 placeholder='Enter Your Address'
                                                 className='w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-500 focus:border-green-500 transition'
@@ -226,13 +234,13 @@ const ProfilePage = () => {
 
 const OrdersTab = ({ userInfo }) => {
 
-    const [orders, setOrders]  = useState([])
+    const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const config = { headers: { Authorization: `Bearer ${userInfo.token}` }}
+                const config = { headers: { Authorization: `Bearer ${userInfo.token}` } }
                 const { data } = await axios.get(`${API}/orders/myorders`, config)
                 setOrders(data)
             } catch (err) {
@@ -270,7 +278,7 @@ const OrdersTab = ({ userInfo }) => {
     if (loading) return (
         <div className='bg-white rounded-2xl border border-gray-100 p-6'>
             <div className='space-y-4 animate-pulse'>
-                {[ ...Array(3)].map((_, i) => (
+                {[...Array(3)].map((_, i) => (
                     <div key={i} className='h-24 bg-gray-100 rounded-xl'></div>
                 ))}
             </div>
@@ -283,7 +291,7 @@ const OrdersTab = ({ userInfo }) => {
                 const status = statusLabel[order.orderStatus] || statusLabel.pending
                 return (
                     <div key={order._id} className='bg-white rounded-2xl border border-gray-100 p-5'>
-                        <div className='flex  items-center justify-between mb-4'> 
+                        <div className='flex  items-center justify-between mb-4'>
                             <div>
                                 <p className='text-xs text-gray-400 !mb-1 text-left'>Order ID</p>
                                 <p className='text-sm font-mono font-medium text-gray-700 text-left'>#{order._id.slice(-8).toUpperCase()}</p>
@@ -301,9 +309,9 @@ const OrdersTab = ({ userInfo }) => {
                         <div className='space-y-2 mb-4'>
                             {order.items.map((item, i) => (
                                 <div key={i} className='flex items-center gap-3'>
-                                    <img 
+                                    <img
                                         src={item.image || 'https://placehold.co/48x48/e8f5e9/2e7d32?text=GL'}
-                                        alt={item.name} 
+                                        alt={item.name}
                                         className='w-12 h-12 object-cover rounded-lg mb-1.5'
                                     />
                                     <div className='flex-1 min-w-0'>
