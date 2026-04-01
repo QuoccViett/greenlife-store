@@ -3,6 +3,7 @@ dotenv.config()
 const mongoose = require('mongoose')
 
 const Category = require('./models/Category')
+const Order = require('./models/Order')
 const Product = require('./models/Product')
 const User = require('./models/User')
 const bcrypt = require('bcryptjs')
@@ -112,6 +113,7 @@ const seedDB = async () => {
         await Category.deleteMany()
         await Product.deleteMany()
         await User.deleteMany()
+        await Order.deleteMany()
         console.log('Cleared old data')
 
         const createdCategories = await Category.insertMany(categories)
