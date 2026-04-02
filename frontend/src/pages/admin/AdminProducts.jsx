@@ -22,7 +22,7 @@ const AdminProducts = () => {
         stock: '',
         image: '',
         category: '',
-        isFeatuerd: false
+        isFeatured: false
     })
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
@@ -353,7 +353,8 @@ const AdminProducts = () => {
                             <label className="flex items-center gap-2 cursor-pointer ms-1">
                                 <input
                                     type="checkbox"
-                                    onChange={e => setForm({ ...form, isFeatuerd: e.target.checked })}
+                                    checked={form.isFeatured}
+                                    onChange={e => setForm({ ...form, isFeatured: e.target.checked })}
                                     className="accent-green-600 w-4 h-4 cursor-pointer"
                                 />
                                 <span className="text-sm text-gray-700 ">Featured Product</span>
