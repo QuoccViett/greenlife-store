@@ -22,7 +22,7 @@ const AdminProducts = () => {
         stock: '',
         image: '',
         category: '',
-        isFeatuerd: false
+        isFeatured: false
     })
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
@@ -55,7 +55,7 @@ const AdminProducts = () => {
 
     const openCreate = () => {
         setEditProduct(null)
-        setForm({ name: '', description: '', price: '', salePrice: '', stock: '', image: '', category: '', isFeatuerd: false })
+        setForm({ name: '', description: '', price: '', salePrice: '', stock: '', image: '', category: '', isFeatured: false })
         setShowModal(true)
     }
 
@@ -95,6 +95,8 @@ const AdminProducts = () => {
                 salePrice: form.salePrice ? Number(form.salePrice) : undefined,
                 stock: Number(form.stock),
             }
+
+
             if (editProduct) {
                 await axios.put(`${API}/products/${editProduct._id}`, payload, config)
             } else {
@@ -103,7 +105,7 @@ const AdminProducts = () => {
             setShowModal(false)
             fetchProducts()
         } catch (err) {
-            console.error(err)
+            console.error("ERROR:", err.response?.data || err.message)
         } finally {
             setSaving(false)
         }
@@ -327,7 +329,7 @@ const AdminProducts = () => {
                                             Select category
                                         </option>
                                         {categories.map(cat => (
-                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                            <option key={cat._id} value={cat._id}>{cat.name}</option>
                                         ))}
                                     </select>
                                     <div className='absolute inset-y-0 z-50 top-7 right-4 flex items-center pointer-events-none text-gray-500'>
@@ -353,7 +355,8 @@ const AdminProducts = () => {
                             <label className="flex items-center gap-2 cursor-pointer ms-1">
                                 <input
                                     type="checkbox"
-                                    onChange={e => setForm({ ...form, isFeatuerd: e.target.checked })}
+                                    checked={form.isFeatured}
+                                    onChange={e => setForm({ ...form, isFeatured: e.target.checked })}
                                     className="accent-green-600 w-4 h-4 cursor-pointer"
                                 />
                                 <span className="text-sm text-gray-700 ">Featured Product</span>
