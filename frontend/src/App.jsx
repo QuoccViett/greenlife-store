@@ -15,6 +15,7 @@ import AdminSidebar from './components/admin/AdminSidebar'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
+import AdminUsers from './pages/admin/AdminUsers'
 
 
 const MainLayout = ({ children }) => (
@@ -57,6 +58,7 @@ function App() {
           <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
           <Route path='/admin/products' element={<AdminLayout><AdminProducts /></AdminLayout>} />
           <Route path="/admin/orders" element={<AdminLayout><AdminOrders /></AdminLayout>} />
+          <Route path="/admin/users" element={<AdminLayout><AdminUsers /></AdminLayout>} />
         </Routes>
       </div>
     </div>

@@ -59,7 +59,7 @@ const AdminDashboard = () => {
 
     return (
         <div className="p-8">
-            <div className="mb-8">
+            <div className="mb-8 text-left">
                 <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
                 <p className="text-gray-500 text-sm mt-1">Welcome back, {userInfo?.name}</p>
             </div>
