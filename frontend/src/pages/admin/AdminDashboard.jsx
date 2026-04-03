@@ -61,7 +61,7 @@ const AdminDashboard = () => {
         <div className="p-8">
             <div className="mb-8 text-left">
                 <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-                <p className="text-gray-500 text-sm mt-1">Welcome back, {userInfo?.name}</p>
+                <p className="text-gray-500 text-sm mt-1">Welcome back, {userInfo?.name} !</p>
             </div>
 
             {loading ? (
@@ -75,7 +75,7 @@ const AdminDashboard = () => {
                     ))}
                 </div>
             ) : (
-                <div  className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div  className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 text-left">
                     <StatCard  icon={<IconUser className='!w-5 !h-5 text-white'/>} label={'Users'} value={stats?.totalUsers || 0} color={'bg-blue-500'}/>
                     <StatCard  icon={<IconClipBoardList className='!w-5 !h-5 text-white'/>} label={'Orders'} value={stats?.totalOrders || 0} color={'bg-purple-500'}/>
                     <StatCard  icon={<IconBox className='!w-5 !h-5 text-white'/>} label={'Products'} value={stats?.totalProducts || 0} color={'bg-green-500'}/>

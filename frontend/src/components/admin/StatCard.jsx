@@ -13,8 +13,8 @@ const StatCard  = ({ icon, label, value, sub, color}) => {
                     Active
                 </span>
             </div>
-            <p className="text-2xl font-bold text-gray-800">{value}</p>
-            <p className="text-sm text-gray-500 mt-0.5">{label}</p>
+            <p className="text-2xl font-bold text-gray-800 !ms-1">{value}</p>
+            <p className="text-sm text-gray-500 mt-0.5 !ms-1">{label}</p>
             {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
         </div>
     )

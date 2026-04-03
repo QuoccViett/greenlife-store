@@ -31,9 +31,10 @@ const AuthLayout = ({ children }) => (
 )
 
 const AdminLayout = ({ children }) => (
-  <div className="min-h-screen bg-gray-50 flex">
+  <div className="h-screen bg-gray-50 flex">
     <AdminSidebar />
-    <div className="flex-1 min-w-0">{children}</div>
+
+    <div className="flex-1 min-w-0 overflow-y-auto">{children}</div>
   </div>
 )
 
