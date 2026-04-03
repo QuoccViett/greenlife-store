@@ -1,10 +1,11 @@
 import { useSearchParams } from "react-router-dom"
 import { Link } from 'react-router-dom'
-import { IconFilter, IconSliders, IconArrowRight, IconTag, IconTruck, IconRecycle, IconRefresh, IconShield } from '../components/icons'
+import { IconFilter, IconSliders, IconArrowRight, IconTag, IconTruck, IconRecycle, IconRefresh, IconShield, IconChevronDown, IconChevronRight } from '../components/icons'
 import { useEffect, useState } from "react"
 import ProductCard from "../components/ProductCard"
 import SkeletonCard from "../components/SkeletonCard"
 import axios from "axios"
+import SubMenu from "../components/SubMenu"
 
 const API = import.meta.env.VITE_API_URL
 
@@ -166,6 +167,7 @@ const ProductsPage = () => {
     const [page, setPage] = useState(1)
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [cols, setCols] = useState(4)
+    const [openCat, setOpenCat] = useState(null)
 
 
     const category = searchParams.get('category') || ''
@@ -218,7 +220,7 @@ const ProductsPage = () => {
             <section className={`w-full bg-gradient-to-br ${banner.bg} text-white py-12`}>
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex items-center gap-2 text-green-300 text-sm mb-2">
-                        {}
+                        { }
                         <Link to='/' className='hover:text-white transition'>
                             Home
                         </Link>
@@ -227,7 +229,7 @@ const ProductsPage = () => {
                                 <span>/</span>
                                 <span className="text-white">{banner.title}</span>
                             </>
-                        : 
+                            :
                             <>
                                 <span>/</span>
                                 <Link to={`/products?category=${category}`} className='hover:text-white transition'>
@@ -245,7 +247,7 @@ const ProductsPage = () => {
                                     ))
                                 ))}
                             </>
-                            
+
                         }
                     </div>
                     <div className="text-center">
@@ -275,37 +277,60 @@ const ProductsPage = () => {
                                 Category
                             </h3>
                             <ul className="space-y-1">
-                                {categories.map(cat => (
-                                    <li key={cat.slug}>
-                                        <button
-                                            onClick={() => setSearchParams(cat.slug ? { category: cat.slug } : {})}
-                                            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${category === cat.slug && sub === ''
-                                                ? 'bg-green-600 text-white font-medium'
-                                                : 'text-gray-600 hover:bg-green-50 hover:text-green-700'
-                                                }`}
-                                        >
-                                            {cat.name}
-                                        </button>
-                                        {cat.sub &&
-                                            <ul className="ml-4 space-y-1">
-                                                {cat.sub.map(subSlug => (
-                                                    <li key={subSlug.slug}>
-                                                        <button
-                                                            onClick={() => setSearchParams(subSlug.slug ? { category: cat.slug, sub: subSlug.slug } : {})}
-                                                            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition 
-                                                                ${sub === subSlug.slug
-                                                                    ? 'bg-green-600 text-white font-medium'
-                                                                    : 'text-gray-600 hover:bg-green-50 hover:text-green-700'}
+                                {categories.map(cat => {
+                                    const isActiveCat = category === cat.slug
+                                    const isOPen = openCat === cat.slug
+                                    return (
+
+                                        <li key={cat.slug} >
+                                            <button
+                                                onClick={() => {
+                                                    setSearchParams(cat.slug ? { category: cat.slug } : {})
+                                                    setOpenCat(isOPen ? null : cat.slug)
+                                                }}
+                                                className={`w-full px-3 py-2 rounded-lg text-sm transition flex items-center justify-between
+                                                    ${isActiveCat && sub === ''
+                                                        ? 'bg-green-600 text-white font-medium'
+                                                        : 'text-gray-600 hover:bg-green-50 hover:text-green-700'
+                                                    }`}
+                                            >
+                                                <span>{cat.name}</span>
+
+                                                {cat.slug !== '' ? (
+                                                    isOPen ? (
+                                                        <IconChevronDown className="!w-4 !h-4" />
+                                                    ) : (
+                                                        <IconChevronRight className="!w-4 !h-4" />
+                                                    )
+                                                ) : null}
+
+                                                
+                                            </button>
+                                            {cat.sub && (
+                                                <SubMenu isOpen={isOPen}>
+                                                    {cat.sub.map(subCat => {
+                                                        const isActiveSub = sub === subCat.slug;
+                                                        return (
+
+                                                            <li key={subCat.slug}>
+                                                                <button
+                                                                    onClick={() => setSearchParams(subCat.slug ? { category: cat.slug, sub: subCat.slug } : {})}
+                                                                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition 
+                                                                ${isActiveSub
+                                                                            ? 'bg-green-600 text-white font-medium'
+                                                                            : 'text-gray-600 hover:bg-green-50 hover:text-green-700'}
                                                                 `}
-                                                        >
-                                                            {subSlug.name}
-                                                        </button>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        }
-                                    </li>
-                                ))}
+                                                                >
+                                                                    {subCat.name}
+                                                                </button>
+                                                            </li>
+                                                        )
+                                                    })}
+                                                </SubMenu>
+                                            )}
+                                        </li>
+                                    )
+                                })}
                             </ul>
                         </div>
 
@@ -329,19 +354,22 @@ const ProductsPage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div>
+                        <div className="relative">
                             <h3 className="font-semibold text-gray-800 mb-3">
                                 Sort
                             </h3>
                             <select
                                 value={sortBy}
                                 onChange={e => setSortBy(e.target.value)}
-                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-green-500"
+                                className="appearance-none w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-green-500"
                             >
                                 <option value="newest">Newest</option>
                                 <option value="price-asc">Price: Low to High</option>
                                 <option value="price-desc">Price: High to Low</option>
                             </select>
+                            <div className='absolute z-50  top-11 right-4 flex items-center pointer-events-none text-gray-500'>
+                                <IconChevronDown className='!w-4 !h-4' />
+                            </div>
                         </div>
                     </div>
                 </aside>
