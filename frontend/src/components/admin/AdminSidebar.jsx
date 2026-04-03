@@ -40,7 +40,7 @@ const AdminSidebar = () => {
     ]
 
     return (
-        <aside className="w-64 bg-green-900 min-h-screen flex flex-col shrink-0">
+        <aside className="w-64 bg-green-900 h-screen flex flex-col shrink-0">
 
             <div className="flex items-center justify-center border-b border-green-700">
                 <Link to={'/'} className="flex items-center gap-2 px-6 py-5 ">
