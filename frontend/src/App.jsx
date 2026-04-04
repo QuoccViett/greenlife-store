@@ -1,37 +1,69 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Orders from "./pages/Orders";
-import PlaceOrders from "./pages/PlaceOrders";
-import Product from "./pages/Product";
-import Cart from "./pages/Cart";
-import Login from "./pages/Login";
-import Collection from "./pages/Collection";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import { Routes, Route } from 'react-router-dom'
+import './App.css'
+import Footer from './components/Footer'
+import Navbar from './components/Navbar'
+import HomePage from './pages/HomePage'
+import ProductsPage from './pages/ProductsPage'
+import ProductDetailPage from './pages/ProductDetailPage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import CartPage from './pages/CartPage'
+import CheckoutPage from './pages/CheckoutPage'
+import ProfilePage from './pages/ProfilePage'
+import OrderSuccessPage from './pages/OrderSuccessPage'
+import AdminSidebar from './components/admin/AdminSidebar'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminProducts from './pages/admin/AdminProducts'
+import AdminOrders from './pages/admin/AdminOrders'
+import AdminUsers from './pages/admin/AdminUsers'
 
-const App = () => {
+
+const MainLayout = ({ children }) => (
+  <div className='min-h-screen flex flex-col'>
+    <Navbar />
+    <main className='flex-1'>{children}</main>
+    <Footer />
+  </div>
+)
+
+const AuthLayout = ({ children }) => (
+  <div className='min-h-screen'>{children}</div>
+)
+
+const AdminLayout = ({ children }) => (
+  <div className="h-screen bg-gray-50 flex">
+    <AdminSidebar />
+
+    <div className="flex-1 min-w-0 overflow-y-auto">{children}</div>
+  </div>
+)
+
+
+function App() {
   return (
-    <>
-      <Navbar />
-      <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw] min-h-screen">
+    <div className='min-h-screen flex flex-col'>
+      <div className='flex-1'>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/place-order" element={<PlaceOrders />} />
-          <Route path="/product/:productId" element={<Product />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/collection" element={<Collection />} />
+
+          <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
+          <Route path="/register" element={<AuthLayout><RegisterPage /></AuthLayout>} />
+
+          <Route path="/" element={<MainLayout><HomePage /></MainLayout>} />
+          <Route path="/products" element={<MainLayout><ProductsPage /></MainLayout>} />
+          <Route path="/products/:id" element={<MainLayout><ProductDetailPage /></MainLayout>} />
+          <Route path="/cart" element={<MainLayout><CartPage /></MainLayout>} />
+          <Route path="/checkout" element={<MainLayout><CheckoutPage /></MainLayout>} />
+          <Route path="/profile" element={<MainLayout><ProfilePage /></MainLayout>} />
+          <Route path="/order-success/:id" element={<MainLayout><OrderSuccessPage /></MainLayout>} />
+
+          <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+          <Route path='/admin/products' element={<AdminLayout><AdminProducts /></AdminLayout>} />
+          <Route path="/admin/orders" element={<AdminLayout><AdminOrders /></AdminLayout>} />
+          <Route path="/admin/users" element={<AdminLayout><AdminUsers /></AdminLayout>} />
         </Routes>
       </div>
-      <Footer />
-    </>
-  );
-};
+    </div>
+  )
+}
 
-export default App;
+export default App

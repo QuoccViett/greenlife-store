@@ -29,7 +29,9 @@ const updateUserRole = async (req, res) => {
 
 const getAllOrders = async (req, res) => {
     try {
-        const orders = (await Order.find().populate('user', 'name email')).sort({ createdAt: -1 })
+        const orders = await Order.find()
+            .populate('user', 'name email')
+            .sort({ createdAt: -1 })
         res.json(orders)
     } catch (error) {
         res.status(500).json({message: error.message})
@@ -38,12 +40,12 @@ const getAllOrders = async (req, res) => {
 
 const updateOrderStatus = async (req, res) => {
     try {
-        const order = await Order.findByIdAndUpdate(
+        const orders = await Order.findByIdAndUpdate(
             req.params.id,
             { orderStatus: req.body.orderStatus },
-            { new: true }
+            { returnDocument: 'after' }
         ) 
-        if (!order) return res.status(404).json({massage: 'Khong tim thay trong don hang'})
+        if (!orders) return res.status(404).json({massage: 'Khong tim thay trong don hang'})
         res.json(orders)
     } catch (error) {
         res.status(500).json({message: error.message})

@@ -9,8 +9,9 @@ const productSchema = new mongoose.Schema({
     salePrice: { type: Number },
     stock: { type: Number, default: 0 },
     image: { type: String },
-    category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
-    isFeatured: {type: Boolean, default: 0},
+    category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', default: null },
+    sub: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
+    isFeatured: {type: Boolean, default: false},
     sold: { type: Number, default: 0 },
 }, { timestamps: true })
 

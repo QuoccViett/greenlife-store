@@ -1,32 +1,41 @@
 import { Link } from "react-router-dom";
+import { IconLeaf, IconMail, IconPhone, IconMapPin, IconFacebook, IconInstagram } from './icons/index'
 
 const Footer = () => {
     return (
-        <footer className="w-full bg-green-800 text-green-100 mt-16">
+        <footer className="w-full bg-green-800 text-green-100">
             <div className="w-full">
                 <div className=" px-4 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
                     <div>
                         <div className="flex items-center gap-2 mb-3">
                             <div className="w-8 h-8 !bg-green-700 rounded-full flex items-center justify-center">
-                                <span className="text-white text-sm font-bold">G</span>
+                                <IconLeaf className="w-5 h-5 text-white" />
                             </div>
                             <span className="text-white font-bold text-lg">Green Life</span>
                         </div>
                         <p className="text-sm text-white leading-relaxed text-left">
-                            An environmentally friendly store. 
+                            An environmentally friendly store.<br/>
                             Live green - live healthy - live sustainably.
                         </p>
+                        <div className="flex gap-3 mt-4">
+                            <a href="https://www.facebook.com/" target="_blank" className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center hover:bg-green-600">
+                                <IconFacebook className="w-4 h-4" />
+                            </a>
+                            <a href="https://www.instagram.com/" target="_blank" className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center hover:bg-green-600">
+                                <IconInstagram className="w-4 h-4" />
+                            </a>
+                        </div>
                     </div>
 
 
                     <div className="text-left">
                         <h3 className="text-white font-semibold mb-3">Company</h3>
                         <ul className="space-y-2 text-sm text-white">
-                            <li><Link to='/products?category=eco-home-living' className="hover:text-gray-300 transition">Eco Home & Living</Link></li>
-                            <li><Link to='/products?category=personal-care' className="hover:text-gray-300 transition">Personal Care</Link></li>
-                            <li><Link to='/products?category=reusable-bags' className="hover:text-gray-300 transition">Reusable Bags</Link></li>
-                            <li><Link to='/products?category=zero-waste' className="hover:text-gray-300 transition">Zero Waste</Link></li>
-                            <li><Link to='/products?category=daily-essentials' className="hover:text-gray-300 transition">Daily Essentials</Link></li>
+                            <li><Link to='/products?category=eco-home-living' className="hover:text-gray-300 trainsition">Eco Home & Living</Link></li>
+                            <li><Link to='/products?category=personal-care' className="hover:text-gray-300 trainsition">Personal Care</Link></li>
+                            <li><Link to='/products?category=reusable-bags' className="hover:text-gray-300 trainsition">Reusable Bags</Link></li>
+                            <li><Link to='/products?category=zero-waste' className="hover:text-gray-300 trainsition">Zero Waste</Link></li>
+                            <li><Link to='/products?category=daily-essentials' className="hover:text-gray-300 trainsition">Daily Essentials</Link></li>
                         </ul>
                     </div>
 
@@ -43,19 +52,21 @@ const Footer = () => {
                     <div className="text-left">
                         <h3 className="text-white font-semibold mb-3">Get In Touch</h3>
                         <ul className="space-y-2 text-sm text-white">
-                            <li>Email: <a href="mailto:support@greenlife.vn" className="hover:text-gray-300">support@greenlife.vn</a></li>
-                            <li>Hotline: <a href="tel:+84123456789" className="hover:text-gray-300">+84 (0) 123 456 789</a></li>
-                            <li>TP. Ho Chi Minh, Viet Nam</li>
+                            <li className="flex items-center gap-2">
+                                <IconMail className="w-4 h-4 flex-shrink-0" />
+                                <span>Email:</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <IconPhone className="w-4 h-4 flex-shrink-0" />
+                                <span>Hotline:</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <IconMapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                <span>TP. Ho Chi Minh, Viet Nam</span>
+                            </li>
                         </ul>
 
-                        <div className="flex gap-3 mt-4">
-                            <a href="https://www.facebook.com/" target="_blank" className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center hover:bg-green-600">
-                                <span className="text-xs font-bold">f</span>
-                            </a>
-                            <a href="https://www.instagram.com/" target="_blank" className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center hover:bg-green-600">
-                                <span className="text-xs font-bold">in</span>
-                            </a>
-                        </div>
+
                     </div>
 
 
