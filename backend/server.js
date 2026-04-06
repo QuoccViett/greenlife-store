@@ -28,6 +28,7 @@ app.use('/api/products', require('./routes/productRoutes.js'))
 app.use('/api/categories', require('./routes/categoryRoutes.js'))
 app.use('/api/orders', require('./routes/orderRoutes.js'))
 app.use('/api/admin', require('./routes/adminRoutes.js'))
+app.use('/api/payment', require('./routes/paymentRoutes.js'))
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server chạy tại port ${PORT}`))
