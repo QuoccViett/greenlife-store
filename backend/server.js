@@ -10,7 +10,15 @@ const app = express()
 
 connectDB()
 
-app.use(cors())
+// app.use(cors())
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://greenlife-store.vercel.app',
+    /\.vercel\.app$/
+  ],
+  credentials: true
+}))
 app.use(express.json())
 
 // Test route
