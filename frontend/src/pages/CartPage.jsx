@@ -179,7 +179,7 @@ const CartPage = () => {
                             <div className='mt-5 space-y-2'>
                                 <div className="flex items-center gap-2 text-xs text-gray-500">
                                     <IconShield className="w-4 h-4 text-green-600 flex-shrink-0" />
-                                    <span>Thanh toán an toàn & bảo mật</span>
+                                    <span>Secure & safe payment</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-xs text-gray-500">
                                     <IconTruck className="w-4 h-4 text-green-600 flex-shrink-0" />

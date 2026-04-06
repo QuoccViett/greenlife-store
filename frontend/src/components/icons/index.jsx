@@ -6,7 +6,8 @@ import {
   faPhone, faLocationDot, faArrowRight, faArrowLeft, faBottleWater,
   faSeedling, faBagShopping, faBoxOpen, faStar,
   faTag, faHeart, faFilter, faSliders, faStore, faChartBar,
-  faClipboardList, faDollarSign, faArrowUp, faPlus, faCheck, faPen, faTrash, faChevronRight
+  faClipboardList, faDollarSign, faArrowUp, faPlus, faCheck, faPen, 
+  faTrash, faChevronRight, faCircleCheck, faCircleXmark, faSpinner
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faFacebook, faInstagram
@@ -46,6 +47,11 @@ export const IconPlus = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={fa
 export const IconCheck = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faCheck} className={className} />
 export const IconPen = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faPen} className={className} />
 export const IconTrash = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faTrash} className={className} />
+export const IconCircleCheck = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faCircleCheck} className={className} />
+export const IconCircleXMark = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faCircleXmark} className={className} />
+export const IconSpinner = ({ className = "w-4 h-4" }) => <FontAwesomeIcon icon={faSpinner} className={className} />
+
+
 
 
 

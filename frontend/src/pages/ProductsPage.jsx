@@ -304,7 +304,7 @@ const ProductsPage = () => {
                                                     )
                                                 ) : null}
 
-                                                
+
                                             </button>
                                             {cat.sub && (
                                                 <SubMenu isOpen={isOPen}>
@@ -513,15 +513,20 @@ const ProductsPage = () => {
 
             <section className="bg-green-50 py-8 border-t border-green-100">
                 <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {benefits.map((item, i) => (
-                        <div key={i} className="flex items-center gap-3 justify-center">
-                            <span className="text-2xl">{item.icon}</span>
-                            <div>
-                                <p className="text-sm font-semibold text-gray-800">{item.title}</p>
-                                <p className="text-sm text-gray-500">{item.desc}</p>
+                    {benefits.map((item, i) => {
+                        const Icon = item.icon
+                        return (
+                            <div key={i} className="flex items-center gap-3 justify-center">
+                                <span className="text-2xl">
+                                    <Icon/>
+                                </span>
+                                <div>
+                                    <p className="text-sm font-semibold text-gray-800">{item.title}</p>
+                                    <p className="text-sm text-gray-500">{item.desc}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
 
             </section>
