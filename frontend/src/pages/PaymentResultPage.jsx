@@ -50,11 +50,11 @@ const PaymentResultPage = () => {
 
                     {status === 'success' ? (
                         <>
-                            <IconCircleCheck className="!w-20 !h-20 text-green-500 mb-6" />
-                            <h1 className="text-2xl font-bold text-gray-800 mb-2">Payment successful!</h1>
-                            <p className="text-gray-500 text-sm mb-2">{message}</p>
+                            <IconCircleCheck className="!w-20 !h-20 text-green-500" />
+                            <h1 className="text-2xl font-bold text-gray-800 !mb-2">Payment successful!</h1>
+                            <p className="text-gray-500 text-sm !mb-2">{message}</p>
                             {orderId && (
-                                <p className="text-xs text-gray-400 mb-6">
+                                <p className="text-xs text-gray-400 !mb-6">
                                     Order ID: <span>#{orderId.slice(-8).toUpperCase()}</span>
                                 </p>
                             )}
@@ -78,9 +78,9 @@ const PaymentResultPage = () => {
                         </>
                     ) : (
                         <>
-                            <IconCircleXMark className="!w-20 !h-20 text-red-400 mb-6" />
-                            <h1 className="text-2xl font-bold text-gray-800 mb-2">Payment failed</h1>
-                            <p className="text-gray-500 text-sm mb-6">{message}</p>
+                            <IconCircleXMark className="!w-20 !h-20 text-red-400" />
+                            <h1 className="text-2xl font-bold text-gray-800 !mb-2">Payment failed</h1>
+                            <p className="text-gray-500 text-sm !mb-6">{message}</p>
                             <div className="flex flex-col gap-3">
                                 <button
                                     onClick={() => navigate(-1)}
