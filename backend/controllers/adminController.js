@@ -54,11 +54,23 @@ const updateOrderStatus = async (req, res) => {
 
 const getDashboardStatus = async (req, res) => {
     try { 
+        const { startDate, endDate } = req.query
+        
+        let dateFilter = {}
+        if (startDate && endDate) {
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(startDate),
+                    $lte: new Date(endDate)
+                }
+            }
+        }
+        
         const totalUsers = await User.countDocuments({ role: 'user' })
-        const totalOrders = await Order.countDocuments()
+        const totalOrders = await Order.countDocuments(dateFilter)
         const totalProduct = await Product.countDocuments()
         const revuene = await Order.aggregate([
-            { $match: { paymentStatus: 'paid' }},
+            { $match: { paymentStatus: 'paid', ...dateFilter }},
             { $group: { _id: null, total: { $sum: '$totalPrice'}}}
         ])
         res.json({

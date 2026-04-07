@@ -84,6 +84,7 @@ const vnpayReturn = async (req, res) => {
             })
             res.json({ code: '00', message: 'Thanh toan thanh cong', orderId })
         } else {
+            await Order.findByIdAndUpdate(orderId, { orderStatus: 'cancelled' })
             res.json({ code: responseCode, message: 'Thanh toan that bai', orderId })
         }
     } catch (err) {

@@ -55,15 +55,21 @@ const CheckoutPage = () => {
     const [form, setForm] = useState({
         fullname: userInfo?.name || '',
         phone: '',
-        address: '',
+        address: userInfo?.address || '',
         city: '',
     })
+    const [useSavedAddress, setUseSavedAddress] = useState(true)
 
     const handleSubmit = async e => {
         e.preventDefault()
         setError('')
         if (!form.fullname || !form.phone || !form.address || !form.city) {
             setError('Please fill in all the shipping information')
+            return
+        }
+        const phoneRegex = /^[0-9]{10,11}$/
+        if (!phoneRegex.test(form.phone.replace(/\s/g, ''))) {
+            setError('Invalid phone number format (10-11 digits)')
             return
         }
         setLoading(true)
@@ -183,7 +189,35 @@ const CheckoutPage = () => {
 
 
                                     <div className='sm:col-span-2'>
-                                        <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left ms-3'>Recipient's Address</label>
+                                        <label className='block text-sm font-medium text-gray-700 mb-3 text-left ms-3'>Shipping Address</label>
+                                        
+                                        {userInfo?.address && (
+                                            <div className='flex gap-4 mb-4'>
+                                                <label className={`flex items-center gap-2 border-2 rounded-lg cursor-pointer p-3 flex-1 transition ${useSavedAddress ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}>
+                                                    <input
+                                                        type='radio'
+                                                        name='addressType'
+                                                        value='saved'
+                                                        checked={useSavedAddress}
+                                                        onChange={() => { setUseSavedAddress(true); setForm({ ...form, address: userInfo.address }) }}
+                                                        className='accent-green-600'
+                                                    />
+                                                    <span className='text-sm text-gray-700'>Use saved address</span>
+                                                </label>
+                                                <label className={`flex items-center gap-2 border-2 rounded-lg cursor-pointer p-3 flex-1 transition ${!useSavedAddress ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}>
+                                                    <input
+                                                        type='radio'
+                                                        name='addressType'
+                                                        value='new'
+                                                        checked={!useSavedAddress}
+                                                        onChange={() => { setUseSavedAddress(false); setForm({ ...form, address: '' }) }}
+                                                        className='accent-green-600'
+                                                    />
+                                                    <span className='text-sm text-gray-700'>Enter new address</span>
+                                                </label>
+                                            </div>
+                                        )}
+
                                         <div className='relative'>
                                             <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
                                                 <IconUser className='!-4 !h-4 text-gray-400' />
@@ -195,7 +229,8 @@ const CheckoutPage = () => {
                                                 onChange={handleChange}
                                                 placeholder="Enter Recipient's Address"
                                                 required
-                                                className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition'
+                                                disabled={useSavedAddress && !!userInfo?.address}
+                                                className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition disabled:bg-gray-100 disabled:text-gray-500'
                                             />
                                         </div>
                                     </div>
