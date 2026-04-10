@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { IconArrowRight, IconChevronDown, IconShield, IconTruck, IconUser } from '../components/icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { clearCart } from '../store/cartSlice'
@@ -77,12 +77,22 @@ const CheckoutPage = () => {
                 paymentMethod,
             }
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } }
-            const { data } = await axios.post(`${API}/orders`, orderData, config)
-            console.log("Navigating to order-success", data._id);
+            const { data: order } = await axios.post(`${API}/orders`, orderData, config)
             dispatch(clearCart())
-            setTimeout(() => {    // delay nhỏ cho Redux update xong
-                navigate(`/order-success/${data._id}`)
-            }, 50)
+
+            if (paymentMethod === 'vnpay') {
+                const { data } = await axios.post(`${API}/payment/vnpay/create`, {
+                    orderId: order._id,
+                    amount: order.totalPrice,
+                }, config)
+                window.location.href = data.paymentUrl
+            } else {
+                setTimeout(() => {    // delay nhỏ cho Redux update xong
+                    navigate(`/order-success/${order._id}`)
+                }, 50)
+            }
+
+
         } catch (err) {
             setError(err.response?.data?.message || 'Order failed, please try again')
         } finally {
@@ -93,10 +103,11 @@ const CheckoutPage = () => {
     const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value })
 
 
-    if (items.length == 0) {
-        navigate('/cart')
-        return null
-    }
+    useEffect(() => {
+        if (items.length === 0) {
+            navigate('/cart')
+        }
+    }, [items, navigate])
 
 
     return (

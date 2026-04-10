@@ -11,6 +11,7 @@ import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
 import ProfilePage from './pages/ProfilePage'
 import OrderSuccessPage from './pages/OrderSuccessPage'
+import PaymentResultPage from './pages/PaymentResultPage'
 import AdminSidebar from './components/admin/AdminSidebar'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
@@ -55,6 +56,7 @@ function App() {
           <Route path="/checkout" element={<MainLayout><CheckoutPage /></MainLayout>} />
           <Route path="/profile" element={<MainLayout><ProfilePage /></MainLayout>} />
           <Route path="/order-success/:id" element={<MainLayout><OrderSuccessPage /></MainLayout>} />
+          <Route path="/payment-result" element={<MainLayout><PaymentResultPage /></MainLayout>} />
 
           <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
           <Route path='/admin/products' element={<AdminLayout><AdminProducts /></AdminLayout>} />

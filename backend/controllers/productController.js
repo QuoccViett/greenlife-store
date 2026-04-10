@@ -2,7 +2,6 @@ const Category = require('../models/Category')
 const Product = require('../models/Product')
 
 const getProducts = async (req, res) => {
-    console.log('Query params:', req.query);
     try {
         const { category, search, featured, sub } = req.query
 
