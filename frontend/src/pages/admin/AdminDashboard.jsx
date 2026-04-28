@@ -12,6 +12,8 @@ const AdminDashboard = () => {
     const [stats, setStats] = useState(null)
     const [loading, setLoading] = useState(true)
     const [recentOrders, setRecentOrders] = useState([])
+    const [startDate, setStartDate] = useState('')
+    const [endDate, setEndDate] = useState('')
 
     useEffect(() => {
         if (!userInfo) return
@@ -19,8 +21,11 @@ const AdminDashboard = () => {
         const fetchData = async () => {
             try {
                 const config = { headers: { Authorization: `Bearer ${userInfo.token}` } }
+                const dateParams = startDate && endDate 
+                    ? `?startDate=${startDate}&endDate=${endDate}` 
+                    : ''
                 const [statsRes, ordersRes] = await Promise.all([
-                    axios.get(`${API}/admin/status`, config),
+                    axios.get(`${API}/admin/status${dateParams}`, config),
                     axios.get(`${API}/admin/orders`, config),
                 ])
                 setStats(statsRes.data)
@@ -32,7 +37,7 @@ const AdminDashboard = () => {
             }
         }
         fetchData()
-    }, [])
+    }, [userInfo, startDate, endDate])
 
     const statusLabel = {
         pending: {
@@ -62,6 +67,35 @@ const AdminDashboard = () => {
             <div className="mb-8 text-left">
                 <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
                 <p className="text-gray-500 text-sm mt-1">Welcome back, {userInfo?.name} !</p>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
+                <div className="flex flex-wrap items-center gap-4">
+                    <label className="text-sm font-medium text-gray-700">Filter by date:</label>
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={e => setStartDate(e.target.value)}
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-green-500"
+                        />
+                        <span className="text-gray-500">-</span>
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={e => setEndDate(e.target.value)}
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-green-500"
+                        />
+                    </div>
+                    {(startDate || endDate) && (
+                        <button
+                            onClick={() => { setStartDate(''); setEndDate('') }}
+                            className="text-sm text-green-600 hover:underline"
+                        >
+                            Clear filter
+                        </button>
+                    )}
+                </div>
             </div>
 
             {loading ? (

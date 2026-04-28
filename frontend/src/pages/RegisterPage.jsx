@@ -10,7 +10,7 @@ const API = import.meta.env.VITE_API_URL
 
 const RegisterPage = () => {
     const [error, setError] = useState('')
-    const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
+    const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '', address: '' })
     const [loading, setLoading] = useState(false)
 
     const dispastch = useDispatch()
@@ -27,12 +27,22 @@ const RegisterPage = () => {
             setError('Password must be at least 6 characters')
             return
         }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(form.email)) {
+            setError('Invalid email format')
+            return
+        }
+        if (!form.address.trim()) {
+            setError('Address is required')
+            return
+        }
         setLoading(true)
         try {
             const { data } = await axios.post(`${API}/auth/register`, {
                 name: form.name,
                 email: form.email,
                 password: form.password,
+                address: form.address,
             })
             dispastch(setCredentials(data))
             navigate('/')
@@ -99,6 +109,24 @@ const RegisterPage = () => {
                                     value={form.email}
                                     onChange={handleChange}
                                     placeholder='Enter your email.' 
+                                    required
+                                    className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition'
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left'>Address</label>
+                            <div className='relative'>
+                                <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
+                                    <IconUser className='!w-4 !h-4 text-gray-400' />
+                                </div>
+                                <input 
+                                    type="text" 
+                                    name="address"
+                                    value={form.address}
+                                    onChange={handleChange}
+                                    placeholder='Enter your address.' 
                                     required
                                     className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition'
                                 />
