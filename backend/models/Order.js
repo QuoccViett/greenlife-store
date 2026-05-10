@@ -21,7 +21,8 @@ const orderSchema = new mongoose.Schema({
     },
     totalPrice: { type: Number, required: true },
     paymentMethod: { type: String, enum: ['cod', 'vnpay', 'momo'], default: 'cod' },
-    paymentStatus: { type: String, enum: ['pending', 'processing', 'shipping', 'delivered', 'cancelled'], default: 'pending'},
+    paymentStatus: { type: String, enum: ['pending', 'paid', 'failed'], default: 'pending'},
+    orderStatus: { type: String, enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'], default: 'pending'},
     paidAt: {type: Date},
 }, { timestamps: true })
 

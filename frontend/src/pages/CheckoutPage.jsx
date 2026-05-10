@@ -54,10 +54,11 @@ const CheckoutPage = () => {
 
     const [form, setForm] = useState({
         fullname: userInfo?.name || '',
-        phone: '',
-        address: '',
+        phone: userInfo?.phone || '',
+        address: userInfo?.address || '',
         city: '',
     })
+    const [useSavedAddress, setUseSavedAddress] = useState(true)
 
     const handleSubmit = async e => {
         e.preventDefault()
@@ -187,7 +188,8 @@ const CheckoutPage = () => {
                                                 onChange={handleChange}
                                                 placeholder={t('checkout.address')}
                                                 required
-                                                className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition'
+                                                disabled={useSavedAddress && !!userInfo?.address}
+                                                className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition disabled:bg-gray-100 disabled:text-gray-500'
                                             />
                                         </div>
                                     </div>
