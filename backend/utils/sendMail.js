@@ -160,4 +160,45 @@ const sendOrderStatusEmail = async ({ to, order, newStatus }) => {
   })
 }
 
-module.exports = { sendOrderConfirmEmail, sendOrderStatusEmail }
+const sendNewPasswordEmail = async ({ to, name, newPassword }) => {
+  const html = `
+    <div style="font-family:'Segoe UI',sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb">
+      <div style="background:linear-gradient(135deg,#166534,#16a34a);padding:32px;text-align:center">
+        <h1 style="color:#fff;margin:8px 0 0;font-size:22px">Your New Password</h1>
+      </div>
+      <div style="padding:32px">
+        <p style="color:#374151;font-size:15px">Hi <strong>${name}</strong>,</p>
+        <p style="color:#6b7280;font-size:14px;margin-bottom:24px">
+          Your account password has been reset by the GreenLife Store administrator.
+        </p>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:20px;text-align:center;margin-bottom:24px">
+          <p style="color:#6b7280;font-size:12px;margin:0 0 8px">Temporary Password</p>
+          <p style="color:#16a34a;font-size:28px;font-weight:700;font-family:monospace;letter-spacing:4px;margin:0">
+            ${newPassword}
+          </p>
+        </div>
+        <p style="color:#ef4444;font-size:13px;text-align:center">
+            For security reasons, please log in and change your password immediately.
+        </p>
+        <div style="text-align:center;margin-top:24px">
+          <a href="${process.env.CLIENT_URL}/login"
+            style="background:#16a34a;color:#fff;padding:12px 32px;border-radius:50px;text-decoration:none;font-weight:600;font-size:14px">
+            Login Now
+          </a>
+        </div>
+      </div>
+      <div style="background:#f9fafb;padding:20px;text-align:center;border-top:1px solid #e5e7eb">
+        <p style="color:#9ca3af;font-size:12px;margin:0">© 2026 GreenLife Store</p>
+      </div>
+    </div>
+  `
+
+  await transporter.sendMail({
+    from: `"GreenLife Store" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: 'Your New Password - GreenLife Store',
+    html,
+  })
+}
+
+module.exports = { sendOrderConfirmEmail, sendOrderStatusEmail, sendNewPasswordEmail }

@@ -2,6 +2,7 @@ const { sendOrderStatusEmail } = require('../utils/sendMail')
 const User = require('../models/User')
 const Order = require('../models/Order')
 const Product = require('../models/Product')
+const bcrypt = require('bcryptjs')
 
 const getUsers = async (req, res) => {
     try {
@@ -47,22 +48,22 @@ const updateOrderStatus = async (req, res) => {
     const order = await Order.findByIdAndUpdate(
       req.params.id,
       { orderStatus: req.body.orderStatus },
-      { returnDocument: true }
+      { new: true }
     ).populate('user', 'email name')
 
     if (!order) return res.status(404).json({ message: 'Không tìm thấy đơn hàng' })
 
+    // Gửi email thông báo trạng thái
     try {
-      const emailTo = order.user?.email
-      if (emailTo) {
+      if (order.user?.email) {
         await sendOrderStatusEmail({
-          to: emailTo,
+          to: order.user.email,
           order,
           newStatus: req.body.orderStatus
         })
       }
-    } catch (emailErr) {
-      console.log('Email error (non-critical):', emailErr.message)
+    } catch (e) {
+      console.log('Email error:', e.message)
     }
 
     res.json(order)
@@ -72,7 +73,7 @@ const updateOrderStatus = async (req, res) => {
 }
 
 
-const getDashboardStatus = async (req, res) => {
+const getDashboardStats = async (req, res) => {
     try { 
         const { startDate, endDate } = req.query
         
@@ -104,7 +105,7 @@ const getDashboardStatus = async (req, res) => {
         res.json({
             totalUsers,
             totalOrders,
-            totalProduct,
+            totalProducts: totalProduct,
             totalRevenue: revenue[0]?.total || 0,
             orderCountByStatus,
             revenueByStatus
@@ -127,4 +128,82 @@ const cancelOverdueOrders = async (req, res) => {
     }
 }
 
-module.exports = { getUsers, updateUserRole, getAllOrders, updateOrderStatus, getDashboardStatus, cancelOverdueOrders}
+// Khóa / mở khóa tài khoản
+const toggleUserStatus = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user) return res.status(404).json({ message: 'Không tìm thấy người dùng' })
+    if (user.role === 'admin') return res.status(403).json({ message: 'Không thể khóa tài khoản admin' })
+
+    user.isActive = !user.isActive
+    await user.save()
+    res.json({ message: user.isActive ? 'Đã mở khóa tài khoản' : 'Đã khóa tài khoản', isActive: user.isActive })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
+// Reset mật khẩu
+const resetUserPassword = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user) return res.status(404).json({ message: 'Không tìm thấy người dùng' })
+
+    const newPassword = Math.random().toString(36).slice(-8)
+    user.password = await bcrypt.hash(newPassword, 10)
+    await user.save()
+
+    try {
+      await sendNewPasswordEmail({ to: user.email, name: user.name, newPassword })
+    } catch (e) {
+      console.log('Email error:', e.message)
+    }
+
+    res.json({ message: `Reset thành công. Mật khẩu mới: ${newPassword}`, newPassword })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
+// Thống kê nâng cao
+const getAdvancedStats = async (req, res) => {
+  try {
+    const { startDate, endDate, orderStatus, paymentStatus } = req.query
+    let filter = {}
+
+    if (startDate || endDate) {
+      filter.createdAt = {}
+      if (startDate) filter.createdAt.$gte = new Date(startDate)
+      if (endDate) {
+        const end = new Date(endDate)
+        end.setHours(23, 59, 59, 999)
+        filter.createdAt.$lte = end
+      }
+    }
+    if (orderStatus) filter.orderStatus = orderStatus
+    if (paymentStatus) filter.paymentStatus = paymentStatus
+
+    const orders = await Order.find(filter)
+
+    res.json({
+      totalOrders: orders.length,
+      totalRevenue: orders.reduce((sum, o) => sum + o.totalPrice, 0),
+      byOrderStatus: {
+        pending: orders.filter(o => o.orderStatus === 'pending').length,
+        processing: orders.filter(o => o.orderStatus === 'processing').length,
+        shipping: orders.filter(o => o.orderStatus === 'shipping').length,
+        delivered: orders.filter(o => o.orderStatus === 'delivered').length,
+        cancelled: orders.filter(o => o.orderStatus === 'cancelled').length,
+      },
+      revenueByStatus: {
+        paid: orders.filter(o => o.paymentStatus === 'paid').reduce((s, o) => s + o.totalPrice, 0),
+        pending: orders.filter(o => o.paymentStatus === 'pending').reduce((s, o) => s + o.totalPrice, 0),
+        failed: orders.filter(o => o.paymentStatus === 'failed').reduce((s, o) => s + o.totalPrice, 0),
+      }
+    })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
+module.exports = { getUsers, updateUserRole, getAllOrders, updateOrderStatus, getDashboardStats, toggleUserStatus, resetUserPassword, getAdvancedStats }

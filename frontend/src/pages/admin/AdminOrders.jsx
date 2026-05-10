@@ -18,7 +18,10 @@ const AdminOrders = () => {
     const { userInfo } = useSelector(state => state.auth)
     const { t } = useLang()
     const config = { headers: { Authorization: `Bearer ${userInfo?.token}` } }
-
+    const [dateFrom, setDateFrom] = useState('')
+    const [dateTo, setDateTo] = useState('')
+    const [filterPayment, setFilterPayment] = useState('')
+    const [advStats, setAdvStats] = useState(null)
     const [orders, setOrders] = useState([])
     const [search, setSearch] = useState('')
     const [filterStatus, setFilterStatus] = useState('')
@@ -38,6 +41,24 @@ const AdminOrders = () => {
         }
         fetchOrders()
     }, [orders.orderStatus])
+
+    const fetchAdvancedStats = async () => {
+        try {
+            const params = new URLSearchParams()
+            if (dateFrom) params.append('startDate', dateFrom)
+            if (dateTo) params.append('endDate', dateTo)
+            if (filterStatus) params.append('orderStatus', filterStatus)
+            if (filterPayment) params.append('paymentStatus', filterPayment)
+            const { data } = await axios.get(`${API}/admin/stats/advanced?${params}`, config)
+            setAdvStats(data)
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    useEffect(() => {
+        fetchAdvancedStats()
+    }, [dateFrom, dateTo, filterStatus, filterPayment])
 
     const handleStatusChange = async (orderID, newStatus) => {
         try {
@@ -71,9 +92,42 @@ const AdminOrders = () => {
             <div className="mb-8 text-left">
                 <h1 className="text-2xl font-bold text-gray-800">{t('admin.orders.title')}</h1>
                 <p className="text-gray-500 text-sm mt-1">{t('admin.orders.total', { count: orders?.length })}</p>
+                {/* Stats cards */}
+                {advStats && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        {[
+                            { label: 'Tổng đơn', value: advStats.totalOrders, color: 'bg-blue-50 text-blue-700' },
+                            { label: 'Tổng doanh thu', value: `$${advStats.totalRevenue.toLocaleString('en-US')}`, color: 'bg-green-50 text-green-700' },
+                            { label: 'Đã thanh toán', value: `$${advStats.revenueByStatus.paid.toLocaleString('en-US')}`, color: 'bg-purple-50 text-purple-700' },
+                            { label: 'Đơn hủy', value: advStats.byOrderStatus.cancelled, color: 'bg-red-50 text-red-700' },
+                        ].map((s, i) => (
+                            <div key={i} className={`rounded-2xl p-4 ${s.color}`}>
+                                <p className="text-2xl font-bold">{s.value}</p>
+                                <p className="text-xs font-medium mt-0.5 opacity-80">{s.label}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* Thống kê theo trạng thái đơn */}
+                {advStats && (
+                    <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4">
+                        <p className="text-sm font-semibold text-gray-700 mb-3">Số đơn theo trạng thái</p>
+                        <div className="flex flex-wrap gap-2">
+                            {Object.entries(advStats.byOrderStatus).map(([status, count]) => {
+                                const s = statusOptions.find(o => o.value === status)
+                                return (
+                                    <span key={status} className={`px-3 py-1.5 rounded-full text-xs font-medium ${s?.color || 'bg-gray-100 text-gray-600'}`}>
+                                        {s?.label || status}: <strong>{count}</strong>
+                                    </span>
+                                )
+                            })}
+                        </div>
+                    </div>
+                )}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            {/* <div className="flex flex-col sm:flex-row gap-3 mb-6">
                 <div className="relative flex-1 max-w-sm">
                     <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                         <IconSearch className="w-4 h-4 text-gray-400" />
@@ -100,8 +154,41 @@ const AdminOrders = () => {
                         <IconChevronDown className='w-4 h-4' />
                     </div>
                 </div>
-            </div>
+            </div> */}
 
+
+            <div className="flex flex-wrap gap-3 mb-6">
+                <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
+                    className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
+                />
+                <span className="self-center text-gray-400 text-sm">đến</span>
+                <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
+                    className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
+                />
+                <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
+                    className="px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 text-gray-700"
+                >
+                    <option value="">Tất cả trạng thái đơn</option>
+                    {statusOptions.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                </select>
+                <select value={filterPayment} onChange={e => setFilterPayment(e.target.value)}
+                    className="px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 text-gray-700"
+                >
+                    <option value="">Tất cả thanh toán</option>
+                    <option value="pending">Chưa thanh toán</option>
+                    <option value="paid">Đã thanh toán</option>
+                    <option value="failed">Thất bại</option>
+                </select>
+                <div className="relative flex-1 min-w-48">
+                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                        <IconSearch className="w-4 h-4 text-gray-400" />
+                    </div>
+                    <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+                        placeholder="Tìm mã đơn hoặc tên khách..."
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
+                    />
+                </div>
+            </div>
             <div className="space-y-3">
                 {loading ? (
                     [...Array(5)].map((_, i) => (
@@ -192,6 +279,19 @@ const AdminOrders = () => {
                                                         <p>{order.shippingAddress?.address}</p>
                                                         <p>{order.shippingAddress?.city}, {order.shippingAddress?.country || 'N/A'}</p>
                                                     </div>
+                                                </div>
+
+                                                {/* Thêm trạng thái thanh toán */}
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Thanh toán:</p>
+                                                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${order.paymentStatus === 'paid' ? 'bg-green-100 text-green-700'
+                                                            : order.paymentStatus === 'failed' ? 'bg-red-100 text-red-600'
+                                                                : 'bg-yellow-100 text-yellow-700'
+                                                        }`}>
+                                                        {order.paymentStatus === 'paid' ? 'Đã thanh toán'
+                                                            : order.paymentStatus === 'failed' ? 'Thất bại'
+                                                                : 'Chưa thanh toán'}
+                                                    </span>
                                                 </div>
 
                                                 <div>
