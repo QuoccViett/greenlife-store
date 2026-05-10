@@ -189,7 +189,7 @@ const Navbar = () => {
                                 )}
                             </div>
                         ))} */}
-                        <Link to='/about' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
+                        <Link to='/learn' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
                             <span>Learn</span>
                         </Link>
                         <Link to="/about" className="px-3 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap transition">
@@ -227,7 +227,7 @@ const Navbar = () => {
                             <IconStore className="!w-4 !h-4 pr-2" />
                             <span>Store</span>
                         </Link>
-                        <Link to='/about' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
+                        <Link to='/learn' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
                             <span>Learn</span>
                         </Link>
                         <Link to="/about" className="px-3 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap transition">

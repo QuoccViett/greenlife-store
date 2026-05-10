@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, } from "react"
 import { IconCheck, IconClose, IconPen, IconPlus, IconSearch, IconTrash, IconChevronDown } from "../../components/icons"
 import axios from "axios"
 import { useSelector } from "react-redux"
-
 
 const API = import.meta.env.VITE_API_URL
 
@@ -92,10 +91,9 @@ const AdminProducts = () => {
             const payload = {
                 ...form,
                 price: Number(form.price),
-                salePrice: form.salePrice ? Number(form.salePrice) : undefined,
+                salePrice: form.salePrice ? Number(form.salePrice) : null,
                 stock: Number(form.stock),
             }
-
 
             if (editProduct) {
                 await axios.put(`${API}/products/${editProduct._id}`, payload, config)
@@ -136,7 +134,7 @@ const AdminProducts = () => {
                 <input type="text"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    placeholder="Search Product ...."
+                    placeholder="Search products..."
                     className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl outline-none focus:border-green-500 transition"
                 />
             </div>
@@ -154,17 +152,16 @@ const AdminProducts = () => {
                             <thead className="bg-gray-50 border-b border-gray-100">
                                 <tr>
                                     <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Product</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-15">Categogy</th>
+                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-15">Category</th>
                                     <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-8">Price</th>
                                     <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-11">Stock</th>
                                     <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-8">Featured</th>
-                                    <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide pe-10">Action</th>
+                                    <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide pe-10">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {filtered.map(product => (
                                     <tr key={product._id} className="hover:bg-gray-50 transition">
-
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <img
@@ -173,14 +170,14 @@ const AdminProducts = () => {
                                                     className="w-12 h-12 object-cover rounded-lg shrink-0"
                                                 />
                                                 <div className="text-left">
-                                                    <p>{product.name}</p>
-                                                    <p>Items Sole: {product.sole || 0}</p>
+                                                    <p className="font-medium text-gray-800">{product.name}</p>
+                                                    <p className="text-xs text-gray-500">Items Sold: {product.sold || 0}</p>
                                                 </div>
                                             </div>
                                         </td>
 
                                         <td className="px-6 py-4 text-gray-600">
-                                            {product.category?.name || '-'}
+                                            {product.category?.name || 'Uncategorized'}
                                         </td>
 
                                         <td className="px-6 py-4">
@@ -200,7 +197,7 @@ const AdminProducts = () => {
                                                     : product.stock > 0 ? 'bg-yellow-100 text-yellow-700'
                                                         : 'bg-red-100 text-red-600'
                                                 }`}>
-                                                {product.stock} left
+                                                {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
                                             </span>
                                         </td>
 
@@ -243,7 +240,7 @@ const AdminProducts = () => {
                     <div className="relative bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-lg font-bold text-gray-800 !ms-1">
-                                {editProduct ? 'Edit Product' : 'Add New Product'}
+                                {editProduct ? 'Edit Product' : 'Create New Product'}
                             </h2>
                             <button
                                 onClick={() => setShowModal(false)}
@@ -255,21 +252,23 @@ const AdminProducts = () => {
 
                         <form onSubmit={handleSave} className="space-y-4 text-left">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Product name *</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Product Name *</label>
                                 <input
                                     type="text"
                                     value={form.name}
                                     required
+                                    placeholder="Enter product name"
                                     onChange={e => setForm({ ...form, name: e.target.value })}
                                     className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Description *</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Description</label>
                                 <textarea
                                     value={form.description}
                                     rows={3}
+                                    placeholder="Enter product description"
                                     onChange={e => setForm({ ...form, description: e.target.value })}
                                     className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 resize-none"
                                 />
@@ -277,34 +276,34 @@ const AdminProducts = () => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Price ($) *</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Base Price ($) *</label>
                                     <input
                                         type="number"
                                         value={form.price}
                                         required
                                         min={0}
+                                        step="0.01"
                                         onChange={e => setForm({ ...form, price: e.target.value })}
                                         className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Sale Price ($) *</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Sale Price ($)</label>
                                     <input
                                         type="number"
                                         value={form.salePrice}
-                                        required
                                         min={0}
+                                        step="0.01"
                                         onChange={e => setForm({ ...form, salePrice: e.target.value })}
                                         className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
                                     />
                                 </div>
-
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Stock *</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Stock Quantity *</label>
                                     <input
                                         type="number"
                                         value={form.stock}
@@ -322,12 +321,7 @@ const AdminProducts = () => {
                                         onChange={e => setForm({ ...form, category: e.target.value })}
                                         className="appearance-none w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
                                     >
-                                        <option
-                                            value=''
-
-                                        >
-                                            Select category
-                                        </option>
+                                        <option value=''>Select category</option>
                                         {categories.map(cat => (
                                             <option key={cat._id} value={cat._id}>{cat.name}</option>
                                         ))}
@@ -339,16 +333,16 @@ const AdminProducts = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">URL Picture</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Product Image URL</label>
                                 <input
                                     type="text"
                                     value={form.image}
                                     onChange={e => setForm({ ...form, image: e.target.value })}
-                                    placeholder="https://..."
+                                    placeholder="https://example.com/image.jpg"
                                     className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
                                 />
                                 {form.image && (
-                                    <img src={form.image} alt='preview' className="mt-2 w-20 h-20 object-cover rounded-lg" />
+                                    <img src={form.image} alt='preview' className="mt-2 w-20 h-20 object-cover rounded-lg border" />
                                 )}
                             </div>
 
@@ -359,7 +353,7 @@ const AdminProducts = () => {
                                     onChange={e => setForm({ ...form, isFeatured: e.target.checked })}
                                     className="accent-green-600 w-4 h-4 cursor-pointer"
                                 />
-                                <span className="text-sm text-gray-700 ">Featured Product</span>
+                                <span className="text-sm text-gray-700">Mark as Featured Product</span>
                             </label>
 
                             <div className="flex gap-3 pt-2">
@@ -375,7 +369,7 @@ const AdminProducts = () => {
                                     disabled={saving}
                                     className="flex-1 bg-green-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-green-700 transition disabled:opacity-60"
                                 >
-                                    {saving ? 'Saving...' : editProduct ? 'Update' : 'Add New'}
+                                    {saving ? 'Saving...' : editProduct ? 'Update Product' : 'Create Product'}
                                 </button>
                             </div>
                         </form>
