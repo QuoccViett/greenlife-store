@@ -13,6 +13,7 @@ import {
   faDollarSign, faArrowUp, faArrowRight,
   faChartLine, faChartPie
 } from '@fortawesome/free-solid-svg-icons'
+import { useLang } from '../../context/LangContext'
 
 const API = import.meta.env.VITE_API_URL
 
@@ -36,6 +37,7 @@ const StatCard = ({ icon, label, value, color, trend }) => (
 
 const AdminDashboard = () => {
   const { userInfo } = useSelector(state => state.auth)
+  const { t } = useLang()
   const [stats, setStats] = useState(null)
   const [orders, setOrders] = useState([])
   const [products, setProducts] = useState([])
@@ -132,16 +134,16 @@ const AdminDashboard = () => {
   return (
     <div className="p-8 overflow-y-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-        <p className="text-gray-500 text-sm mt-1">Chào mừng trở lại, {userInfo?.name}!</p>
+        <h1 className="text-2xl font-bold text-gray-800">{t('admin.dashboard.title')}</h1>
+        <p className="text-gray-500 text-sm mt-1">{t('admin.dashboard.welcome', { name: userInfo?.name })}</p>
       </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard icon={faUsers} label="Người dùng" value={stats?.totalUsers || 0} color="bg-blue-500" trend="+12%" />
-        <StatCard icon={faClipboardList} label="Đơn hàng" value={stats?.totalOrders || 0} color="bg-purple-500" trend="+8%" />
-        <StatCard icon={faBoxOpen} label="Sản phẩm" value={stats?.totalProducts || 0} color="bg-green-500" trend="+3%" />
-        <StatCard icon={faDollarSign} label="Doanh thu" value={`$${(stats?.totalRevenue || 0).toLocaleString('en-US')}`} color="bg-orange-500" trend="+15%" />
+        <StatCard icon={faUsers} label={t('admin.stats.users')} value={stats?.totalUsers || 0} color="bg-blue-500" trend="+12%" />
+        <StatCard icon={faClipboardList} label={t('admin.stats.orders')} value={stats?.totalOrders || 0} color="bg-purple-500" trend="+8%" />
+        <StatCard icon={faBoxOpen} label={t('admin.stats.products')} value={stats?.totalProducts || 0} color="bg-green-500" trend="+3%" />
+        <StatCard icon={faDollarSign} label={t('admin.stats.revenue')} value={`$${(stats?.totalRevenue || 0).toLocaleString('en-US')}`} color="bg-orange-500" trend="+15%" />
       </div>
 
       {/* Charts row 1 */}
@@ -151,7 +153,7 @@ const AdminDashboard = () => {
         <div className="bg-white rounded-2xl border border-gray-100 p-6">
           <div className="flex items-center gap-2 mb-5">
             <FontAwesomeIcon icon={faChartLine} className="w-4 h-4 text-green-600" />
-            <h3 className="font-bold text-gray-800">Doanh thu 7 ngày qua</h3>
+            <h3 className="font-bold text-gray-800">{t('admin.charts.revenue_7_days')}</h3>
           </div>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={revenueData}>
@@ -175,7 +177,7 @@ const AdminDashboard = () => {
         <div className="bg-white rounded-2xl border border-gray-100 p-6">
           <div className="flex items-center gap-2 mb-5">
             <FontAwesomeIcon icon={faChartPie} className="w-4 h-4 text-green-600" />
-            <h3 className="font-bold text-gray-800">Trạng thái đơn hàng</h3>
+            <h3 className="font-bold text-gray-800">{t('admin.charts.order_status')}</h3>
           </div>
           {orderStatusData.length === 0 ? (
             <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
@@ -208,7 +210,7 @@ const AdminDashboard = () => {
 
         {/* Top products bar chart */}
         <div className="bg-white rounded-2xl border border-gray-100 p-6">
-          <h3 className="font-bold text-gray-800 mb-5">Top 5 sản phẩm bán chạy</h3>
+          <h3 className="font-bold text-gray-800 mb-5">{t('admin.charts.top_products')}</h3>
           {topProducts.length === 0 ? (
             <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
               Chưa có dữ liệu
@@ -228,7 +230,7 @@ const AdminDashboard = () => {
 
         {/* Products by category pie */}
         <div className="bg-white rounded-2xl border border-gray-100 p-6">
-          <h3 className="font-bold text-gray-800 mb-5">Sản phẩm theo danh mục</h3>
+          <h3 className="font-bold text-gray-800 mb-5">{t('admin.charts.products_by_category')}</h3>
           {categoryData.length === 0 ? (
             <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
               Chưa có dữ liệu
@@ -259,9 +261,9 @@ const AdminDashboard = () => {
       {/* Recent orders table */}
       <div className="bg-white rounded-2xl border border-gray-100 p-6">
         <div className="flex items-center justify-between mb-5">
-          <h3 className="font-bold text-gray-800">Đơn hàng gần đây</h3>
+          <h3 className="font-bold text-gray-800">{t('admin.recent_orders.title')}</h3>
           <Link to="/admin/orders" className="flex items-center gap-1 text-sm text-green-600 hover:underline">
-            <span>Xem tất cả</span>
+            <span>{t('admin.recent_orders.view_all')}</span>
             <FontAwesomeIcon icon={faArrowRight} className="w-3 h-3" />
           </Link>
         </div>
@@ -269,7 +271,7 @@ const AdminDashboard = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
-                {['Mã đơn', 'Khách hàng', 'Tổng tiền', 'Thanh toán', 'Trạng thái', 'Ngày'].map(h => (
+                {[t('admin.table.order_id'), t('admin.table.customer'), t('admin.table.total'), t('admin.table.payment'), t('admin.table.status'), t('admin.table.date')].map(h => (
                   <th key={h} className="text-left py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide pr-4">{h}</th>
                 ))}
               </tr>
@@ -280,15 +282,15 @@ const AdminDashboard = () => {
                 return (
                   <tr key={order._id} className="hover:bg-gray-50 transition">
                     <td className="py-3 pr-4 font-mono text-xs text-gray-600">#{order._id.slice(-8).toUpperCase()}</td>
-                    <td className="py-3 pr-4 text-gray-700">{order.user?.name || 'N/A'}</td>
+                        <td className="py-3 pr-4 text-gray-700">{order.user?.name || 'N/A'}</td>
                     <td className="py-3 pr-4 font-semibold text-green-700">${order.totalPrice.toLocaleString('en-US')}</td>
-                    <td className="py-3 pr-4">
+                        <td className="py-3 pr-4">
                       <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                         order.paymentStatus === 'paid'
                           ? 'bg-green-100 text-green-700'
                           : 'bg-yellow-100 text-yellow-700'
                       }`}>
-                        {order.paymentStatus === 'paid' ? 'Đã TT' : 'Chưa TT'}
+                        {order.paymentStatus === 'paid' ? t('admin.payment.paid') : t('admin.payment.unpaid')}
                       </span>
                     </td>
                     <td className="py-3 pr-4">

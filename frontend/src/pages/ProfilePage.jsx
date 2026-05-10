@@ -3,19 +3,21 @@ import { useNavigate, Link } from 'react-router-dom'
 import { IconUser, IconBox, IconShield, IconArrowRight, IconMail, IconMapPin, IconPhone } from '../components/icons/index'
 import { useEffect, useState } from 'react'
 import { setCredentials, logout } from '../store/authSlice'
+import { useLang } from '../context/LangContext'
 import { clearCart } from '../store/cartSlice'
 import axios from 'axios'
 
 const API = import.meta.env.VITE_API_URL
 
 const menu = [
-    { key: 'profile', label: 'Personal Information', icon: IconUser },
-    { key: 'orders', label: 'My Orders', icon: IconBox },
+    { key: 'profile', label: 'profile.personal_info', icon: IconUser },
+    { key: 'orders', label: 'profile.my_orders', icon: IconBox },
 ]
 
 const ProfilePage = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const { t } = useLang()
     const { userInfo } = useSelector(state => state.auth)
 
     const [tab, setTab] = useState('profile')
@@ -51,9 +53,9 @@ const ProfilePage = () => {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } }
             const { data } = await axios.put(`${API}/auth/profile`, form, config)
             dispatch(setCredentials({ ...userInfo, ...data }))
-            setSuccess('Profile updated successfully!')
+            setSuccess(t('profile.updated_success'))
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to update profile')
+            setError(err.response?.data?.message || t('profile.update_failed'))
         } finally {
             setLoading(false)
         }
@@ -93,7 +95,7 @@ const ProfilePage = () => {
                                             }`}
                                     >
                                         <item.icon className="!w-4 !h-4" />
-                                        <span>{item.label}</span>
+                                        <span>{t(item.label)}</span>
                                     </button>
                                 ))}
 
@@ -103,7 +105,7 @@ const ProfilePage = () => {
                                         className='w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-gray-500 hover:bg-gray-50 hover:text-green-600 transition-all'
                                     >
                                         <IconShield className='w-4 h-4' />
-                                        <span>Admin Dashboard</span>
+                                        <span>{t('nav.admin')}</span>
                                     </Link>
                                 )}
 
@@ -113,7 +115,7 @@ const ProfilePage = () => {
                                         className='w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-500 hover:bg-red-50 transition-all'
                                     >
                                         <IconArrowRight className='!w-4 !h-4' />
-                                        <span className='font-medium'>Sign Out</span>
+                                        <span className='font-medium'>{t('auth.logout')}</span>
                                     </button>
                                 </div>
                             </nav>
@@ -125,8 +127,8 @@ const ProfilePage = () => {
                         {tab === 'profile' && (
                             <div className='bg-white rounded-2xl border border-gray-100 p-8 shadow-sm'>
                                 <div className="mb-8">
-                                    <h2 className='text-xl font-bold text-gray-800'>Account Settings</h2>
-                                    <p className='text-sm text-gray-400 mt-1'>Update your personal details and contact information.</p>
+                                    <h2 className='text-xl font-bold text-gray-800'>{t('profile.title')}</h2>
+                                    <p className='text-sm text-gray-400 mt-1'>{t('profile.description')}</p>
                                 </div>
 
                                 {success && (
@@ -157,11 +159,11 @@ const ProfilePage = () => {
                                                     className='w-full pl-10 pr-4 py-3 border border-gray-100 rounded-xl text-sm bg-gray-50 text-gray-400 cursor-not-allowed italic mt-1'
                                                 />
                                             </div>
-                                            <p className='text-[11px] text-gray-400 ml-1 italic'>* Email cannot be modified</p>
+                                            <p className='text-[11px] text-gray-400 ml-1 italic'>{t('profile.email_immutable')}</p>
                                         </div>
 
                                         <div className='space-y-2 text-left'>
-                                            <label className='text-sm font-semibold text-gray-700 ml-1'>Full Name</label>
+                                            <label className='text-sm font-semibold text-gray-700 ml-1'>{t('checkout.full_name')}</label>
                                             <div className='relative'>
                                                 <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
                                                     <IconUser className='!w-4 !h-4 text-gray-400' />
@@ -171,14 +173,14 @@ const ProfilePage = () => {
                                                     name='name'
                                                     value={form?.name}
                                                     onChange={handleChange}
-                                                    placeholder='Enter your full name'
+                                                    placeholder={t('checkout.full_name')}
                                                     className='w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all outline-none mt-1'
                                                 />
                                             </div>
                                         </div>
 
                                         <div className='space-y-2 text-left'>
-                                            <label className='text-sm font-semibold text-gray-700 ml-1'>Phone Number</label>
+                                            <label className='text-sm font-semibold text-gray-700 ml-1'>{t('checkout.phone')}</label>
                                             <div className='relative'>
                                                 <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
                                                     <IconPhone className='!w-4 !h-4 text-gray-400' />
@@ -188,14 +190,14 @@ const ProfilePage = () => {
                                                     name='phone'
                                                     value={form?.phone}
                                                     onChange={handleChange}
-                                                    placeholder='Enter your phone number'
+                                                    placeholder={t('checkout.phone')}
                                                     className='mt-1 w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all outline-none'
                                                 />
                                             </div>
                                         </div>
 
                                         <div className='space-y-2 text-left'>
-                                            <label className='text-sm font-semibold text-gray-700 ml-1'>Shipping Address</label>
+                                            <label className='text-sm font-semibold text-gray-700 ml-1'>{t('checkout.address')}</label>
                                             <div className='relative'>
                                                 <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
                                                     <IconMapPin className='!w-4 !h-4 text-gray-400' />
@@ -205,7 +207,7 @@ const ProfilePage = () => {
                                                     name='address'
                                                     value={form?.address}
                                                     onChange={handleChange}
-                                                    placeholder='Enter your detailed address'
+                                                    placeholder={t('checkout.address')}
                                                     className='mt-1 w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all outline-none'
                                                 />
                                             </div>
@@ -218,7 +220,7 @@ const ProfilePage = () => {
                                             disabled={loading}
                                             className='bg-green-600 text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-green-700 disabled:opacity-60 transition-all shadow-lg shadow-green-100'
                                         >
-                                            {loading ? 'Saving...' : 'Save Changes'}
+                                            {loading ? t('profile.saving') : t('profile.save_changes')}
                                         </button>
                                     </div>
                                 </form>
@@ -277,9 +279,9 @@ const OrdersTab = ({ userInfo }) => {
             <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <IconBox className="w-8 h-8 text-gray-300" />
             </div>
-            <h3 className="text-gray-800 font-bold text-lg">No orders yet</h3>
-            <p className="text-gray-400 text-sm mt-1">Looks like you haven't made any purchases yet.</p>
-            <Link to="/products" className="inline-block mt-6 text-green-600 font-bold text-sm hover:underline">Start Shopping</Link>
+            <h3 className="text-gray-800 font-bold text-lg">{t('orders.none_title')}</h3>
+            <p className="text-gray-400 text-sm mt-1">{t('orders.none_desc')}</p>
+            <Link to="/products" className="inline-block mt-6 text-green-600 font-bold text-sm hover:underline">{t('orders.start_shopping')}</Link>
         </div>
     )
 

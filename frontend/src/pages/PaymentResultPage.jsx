@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { IconArrowRight, IconCircleCheck, IconCircleXMark, IconSpinner } from "../components/icons"
 import axios from "axios"
+import { useLang } from '../context/LangContext'
 
 const API = import.meta.env.VITE_API_URL
 
@@ -11,6 +12,7 @@ const PaymentResultPage = () => {
     const [status, setStatus] = useState('loading')
     const [orderId, setOrderId] = useState('')
     const [message, setMessage] = useState('')
+    const { t } = useLang()
 
     useEffect(() => {
         const verifyPayment = async () => {
@@ -22,18 +24,18 @@ const PaymentResultPage = () => {
                 const { data } = await axios.get(`${API}/payment/vnpay/return`, { params })
                 
                 setOrderId(data.orderId)
-                
+
                 if (data.code === '00') {
                     setStatus('success')
-                    setMessage('Your VNPay payment was processed successfully!')
+                    setMessage(data.message || t('payment.success_desc'))
                 } else {
                     setStatus('failed')
-                    setMessage(data.message || 'Payment failed or was canceled by the user.')
+                    setMessage(data.message || t('payment.failed_desc'))
                 }
             } catch (error) {
                 console.error("Payment Verification Error:", error)
                 setStatus('failed')
-                setMessage('An error occurred while confirming your payment status.')
+                setMessage(t('payment.error_desc'))
             }
         }
         
@@ -45,8 +47,8 @@ const PaymentResultPage = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
             <div className="text-center">
                 <IconSpinner className="w-12 h-12 text-green-600 animate-spin mx-auto mb-4"/>
-                <h2 className="text-lg font-semibold text-gray-800">Verifying Transaction</h2>
-                <p className="text-gray-500 text-sm">Please do not refresh or close this page...</p>
+                <h2 className="text-lg font-semibold text-gray-800">{t('payment.verifying')}</h2>
+                <p className="text-gray-500 text-sm">{t('payment.please_wait')}</p>
             </div>
         </div>
     )
@@ -61,7 +63,7 @@ const PaymentResultPage = () => {
                             <div className="flex justify-center mb-6">
                                 <IconCircleCheck className="!w-20 !h-20 text-green-500" />
                             </div>
-                            <h1 className="text-2xl font-bold text-gray-800 mb-2">Payment Successful!</h1>
+                            <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('payment.success_title')}</h1>
                             <p className="text-gray-500 text-sm mb-2">{message}</p>
                             
                             {orderId && (
@@ -75,14 +77,14 @@ const PaymentResultPage = () => {
                                     to={`/order-success/${orderId}`}
                                     className="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-sm hover:bg-green-700 transition flex items-center justify-center gap-2 shadow-lg shadow-green-100"
                                 >
-                                    <span>Complete Order</span>
+                                    <span>{t('payment.complete_order')}</span>
                                     <IconArrowRight className="!w-4 !h-4" />
                                 </Link>
                                 <Link 
                                     to={'/products'}
                                     className="w-full border border-gray-200 text-gray-600 py-3.5 rounded-xl font-bold text-sm hover:bg-gray-50 transition"
                                 >
-                                    Continue Shopping
+                                    {t('cart.continue_shopping')}
                                 </Link>
                             </div>
                         </>
@@ -91,7 +93,7 @@ const PaymentResultPage = () => {
                             <div className="flex justify-center mb-6">
                                 <IconCircleXMark className="!w-20 !h-20 text-red-400" />
                             </div>
-                            <h1 className="text-2xl font-bold text-gray-800 mb-2">Payment Failed</h1>
+                            <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('payment.failed_title')}</h1>
                             <p className="text-gray-500 text-sm mb-8">{message}</p>
                             
                             <div className="flex flex-col gap-3">
@@ -99,13 +101,13 @@ const PaymentResultPage = () => {
                                     onClick={() => navigate('/checkout')}
                                     className="w-full bg-gray-800 text-white py-3.5 rounded-xl font-bold text-sm hover:bg-black transition"
                                 >
-                                    Try Another Method
+                                    {t('payment.try_another')}
                                 </button>
                                 <Link
                                     to={'/profile'}
                                     className="w-full border border-gray-200 text-gray-600 py-3.5 rounded-xl font-bold text-sm hover:bg-gray-50 transition"
                                 >
-                                    View My Orders
+                                    {t('order.view_orders')}
                                 </Link>
                             </div>
                         </>

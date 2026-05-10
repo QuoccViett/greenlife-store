@@ -2,12 +2,14 @@ import { useEffect, useState, useMemo } from "react"
 import { useSelector } from "react-redux"
 import { IconSearch, IconUser, IconShield, IconChevronDown } from "../../components/icons"
 import axios from "axios"
+import { useLang } from '../../context/LangContext'
 
 const API = import.meta.env.VITE_API_URL
 
 const AdminUsers = () => {
     const { userInfo } = useSelector(state => state.auth)
     const config = { headers: { Authorization: `Bearer ${userInfo?.token}` } }
+    const { t } = useLang()
     
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(true)
@@ -49,9 +51,9 @@ const AdminUsers = () => {
     return (
         <div className="p-8">
             <div className="mb-8 text-left">
-                <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
+                <h1 className="text-2xl font-bold text-gray-800">{t('admin.users.title')}</h1>
                 <p className="text-gray-500 text-sm mt-1">
-                    Showing {filteredUsers.length} of {users.length} total users
+                    {t('admin.users.showing', { shown: filteredUsers.length, total: users.length })}
                 </p>
             </div>
 
@@ -59,13 +61,13 @@ const AdminUsers = () => {
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                     <IconSearch className="w-4 h-4 text-gray-400" />
                 </div>
-                <input
-                    type="text"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    placeholder="Search by name or email..."
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition-all"
-                />
+                    <input
+                        type="text"
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        placeholder={t('admin.users.search_placeholder')}
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition-all"
+                    />
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
@@ -77,7 +79,7 @@ const AdminUsers = () => {
                     </div>
                 ) : filteredUsers.length === 0 ? (
                     <div className="p-20 text-center text-gray-400">
-                        No users found matching "{search}"
+                        {t('admin.users.none', { query: search })}
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
@@ -104,7 +106,7 @@ const AdminUsers = () => {
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
                                                 <span className="text-gray-700">{user.email}</span>
-                                                <span className="text-gray-400 text-xs">{user.phone || 'No phone'}</span>
+                                                <span className="text-gray-400 text-xs">{user.phone || t('admin.users.no_phone')}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-gray-400 text-xs">
@@ -118,7 +120,7 @@ const AdminUsers = () => {
                                             {user._id === userInfo._id ? (
                                                 <span className="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-tighter">
                                                     <IconShield className="w-3.5 h-3.5" />
-                                                    Current Admin
+                                                    {t('admin.users.current_admin')}
                                                 </span>
                                             ) : (
                                                 <div className="relative inline-block text-left">
@@ -131,8 +133,8 @@ const AdminUsers = () => {
                                                                 : 'border-gray-300 text-gray-600 bg-white hover:border-gray-400'
                                                             }`}
                                                     >
-                                                        <option value="user">User</option>
-                                                        <option value="admin">Admin</option>
+                                                        <option value="user">{t('admin.users.role_user')}</option>
+                                                        <option value="admin">{t('admin.users.role_admin')}</option>
                                                     </select>
                                                     <IconChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none text-gray-400" />
                                                 </div>

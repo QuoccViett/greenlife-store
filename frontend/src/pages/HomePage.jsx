@@ -2,73 +2,21 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import {
-  IconTruck, IconRecycle, IconShield, IconRefresh,
-  IconEcoHome, IconPersonalCare, IconBag, IconZeroWaste,
-  IconBottle, IconArrowRight, IconLeaf,
-  IconMail
+    IconTruck, IconRecycle, IconShield, IconRefresh,
+    IconEcoHome, IconPersonalCare, IconBag, IconZeroWaste,
+    IconBottle, IconArrowRight, IconLeaf,
+    IconMail
 } from '../components/icons'
+import { useLang } from '../context/LangContext'
 import ProductCard from '../components/ProductCard'
 import SkeletonCard from '../components/SkeletonCard'
 
 const API = import.meta.env.VITE_API_URL
 
-const benefits = [
-    {
-        icon: IconTruck,
-        title: 'Free Shipping',
-        desc: 'On orders over $20' // Sửa lỗi chính tả "Oreder"
-    },
-    {
-        icon: IconRecycle,
-        title: 'Sustainable Choice', // Đổi title để tránh lặp với desc
-        desc: '100% Eco-Friendly'
-    },
-    {
-        icon: IconShield,
-        title: 'Secure Payment',
-        desc: 'VNPay, MoMo & Cards' // Thêm "& Cards" để tăng độ uy tín
-    },
-    {
-        icon: IconRefresh,
-        title: 'Easy Returns',
-        desc: '7-day policy' // Viết ngắn gọn, chuyên nghiệp hơn
-    },
-]
-
-const categories = [
-    {
-        name: 'Eco Home & Living',
-        slug: 'eco-home-living',
-        icon: IconEcoHome,
-        desc: 'Kitchen & Cleaning'
-    },
-    {
-        name: 'Personal Care',
-        slug: 'personal-care',
-        icon: IconPersonalCare,
-        desc: 'Safe & Natural'
-    },
-    {
-        name: 'Reusable Bags',
-        slug: 'reusable-bags',
-        icon: IconBag,
-        desc: 'Tote & Shopping'
-    },
-    {
-        name: 'Zero Waste',
-        slug: 'zero-waste',
-        icon: IconZeroWaste,
-        desc: 'Sustainable Storage'
-    },
-    {
-        name: 'Daily Essentials',
-        slug: 'daily-essentials',
-        icon: IconBottle,
-        desc: 'Bottles & Lunch Boxes'
-    },
-]
+// benefits and categories will be built inside component using translations
 
 const HomePage = () => {
+    const { t } = useLang()
 
     const [ loading, setLoading ] = useState(true)
     const [ featured, setFeatured ] = useState([])
@@ -93,6 +41,21 @@ const HomePage = () => {
         fetchProducts()
     }, [])
 
+    const benefits = [
+        { icon: IconTruck, title: t('benefits.free_shipping'), desc: t('benefits.free_shipping_desc') },
+        { icon: IconRecycle, title: t('benefits.sustainable'), desc: t('benefits.sustainable_desc') },
+        { icon: IconShield, title: t('benefits.secure_payment'), desc: t('benefits.secure_payment_desc') },
+        { icon: IconRefresh, title: t('benefits.easy_returns'), desc: t('benefits.easy_returns_desc') },
+    ]
+
+    const categories = [
+        { name: t('product.categories_list.home'), slug: 'eco-home-living', icon: IconEcoHome, desc: t('home.sub_ecohome_living') },
+        { name: t('product.categories_list.personal'), slug: 'personal-care', icon: IconPersonalCare, desc: t('home.sub_personal_care') },
+        { name: t('product.categories_list.bags'), slug: 'reusable-bags', icon: IconBag, desc: t('home.sub_reusable_bags') },
+        { name: t('product.categories_list.zerowaste'), slug: 'zero-waste', icon: IconZeroWaste, desc: t('home.sub_zero_waste') },
+        { name: t('product.categories_list.bottles'), slug: 'daily-essentials', icon: IconBottle, desc: t('home.sub_daily_essentials') },
+    ]
+
     return(
         <div className="min-h-screen bg-white">
 
@@ -102,22 +65,21 @@ const HomePage = () => {
                     <div className='flex-1 text-center md:text-left'>
                         <span className='inline-flex items-center gap-1.5 bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider'>
                             <IconLeaf className="!w-3.5 !h-3.5 mr-2" />
-                            Eco-Friendly Selection
+                            {t('home.hero_badge')}
                         </span>
                         <h1 className='text-4xl md:text-5xl font-bold leading-tight mb-4'>
-                            <span className='text-white'>Sustainable living</span><br/>
-                            <span className='text-green-400'>made simple for you.</span>
+                            <span className='text-white'>{t('home.hero_title')}</span>
                         </h1>
                         <p className='text-white text-base mb-8 max-w-md'>
-                            Premium eco-friendly essentials for your home and lifestyle. Join us in making a positive impact on the planet.
+                            {t('home.hero_sub')}
                         </p>
                         <div className='flex gap-3 justify-center md:justify-start mt-8'>
                             <Link to='/products' className='flex items-center gap-2 bg-white text-green-800 font-semibold px-6 py-3 rounded-full hover:bg-green-50 transition'>
-                                <span>Shop Now</span>
+                                <span>{t('home.hero_btn')}</span>
                                 <IconArrowRight className='!w-4 !h-4'/>
                             </Link>
                             <Link to='/about' className='border border-white text-white font-semibold px-6 py-3 rounded-full hover:bg-green-700 transition'>
-                                Our Mission
+                                {t('home.learn_more')}
                             </Link>
                         </div>
                     </div>
@@ -150,8 +112,8 @@ const HomePage = () => {
             {/* Categories Section */}
             <section className='max-w-7xl mx-auto px-4 py-14'>
                 <div className='text-center mb-6'>
-                    <h2 className='text-2xl font-bold text-gray-800'>Shop by Category</h2>
-                    <p className='text-gray-500 text-sm mt-1'>Curated collections for a conscious lifestyle.</p>
+                    <h2 className='text-2xl font-bold text-gray-800'>{t('home.categories')}</h2>
+                    <p className='text-gray-500 text-sm mt-1'>{t('home.categories_sub')}</p>
                 </div>
                 <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4'>
                     {categories.map(cat => (
@@ -177,21 +139,23 @@ const HomePage = () => {
                 <div className='max-w-7xl mx-auto px-4'>
                     <div className='flex items-center justify-between mb-8'>
                         <div>
-                            <h2 className='text-2xl font-bold text-gray-800'>Featured Selection</h2>
-                            <p className='text-gray-500 text-sm mt-1'>Most loved by the GreenLife community</p>
+                            <h2 className='text-2xl font-bold text-gray-800'>{t('home.featured')}</h2>
+                            <p className='text-gray-500 text-sm mt-1'>{t('home.featured_sub')}</p>
                         </div>
                         <Link to='/products?featured=true' className='flex items-center gap-1 text-sm text-green-600 font-medium hover:underline'>
-                            <span>View All</span>
+                            <span>{t('home.view_all')}</span>
                             <IconArrowRight className='!w-4 !h-4'/>
                         </Link>
                     </div>
+                    
                     <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-                        {loading
-                            ? [...Array(4)].map((_, i) => <SkeletonCard key={i}/>)
-                            : featured.length > 0
-                                ? featured.map(p => <ProductCard key={p._id} product={p}/>)
-                                : <p className='col-span-4 text-center text-gray-400 py-10'>No featured products available</p>
-                        }
+                        {loading ? (
+                            [...Array(4)].map((_, i) => <SkeletonCard key={i} />)
+                        ) : featured.length > 0 ? (
+                            featured.map(p => <ProductCard key={p._id} product={p} />)
+                        ) : (
+                            <p className='col-span-4 text-center text-gray-400 py-10'>{t('home.no_featured')}</p>
+                        )}
                     </div>
                 </div>
             </section>
@@ -204,15 +168,15 @@ const HomePage = () => {
                             <IconLeaf className='!w-7 !h-7 text-white'/>
                         </div>
                         <div>
-                            <h2 className='text-2xl font-bold mb-1 text-left !text-white'>Start Your Journey Today</h2>
-                            <p className='!text-white text-sm text-left'>Small choices today lead to a healthier planet tomorrow.</p>
+                            <h2 className='text-2xl font-bold mb-1 text-left !text-white'>{t('home.banner_title')}</h2>
+                            <p className='!text-white text-sm text-left'>{t('home.banner_sub')}</p>
                         </div>
                     </div>
-                    <Link
+                        <Link
                         to='/products'
                         className='flex items-center gap-2 bg-white text-green-800 font-semibold px-8 py-3 rounded-full hover:bg-green-100 transition whitespace-nowrap shrink-0'
                     >
-                        <span>Explore Collection</span>
+                        <span>{t('home.view_all')}</span>
                         <IconArrowRight className='!w-4 !h-4'/>
                     </Link>
                 </div>
@@ -223,21 +187,23 @@ const HomePage = () => {
                 <div className='max-w-7xl mx-auto px-4'>
                     <div className='flex items-center justify-between mb-8'>
                         <div>
-                            <h2 className='text-2xl font-bold text-gray-800'>New Arrivals</h2>
-                            <p className='text-gray-500 text-sm mt-1'>The latest additions to our store</p>
+                            <h2 className='text-2xl font-bold text-gray-800'>{t('home.newest')}</h2>
+                            <p className='text-gray-500 text-sm mt-1'>{t('home.newest_sub')}</p>
                         </div>
-                        <Link to='/products' className=' flex items-center gap-1 text-sm text-green-600 font-medium hover:underline'>
-                            <span>View All</span>
+                        <Link to='/products' className='flex items-center gap-1 text-sm text-green-600 font-medium hover:underline'>
+                            <span>{t('home.view_all')}</span>
                             <IconArrowRight className="!w-4 !h-4" />
                         </Link>
                     </div>
+                    
                     <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-                        {loading
-                            ? [...Array(8)].map((_, i) => <SkeletonCard key={i}/>)
-                            : newest.length > 0
-                                ? newest.map(p => <ProductCard key={p._id} product={p} />)
-                                : <p className='col-span-4 text-center text-gray-400 py-10'>No products found</p>
-                        }
+                        {loading ? (
+                            [...Array(8)].map((_, i) => <SkeletonCard key={i} />)
+                        ) : newest.length > 0 ? (
+                            newest.map(p => <ProductCard key={p._id} product={p} />)
+                        ) : (
+                            <p className='col-span-4 text-center text-gray-400 py-10'>{t('home.no_products')}</p>
+                        )}
                     </div>
                 </div>
             </section>
@@ -247,8 +213,8 @@ const HomePage = () => {
                 <div className='w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4'>
                     <IconMail className='!w-7 !h-7 text-green-600'/>
                 </div>
-                <h2 className='text-2xl font-bold text-gray-800 mb-2'>Stay in the Loop</h2>
-                <p className='text-gray-500 text-sm !mb-5'>Subscribe for exclusive offers and sustainable living tips.</p>
+                <h2 className='text-2xl font-bold text-gray-800 mb-2'>{t('home.newsletter')}</h2>
+                <p className='text-gray-500 text-sm !mb-5'>{t('home.newsletter_sub')}</p>
                 <form
                     onSubmit={e => {e.preventDefault(); setEmail('') }}
                     className='flex max-w-md mx-auto border border-gray-300 rounded-full overflow-hidden focus-within:border-green-500 transition'
@@ -257,11 +223,11 @@ const HomePage = () => {
                         type="email"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
-                        placeholder='Your email address...'
+                        placeholder={t('home.newsletter_placeholder')}
                         className='flex-1 px-5 py-3 text-sm outline-none'
                         required
                     />
-                    <button type='submit' className='bg-green-600 text-white px-6 text-sm font-medium hover:bg-green-700 transition'>Subscribe</button>
+                    <button type='submit' className='bg-green-600 text-white px-6 text-sm font-medium hover:bg-green-700 transition'>{t('home.newsletter_btn')}</button>
                 </form>
             </section>
 

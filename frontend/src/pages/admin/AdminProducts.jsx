@@ -1,7 +1,8 @@
-import { useEffect, useState, } from "react"
+import { useEffect, useState } from "react"
 import { IconCheck, IconClose, IconPen, IconPlus, IconSearch, IconTrash, IconChevronDown } from "../../components/icons"
 import axios from "axios"
 import { useSelector } from "react-redux"
+import { useLang } from '../../context/LangContext'
 
 const API = import.meta.env.VITE_API_URL
 
@@ -9,6 +10,7 @@ const AdminProducts = () => {
     const { userInfo } = useSelector(state => state.auth)
     const config = { headers: { Authorization: `Bearer ${userInfo?.token}` } }
 
+    const { t } = useLang()
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [showModal, setShowModal] = useState(false)
@@ -68,14 +70,13 @@ const AdminProducts = () => {
             stock: product.stock,
             image: product.image || '',
             category: product.category?._id || '',
-            isFeatured: product.isFeatured,
+            isFeatured: product.isFeatured || false,
         })
         setShowModal(true)
     }
 
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this product?')) return
-
         try {
             await axios.delete(`${API}/products/${id}`, config)
             setProducts(products.filter(p => p._id !== id))
@@ -115,15 +116,15 @@ const AdminProducts = () => {
         <div className="p-8">
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Manage Products</h1>
-                    <p className="text-gray-500 text-sm mt-1 text-left !ms-1">Total: {products.length} products</p>
+                    <h1 className="text-2xl font-bold text-gray-800">{t('admin.products.title')}</h1>
+                    <p className="text-gray-500 text-sm mt-1 text-left">{t('admin.products.total', {count: products.length})}</p>
                 </div>
                 <button
                     onClick={openCreate}
                     className="flex items-center gap-2 bg-green-600 text-white px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-green-700 transition"
                 >
                     <IconPlus className="!w-4 !h-4" />
-                    Add Product
+                    {t('admin.products.add')}
                 </button>
             </div>
 
@@ -134,12 +135,12 @@ const AdminProducts = () => {
                 <input type="text"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    placeholder="Search products..."
+                    placeholder={t('admin.products.search_placeholder')}
                     className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl outline-none focus:border-green-500 transition"
                 />
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden text-left">
                 {loading ? (
                     <div className="p-6 space-y-3">
                         {[...Array(6)].map((_, i) => (
@@ -151,12 +152,12 @@ const AdminProducts = () => {
                         <table className="w-full text-sm">
                             <thead className="bg-gray-50 border-b border-gray-100">
                                 <tr>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Product</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-15">Category</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-8">Price</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-11">Stock</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide ps-8">Featured</th>
-                                    <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide pe-10">Actions</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">{t('admin.products.table.product')}</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">{t('admin.products.table.category')}</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">{t('admin.products.table.price')}</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">{t('admin.products.table.stock')}</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">{t('admin.products.table.featured')}</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-right">{t('admin.products.table.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
@@ -169,17 +170,15 @@ const AdminProducts = () => {
                                                     alt={product.name}
                                                     className="w-12 h-12 object-cover rounded-lg shrink-0"
                                                 />
-                                                <div className="text-left">
+                                                <div>
                                                     <p className="font-medium text-gray-800">{product.name}</p>
-                                                    <p className="text-xs text-gray-500">Items Sold: {product.sold || 0}</p>
+                                                    <p className="text-xs text-gray-500">{t('admin.products.items_sold', {count: product.sold || 0})}</p>
                                                 </div>
                                             </div>
                                         </td>
-
                                         <td className="px-6 py-4 text-gray-600">
                                             {product.category?.name || 'Uncategorized'}
                                         </td>
-
                                         <td className="px-6 py-4">
                                             {product.salePrice ? (
                                                 <div>
@@ -190,38 +189,27 @@ const AdminProducts = () => {
                                                 <p className="font-semibold text-gray-700">${product.price}</p>
                                             )}
                                         </td>
-
                                         <td className="px-6 py-4">
                                             <span className={`text-xs font-medium px-2.5 py-1 rounded-full
-                                                        ${product.stock > 10 ? 'bg-green-100 text-green-700'
-                                                    : product.stock > 0 ? 'bg-yellow-100 text-yellow-700'
-                                                        : 'bg-red-100 text-red-600'
-                                                }`}>
-                                                {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+                                                ${product.stock > 10 ? 'bg-green-100 text-green-700'
+                                                : product.stock > 0 ? 'bg-yellow-100 text-yellow-700'
+                                                : 'bg-red-100 text-red-600'}`}>
+                                                {product.stock > 0 ? `${product.stock} ${t('admin.products.in_stock')}` : t('admin.products.out_of_stock')}
                                             </span>
                                         </td>
-
                                         <td className="px-6 py-4">
                                             {product.isFeatured ? (
                                                 <IconCheck className="!w-4 !h-4 text-green-600" />
-                                            ) :
+                                            ) : (
                                                 <IconClose className="!w-4 !h-4 text-gray-300" />
-                                            }
+                                            )}
                                         </td>
-
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button
-                                                    onClick={() => openEdit(product)}
-                                                    className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition"
-                                                >
+                                                <button onClick={() => openEdit(product)} className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg">
                                                     <IconPen className="!w-4 !h-4" />
                                                 </button>
-
-                                                <button
-                                                    onClick={() => handleDelete(product._id)}
-                                                    className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                                                >
+                                                <button onClick={() => handleDelete(product._id)} className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg">
                                                     <IconTrash className="!w-4 !h-4" />
                                                 </button>
                                             </div>
@@ -234,49 +222,47 @@ const AdminProducts = () => {
                 )}
             </div>
 
+            {/* Modal */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
                     <div className="absolute inset-0 bg-black/50" onClick={() => setShowModal(false)}></div>
                     <div className="relative bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-bold text-gray-800 !ms-1">
-                                {editProduct ? 'Edit Product' : 'Create New Product'}
+                            <h2 className="text-lg font-bold text-gray-800">
+                                {editProduct ? t('admin.products.edit') : t('admin.products.add')}
                             </h2>
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className="text-gray-400 hover:text-gray-600"
-                            >
+                            <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600">
                                 <IconClose className="!w-5 !h-5" />
                             </button>
                         </div>
 
                         <form onSubmit={handleSave} className="space-y-4 text-left">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Product Name *</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('admin.products.form.name')} *</label>
                                 <input
                                     type="text"
                                     value={form.name}
                                     required
-                                    placeholder="Enter product name"
+                                    placeholder={t('admin.products.form.name_placeholder')}
                                     onChange={e => setForm({ ...form, name: e.target.value })}
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-green-500 outline-none"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Description</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('admin.products.form.description')}</label>
                                 <textarea
                                     value={form.description}
                                     rows={3}
-                                    placeholder="Enter product description"
+                                    placeholder={t('admin.products.form.description_placeholder')}
                                     onChange={e => setForm({ ...form, description: e.target.value })}
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 resize-none"
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-green-500 outline-none resize-none"
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Base Price ($) *</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('admin.products.table.price')} ($) *</label>
                                     <input
                                         type="number"
                                         value={form.price}
@@ -284,92 +270,85 @@ const AdminProducts = () => {
                                         min={0}
                                         step="0.01"
                                         onChange={e => setForm({ ...form, price: e.target.value })}
-                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
+                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none"
                                     />
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Sale Price ($)</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Sale Price ($)</label>
                                     <input
                                         type="number"
                                         value={form.salePrice}
                                         min={0}
                                         step="0.01"
                                         onChange={e => setForm({ ...form, salePrice: e.target.value })}
-                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
+                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none"
                                     />
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Stock Quantity *</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('admin.products.table.stock')} *</label>
                                     <input
                                         type="number"
                                         value={form.stock}
                                         required
                                         min={0}
                                         onChange={e => setForm({ ...form, stock: e.target.value })}
-                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
+                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none"
                                     />
                                 </div>
-
                                 <div className="relative">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Category</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('admin.products.table.category')}</label>
                                     <select
                                         value={form.category}
                                         onChange={e => setForm({ ...form, category: e.target.value })}
-                                        className="appearance-none w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
+                                        className="appearance-none w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none"
                                     >
                                         <option value=''>Select category</option>
                                         {categories.map(cat => (
                                             <option key={cat._id} value={cat._id}>{cat.name}</option>
                                         ))}
                                     </select>
-                                    <div className='absolute inset-y-0 z-50 top-7 right-4 flex items-center pointer-events-none text-gray-500'>
-                                        <IconChevronDown className='!w-4 !h-4' />
-                                    </div>
+                                    <IconChevronDown className='absolute right-4 top-10 !w-4 !h-4 text-gray-500 pointer-events-none' />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5 ms-1">Product Image URL</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5">Image URL</label>
                                 <input
                                     type="text"
                                     value={form.image}
                                     onChange={e => setForm({ ...form, image: e.target.value })}
                                     placeholder="https://example.com/image.jpg"
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none"
                                 />
-                                {form.image && (
-                                    <img src={form.image} alt='preview' className="mt-2 w-20 h-20 object-cover rounded-lg border" />
-                                )}
                             </div>
 
-                            <label className="flex items-center gap-2 cursor-pointer ms-1">
+                            <label className="flex items-center gap-2 cursor-pointer">
                                 <input
                                     type="checkbox"
                                     checked={form.isFeatured}
                                     onChange={e => setForm({ ...form, isFeatured: e.target.checked })}
-                                    className="accent-green-600 w-4 h-4 cursor-pointer"
+                                    className="accent-green-600 w-4 h-4"
                                 />
-                                <span className="text-sm text-gray-700">Mark as Featured Product</span>
+                                <span className="text-sm text-gray-700">{t('admin.products.table.featured')}</span>
                             </label>
 
                             <div className="flex gap-3 pt-2">
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="flex-1 border border-gray-300 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition"
+                                    className="flex-1 border border-gray-300 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50"
                                 >
-                                    Cancel
+                                    {t('admin.products.form.cancel') || 'Cancel'}
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={saving}
-                                    className="flex-1 bg-green-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-green-700 transition disabled:opacity-60"
+                                    className="flex-1 bg-green-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-green-700 disabled:opacity-60"
                                 >
-                                    {saving ? 'Saving...' : editProduct ? 'Update Product' : 'Create Product'}
+                                    {saving ? '...' : editProduct ? t('admin.products.update') || 'Update' : t('admin.products.create') || 'Create'}
                                 </button>
                             </div>
                         </form>
@@ -380,4 +359,4 @@ const AdminProducts = () => {
     )
 }
 
-export default AdminProducts
+export default AdminProducts;
