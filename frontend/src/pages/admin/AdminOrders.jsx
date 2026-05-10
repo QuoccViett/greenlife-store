@@ -67,10 +67,21 @@ const AdminOrders = () => {
     }
 
     const filtered = orders.filter(o => {
-        const matchSearch = o._id.includes(search) || o.user?.name?.toLowerCase().includes(search.toLowerCase())
-        const matchStatus = filterStatus ? o.orderStatus === filterStatus : true
-        return matchSearch && matchStatus
-    })
+        const orderId = o._id ? o._id.toLowerCase() : "";
+
+        const customerName = (o.user?.name || "").toLowerCase();
+
+        const searchTerm = search.toLowerCase();
+
+        const matchSearch = orderId.includes(searchTerm) || customerName.includes(searchTerm);
+
+        const orderStatus = (o.orderStatus || "").toLowerCase();
+        const filterStatusTerm = (filterStatus || "").toLowerCase();
+
+        const matchStatus = filterStatus ? orderStatus === filterStatusTerm : true;
+
+        return matchSearch && matchStatus;
+    });
 
     const getStatus = (value) => statusOption.find(s => s.value === value) || statusOption[0]
 

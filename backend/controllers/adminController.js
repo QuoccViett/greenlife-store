@@ -56,7 +56,7 @@ const getDashboardStatus = async (req, res) => {
     try { 
         const totalUsers = await User.countDocuments({ role: 'user' })
         const totalOrders = await Order.countDocuments()
-        const totalProduct = await Product.countDocuments()
+        const totalProducts = await Product.countDocuments()
         const revuene = await Order.aggregate([
             { $match: { paymentStatus: 'paid' }},
             { $group: { _id: null, total: { $sum: '$totalPrice'}}}
@@ -64,12 +64,11 @@ const getDashboardStatus = async (req, res) => {
         res.json({
             totalUsers,
             totalOrders,
-            totalProduct,
-            totalRevenoue: revuene[0]?.total || 0
+            totalProducts,
+            totalRevenue: revuene[0]?.total || 0
         })
     } catch (error) {
         res.status(500).json({message: error.message})
     }
 }
-
 module.exports = { getUsers, updateUserRole, getAllOrders, updateOrderStatus, getDashboardStatus}

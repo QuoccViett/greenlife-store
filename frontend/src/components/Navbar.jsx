@@ -8,58 +8,58 @@ import {
 } from './icons/index'
 
 
-const categories = [
-    {
-        name: 'Eco Home & Living',
-        slug: 'eco-home-living',
-        sub: [
-            { name: 'Bamboo Products', slug: 'bamboo-products' },
-            { name: 'Kitchen Tools', slug: 'kitchen-tools' },
-            { name: 'Cleaning Supplies', slug: 'cleaning-supplies' },
-        ]
-    },
-    {
-        name: 'Personal Care',
-        slug: 'personal-care',
-        sub: [
-            { name: 'Skincare', slug: 'skincare' },
-            { name: 'Soap', slug: 'soap' },
-            { name: 'Shampoo Bars', slug: 'shampoo-bar' },
-        ]
-    },
-    {
-        name: 'Reusable Bags',
-        slug: 'reusable-bags',
-        sub: [
-            { name: 'Tote Bags', slug: 'tote-bags' },
-            { name: 'Shopping Bags', slug: 'shopping-bags' },
-        ]
-    },
-    {
-        name: 'Zero Waste',
-        slug: 'zero-waste',
-        sub: [
-            { name: 'Straws', slug: 'straws' },
-            { name: 'Food Wraps', slug: 'food-wraps' },
-            { name: 'Storage', slug: 'storage' },
-        ]
-    },
-    {
-        name: 'Daily Essentials',
-        slug: 'daily-essentials',
-        sub: [
-            { name: 'Water Bottles', slug: 'water-bottles' },
-            { name: 'Lunch Boxes', slug: 'lunch-boxes' },
-        ]
-    },
+// const categories = [
+//     {
+//         name: 'Eco Home & Living',
+//         slug: 'eco-home-living',
+//         sub: [
+//             { name: 'Bamboo Products', slug: 'bamboo-products' },
+//             { name: 'Kitchen Tools', slug: 'kitchen-tools' },
+//             { name: 'Cleaning Supplies', slug: 'cleaning-supplies' },
+//         ]
+//     },
+//     {
+//         name: 'Personal Care',
+//         slug: 'personal-care',
+//         sub: [
+//             { name: 'Skincare', slug: 'skincare' },
+//             { name: 'Soap', slug: 'soap' },
+//             { name: 'Shampoo Bars', slug: 'shampoo-bar' },
+//         ]
+//     },
+//     {
+//         name: 'Reusable Bags',
+//         slug: 'reusable-bags',
+//         sub: [
+//             { name: 'Tote Bags', slug: 'tote-bags' },
+//             { name: 'Shopping Bags', slug: 'shopping-bags' },
+//         ]
+//     },
+//     {
+//         name: 'Zero Waste',
+//         slug: 'zero-waste',
+//         sub: [
+//             { name: 'Straws', slug: 'straws' },
+//             { name: 'Food Wraps', slug: 'food-wraps' },
+//             { name: 'Storage', slug: 'storage' },
+//         ]
+//     },
+//     {
+//         name: 'Daily Essentials',
+//         slug: 'daily-essentials',
+//         sub: [
+//             { name: 'Water Bottles', slug: 'water-bottles' },
+//             { name: 'Lunch Boxes', slug: 'lunch-boxes' },
+//         ]
+//     },
 
-]
+// ]
 
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false)
     const [searchText, setSearchText] = useState('')
-    const [activeDropdown, setActiveDropdown] = useState(null)
+    // const [activeDropdown, setActiveDropdown] = useState(null)
     const navigate = useNavigate()
     const cartItems = useSelector(state => state.cart.items)
     const { userInfo } = useSelector(state => state.auth)
@@ -152,7 +152,7 @@ const Navbar = () => {
                             <IconStore className="!w-4 !h-4 pr-2" />
                             <span>Store</span>
                         </Link>
-                        {categories.map(cat => (
+                        {/* {categories.map(cat => (
                             <div
                                 key={cat.slug}
                                 className="relative group "
@@ -188,9 +188,15 @@ const Navbar = () => {
                                     </div>
                                 )}
                             </div>
-                        ))}
+                        ))} */}
                         <Link to='/about' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
                             <span>Learn</span>
+                        </Link>
+                        <Link to="/about" className="px-3 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap transition">
+                            About Us
+                        </Link>
+                        <Link to="/contact" className="px-3 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap transition">
+                            Contact
                         </Link>
                     </div>
                 </div>
@@ -217,7 +223,21 @@ const Navbar = () => {
                             Home
                         </Link>
 
-                        {categories.map(cat => (
+                        <Link to='/products' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
+                            <IconStore className="!w-4 !h-4 pr-2" />
+                            <span>Store</span>
+                        </Link>
+                        <Link to='/about' className="block px-4 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap">
+                            <span>Learn</span>
+                        </Link>
+                        <Link to="/about" className="px-3 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap transition">
+                            About Us
+                        </Link>
+                        <Link to="/contact" className="px-3 py-3 text-sm font-medium text-gray-700 hover:text-green-700 whitespace-nowrap transition">
+                            Contact
+                        </Link>
+
+                        {/* {categories.map(cat => (
                             <div key={cat.slug} className="border-b border-gray-100 ">
                                 <Link
                                     to={`/products?category=${cat.slug}`}
@@ -226,7 +246,7 @@ const Navbar = () => {
                                 >
                                     {cat.name}
                                 </Link>
-                                {/* <div className="pl-3 flex flex-col gap-1">
+                                <div className="pl-3 flex flex-col gap-1">
                                 {cat.sub.map(sub => (
                                     <Link 
                                         key={sub.slug}
@@ -236,9 +256,9 @@ const Navbar = () => {
                                         - {sub.name}
                                     </Link>
                                 ))}
-                            </div> */}
                             </div>
-                        ))}
+                            </div>
+                        ))} */}
 
 
                         {userInfo ? (
