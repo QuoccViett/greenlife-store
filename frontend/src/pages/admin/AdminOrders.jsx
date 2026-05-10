@@ -37,7 +37,7 @@ const AdminOrders = () => {
             }
         }
         fetchOrders()
-    }, [])
+    }, [orders.orderStatus])
 
     const handleStatusChange = async (orderID, newStatus) => {
         try {
