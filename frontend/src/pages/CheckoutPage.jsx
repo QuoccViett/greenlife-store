@@ -309,7 +309,7 @@ const CheckoutPage = () => {
 
                                 <div className='mt-4 flex items-center gap-2 text-xs text-gray-400 justify-center'>
                                     <IconShield className='!w-3.5 !h-3.5 text-green-500' />
-                                    <span>Secure SSL Encryption</span>
+                                    <span>{t('checkout.payment_desc')}</span>
                                 </div>
                             </div>
                         </div>
