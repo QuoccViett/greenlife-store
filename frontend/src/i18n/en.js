@@ -20,8 +20,21 @@ export default {
         email_immutable: '* Email cannot be modified',
         save_changes: 'Save Changes',
         saving: 'Saving...',
+        paid: 'Paid',
+        pending: 'Pending',
         personal_info: 'Personal Information',
-        my_orders: 'My Orders'
+        my_orders: 'My Orders',
+        orders: {
+            order_id: 'Order ID',
+            date: 'Date',
+            payment: 'Payment:',
+            total: 'Total Amount',
+            quantity: 'Quantity:'
+        },
+        payment: {
+            cod: 'Cash on Delivery',
+            non_cod: 'Credit Card'
+        }
     },
     orders: {
         none_title: 'No orders yet',
@@ -226,6 +239,7 @@ export default {
         city: 'City / Province',
         error_fill: 'Please fill in all required shipping information',
         select_country: 'Select Country',
+        email: 'Email',
         payment: {
             cod: {
                 label: 'Cash on Delivery (COD)',
@@ -248,6 +262,7 @@ export default {
     auth: {
         welcome: 'Welcome back',
         login: 'Log in',
+        logout: 'Logout',
         register: 'Register',
         email: 'Email',
         password: 'Password',
@@ -371,15 +386,17 @@ export default {
     }
     ,
     admin: {
+        filter: 'Filter by Date Range:',
+        to: 'to',
         dashboard: {
-            title: 'Dashboard',
+            title: 'Dashboard Overview',
             welcome: 'Welcome back, {name}!'
         },
         stats: {
-            users: 'Users',
-            orders: 'Orders',
-            products: 'Products',
-            revenue: 'Revenue'
+            users: 'Total Users',
+            orders: 'Total Orders',
+            products: 'Total Products',
+            revenue: 'Total Revenue'
         },
         charts: {
             revenue_7_days: 'Revenue (7 days)',
@@ -389,7 +406,7 @@ export default {
         },
         recent_orders: {
             title: 'Recent Orders',
-            view_all: 'View All'
+            view_all: 'View All Orders'
         },
         table: {
             order_id: 'Order ID',
@@ -397,7 +414,8 @@ export default {
             total: 'Total',
             payment: 'Payment',
             status: 'Status',
-            date: 'Date'
+            date: 'Date',
+            none: 'No orders found for this period.'
         },
         payment: {
             paid: 'Paid',
@@ -467,7 +485,13 @@ export default {
             no_phone: 'No phone',
             current_admin: 'Current Admin',
             role_user: 'User',
-            role_admin: 'Admin'
+            role_admin: 'Admin',
+            table: {
+                user: 'user',
+                contact: 'contact',
+                joined: 'joined',
+                access_lv: 'access lever',
+            }
         }
     },
     learn: {

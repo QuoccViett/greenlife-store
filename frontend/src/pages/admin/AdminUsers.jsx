@@ -53,7 +53,7 @@ const AdminUsers = () => {
             <div className="mb-8 text-left">
                 <h1 className="text-2xl font-bold text-gray-800">{t('admin.users.title')}</h1>
                 <p className="text-gray-500 text-sm mt-1">
-                    {t('admin.users.showing', { shown: filteredUsers.length, total: users.length })}
+                    {t('admin.users.showing', { shown: filteredUsers?.length || 0, total: users?.length || 0 })}
                 </p>
             </div>
 
@@ -83,13 +83,13 @@ const AdminUsers = () => {
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
+                        <table className="w-full text-sm table-fixed">
                             <thead className="bg-gray-50 border-b border-gray-100">
                                 <tr>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">User</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Contact</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Joined</th>
-                                    <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Access Level</th>
+                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('admin.users.table.user')}</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('admin.users.table.contact')}</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('admin.users.table.joined')}</th>
+                                    <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('admin.users.table.access_lv')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
