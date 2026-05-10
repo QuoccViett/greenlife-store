@@ -26,7 +26,7 @@ const CartPage = () => {
     if (items.length === 0) return (
         <div className='min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4 px-4'>
             <div className='w-20 h-20 bg-green-100 rounded-full flex items-center justify-center'>
-                <IconCart className='!w-10 !h-10 text-green-600'/>
+                <IconCart className='!w-10 !h-10 text-green-600' />
             </div>
             <h2 className='text-xl font-bold text-gray-800'>{t('cart.empty')}</h2>
             <p className='text-gray-500'>{t('cart.empty_sub')}</p>
@@ -35,7 +35,7 @@ const CartPage = () => {
                 className='flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-green-700 transition'
             >
                 <span>{t('cart.continue_shopping')}</span>
-                <IconArrowRight className='!w-4 !h-4'/>
+                <IconArrowRight className='!w-4 !h-4' />
             </Link>
         </div>
     )
@@ -91,10 +91,13 @@ const CartPage = () => {
                                     <div className='flex items-center justify-between mt-3'>
                                         <div className='flex items-center border border-gray-200 rounded-lg overflow-hidden'>
                                             <button
-                                                onClick={() => item.quantity > 1
-                                                    ? dispatch(updateQuantity({ id: item._id, quantity: item.quantity - 1 }))
-                                                    : dispatch(removeFromCart(item._id))
-                                                }
+                                                onClick={() => {
+                                                    if (item.quantity > 1) {
+                                                        dispatch(updateQuantity({ id: item._id, quantity: item.quantity - 1 }))
+                                                    } else {
+                                                        dispatch(removeFromCart(item._id))
+                                                    }
+                                                }}
                                                 className='px-3 py-1.5 text-gray-600 hover:bg-gray-100 transition text-sm font-medium'
                                             >
                                                 -
@@ -130,8 +133,8 @@ const CartPage = () => {
                                 <IconArrowLeft className='!w-4 !h-4 me-1' />
                                 {t('cart.continue_shopping')}
                             </Link>
-                            <button 
-                                className='text-sm text-red-500 hover:text-red-700 transition font-medium' 
+                            <button
+                                className='text-sm text-red-500 hover:text-red-700 transition font-medium'
                                 onClick={() => dispatch(clearCart())}
                             >
                                 {t('cart.clear_all')}
@@ -153,7 +156,7 @@ const CartPage = () => {
                                         ${subtotal.toLocaleString('en-US')}
                                     </span>
                                 </div>
-                                
+
                                 <div className='flex justify-between text-gray-600'>
                                     <span>{t('cart.shipping')}</span>
                                     {shipping === 0 ? (
@@ -165,7 +168,7 @@ const CartPage = () => {
 
                                 {shipping > 0 && (
                                     <p className='text-xs text-gray-400 !mb-4 text-left italic'>
-                                        {t('cart.spend_for_free', {amount: `$${(20 - subtotal).toFixed(2)}`})}
+                                        {t('cart.spend_for_free', { amount: `$${(20 - subtotal).toFixed(2)}` })}
                                     </p>
                                 )}
 

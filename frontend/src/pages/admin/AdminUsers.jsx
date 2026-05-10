@@ -10,7 +10,7 @@ const AdminUsers = () => {
     const { userInfo } = useSelector(state => state.auth)
     const config = { headers: { Authorization: `Bearer ${userInfo?.token}` } }
     const { t } = useLang()
-    
+
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
@@ -32,8 +32,8 @@ const AdminUsers = () => {
     // Optimized search logic covering both name and email
     const filteredUsers = useMemo(() => {
         const query = search.toLowerCase().trim()
-        return users.filter(u => 
-            u.name?.toLowerCase().includes(query) || 
+        return users.filter(u =>
+            u.name?.toLowerCase().includes(query) ||
             u.email?.toLowerCase().includes(query)
         )
     }, [users, search])
@@ -45,6 +45,27 @@ const AdminUsers = () => {
         } catch (err) {
             console.error("Failed to update role:", err)
             // Optional: Add a toast notification here to inform the admin of the failure
+        }
+    }
+
+    const handleToggleStatus = async (userId, currentStatus) => {
+        if (!window.confirm(`Xác nhận ${currentStatus ? 'khóa' : 'mở khóa'} tài khoản này?`)) return
+        try {
+            const { data } = await axios.put(`${API}/admin/users/${userId}/toggle`, {}, config)
+            setUsers(users.map(u => u._id === userId ? { ...u, isActive: !currentStatus } : u))
+            alert(data.message)
+        } catch (err) {
+            alert(err.response?.data?.message || 'Có lỗi xảy ra')
+        }
+    }
+
+    const handleResetPassword = async (userId, userName) => {
+        if (!window.confirm(`Reset mật khẩu cho "${userName}"?\nMật khẩu mới sẽ gửi qua email.`)) return
+        try {
+            const { data } = await axios.put(`${API}/admin/users/${userId}/reset-password`, {}, config)
+            alert(`✅ ${data.message}`)
+        } catch (err) {
+            alert(err.response?.data?.message || 'Có lỗi xảy ra')
         }
     }
 
@@ -61,13 +82,13 @@ const AdminUsers = () => {
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                     <IconSearch className="w-4 h-4 text-gray-400" />
                 </div>
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        placeholder={t('admin.users.search_placeholder')}
-                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition-all"
-                    />
+                <input
+                    type="text"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder={t('admin.users.search_placeholder')}
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition-all"
+                />
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
@@ -90,17 +111,22 @@ const AdminUsers = () => {
                                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('admin.users.table.contact')}</th>
                                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('admin.users.table.joined')}</th>
                                     <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('admin.users.table.access_lv')}</th>
+                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {filteredUsers.map(user => (
                                     <tr key={user._id} className="hover:bg-gray-50/50 transition">
                                         <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-9 h-9 bg-green-100 rounded-full flex items-center justify-center shrink-0">
-                                                    <IconUser className="w-4 h-4 text-green-600" />
-                                                </div>
+                                            <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${user.isActive !== false ? 'bg-green-100' : 'bg-red-100'
+                                                }`}>
+                                                <IconUser className={`w-4 h-4 ${user.isActive !== false ? 'text-green-600' : 'text-red-400'}`} />
+                                            </div>
+                                            <div>
                                                 <p className="font-medium text-gray-800">{user.name}</p>
+                                                {user.isActive === false && (
+                                                    <span className="text-xs text-red-500 font-medium">Đã khóa</span>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
@@ -128,8 +154,8 @@ const AdminUsers = () => {
                                                         value={user.role}
                                                         onChange={e => handleRoleChange(user._id, e.target.value)}
                                                         className={`appearance-none pl-4 pr-10 py-1.5 border rounded-full text-xs font-bold uppercase outline-none cursor-pointer transition-colors
-                                                            ${user.role === 'admin' 
-                                                                ? 'border-green-300 text-green-700 bg-green-50' 
+                                                            ${user.role === 'admin'
+                                                                ? 'border-green-300 text-green-700 bg-green-50'
                                                                 : 'border-gray-300 text-gray-600 bg-white hover:border-gray-400'
                                                             }`}
                                                     >
@@ -139,6 +165,30 @@ const AdminUsers = () => {
                                                     <IconChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none text-gray-400" />
                                                 </div>
                                             )}
+                                        </td>
+
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2">
+                                                {/* Toggle status */}
+                                                {user._id !== userInfo._id && (
+                                                    <button
+                                                        onClick={() => handleToggleStatus(user._id, user.isActive)}
+                                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${user.isActive
+                                                            ? 'bg-red-50 text-red-600 hover:bg-red-100'
+                                                            : 'bg-green-50 text-green-600 hover:bg-green-100'
+                                                            }`}
+                                                    >
+                                                        {user.isActive ? 'Khóa' : 'Mở khóa'}
+                                                    </button>
+                                                )}
+                                                {/* Reset password */}
+                                                <button
+                                                    onClick={() => handleResetPassword(user._id, user.name)}
+                                                    className="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-50 text-blue-600 hover:bg-blue-100 transition"
+                                                >
+                                                    Reset pass
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

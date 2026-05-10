@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     phone: { type: String },
     address: { type: String, required: true },
+    isActive: { type: Boolean, default: true },
 }, { timestamps: true })
 
 module.exports = mongoose.model('User', userSchema)

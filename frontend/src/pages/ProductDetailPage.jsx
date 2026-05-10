@@ -173,30 +173,49 @@ const ProductDetailPage = () => {
                         </div>
 
                         <div className="flex flex-col gap-2 pt-2">
-                             <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2">
+                                    {product.stock > 0 ? (
+                                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-green-100 text-green-700">
+                                            Còn {product.stock} sản phẩm
+                                        </span>
+                                    ) : (
+                                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-red-100 text-red-600">
+                                            Hết hàng
+                                        </span>
+                                    )}
+                                    {product.stock <= 5 && product.stock > 0 && (
+                                        <span className="text-xs text-orange-600 font-medium">
+                                            Sắp hết hàng!
+                                        </span>
+                                    )}
+                                </div>
                                 <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{t('product.quantity')}</span>
                                 <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
-                                    <button 
+                                    <button
                                         onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                                        className="px-3 py-1 text-gray-600 hover:bg-gray-100 transition text-xl"
+
+                                        className="px-3 py-2 text-gray-600 hover:bg-gray-100 transition text-lg font-medium disabled:opacity-40 disabled:cursor-not-allowed"
                                     >
                                         −
                                     </button>
                                     <span className="px-4 py-1 text-sm font-bold min-w-[3rem] text-center">
                                         {quantity}
                                     </span>
-                                    <button 
+                                    <button
                                         onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                                        className="px-3 py-1 text-gray-600 hover:bg-gray-100 transition text-xl"
+                                        disabled={quantity >= product.stock}
+                                        className="px-3 py-2 text-gray-600 hover:bg-gray-100 transition text-lg font-medium disabled:opacity-40 disabled:cursor-not-allowed"
                                     >
                                         +
                                     </button>
                                 </div>
-                                {product.stock < 10 && product.stock > 0 && (
-                                    <span className="text-xs text-orange-600 font-medium italic">
-                                        {t('product.only_left', {count: product.stock})}
-                                    </span>
+                                {product.stock <= 5 && product.stock > 0 && (
+                                    <p className="text-xs text-orange-600 font-medium">
+                                        Chỉ còn {product.stock} sản phẩm — đặt hàng ngay!
+                                    </p>
                                 )}
+
                             </div>
                         </div>
 

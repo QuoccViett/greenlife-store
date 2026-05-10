@@ -51,15 +51,17 @@ const CheckoutPage = () => {
     const subtotal = items.reduce((acc, item) => acc + (item.salePrice || item.price) * item.quantity, 0)
     const shipping = subtotal >= 20 ? 0 : 5
     const total = subtotal + shipping
-
+    const [useDefaultAddress, setUseDefaultAddress] = useState(
+        !!userInfo?.address
+    )
     const [form, setForm] = useState({
-        fullname: userInfo?.name || '',
+        fullName: userInfo?.name || '',
         phone: userInfo?.phone || '',
-        address: userInfo?.address || '',
+        address: useDefaultAddress ? (userInfo?.address || '') : '',
         city: '',
         notifyEmail: userInfo?.email || '',
     })
-    const [useSavedAddress, setUseSavedAddress] = useState(true)
+    // const [useSavedAddress, setUseSavedAddress] = useState(true)
 
     const handleSubmit = async e => {
         e.preventDefault()
@@ -140,6 +142,36 @@ const CheckoutPage = () => {
                                     </div>
                                 )}
 
+                                {/* Chọn địa chỉ mặc định hoặc nhập tay */}
+                                {userInfo?.address && (
+                                    <div className="flex gap-3 mb-5">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setUseDefaultAddress(true)
+                                                setForm(f => ({ ...f, address: userInfo.address }))
+                                            }}
+                                            className={`flex-1 p-3 border-2 rounded-xl text-sm transition text-left ${useDefaultAddress ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300'
+                                                }`}
+                                        >
+                                            <p className="font-medium text-gray-800 mb-0.5">Địa chỉ mặc định</p>
+                                            <p className="text-gray-500 text-xs line-clamp-1">{userInfo.address}</p>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setUseDefaultAddress(false)
+                                                setForm(f => ({ ...f, address: '' }))
+                                            }}
+                                            className={`flex-1 p-3 border-2 rounded-xl text-sm transition text-left ${!useDefaultAddress ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300'
+                                                }`}
+                                        >
+                                            <p className="font-medium text-gray-800 mb-0.5">Nhập địa chỉ mới</p>
+                                            <p className="text-gray-500 text-xs">Điền địa chỉ giao hàng khác</p>
+                                        </button>
+                                    </div>
+                                )}
+
                                 <div className='grid sm:grid-cols-2 gap-4 mt-4'>
                                     <div className='sm:col-span-2'>
                                         <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left ms-3'>{t('checkout.full_name')}</label>
@@ -190,7 +222,7 @@ const CheckoutPage = () => {
                                                 onChange={handleChange}
                                                 placeholder={t('checkout.address')}
                                                 required
-                                                disabled={useSavedAddress && !!userInfo?.address}
+                                                disabled={useDefaultAddress && !!userInfo?.address}
                                                 className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition disabled:bg-gray-100 disabled:text-gray-500'
                                             />
                                         </div>

@@ -26,8 +26,9 @@ const AdminDashboard = () => {
                 const dateParams = startDate && endDate
                     ? `?startDate=${startDate}&endDate=${endDate}`
                     : ''
+                console.log('Token:', userInfo?.token)
                 const [statsRes, ordersRes] = await Promise.all([
-                    axios.get(`${API}/admin/status${dateParams}`, config),
+                    axios.get(`${API}/admin/stats${dateParams}`, config),
                     axios.get(`${API}/admin/orders`, config),
                 ])
                 setStats(statsRes.data)

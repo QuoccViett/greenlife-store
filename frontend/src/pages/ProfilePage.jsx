@@ -196,6 +196,28 @@ const ProfilePage = () => {
                                             </div>
                                         </div>
 
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                                Địa chỉ giao hàng mặc định
+                                            </label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                                    <IconMapPin className="w-4 h-4 text-gray-400" />
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    name="address"
+                                                    value={form.address}
+                                                    onChange={handleChange}
+                                                    placeholder={t('checkout.address')}
+                                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition"
+                                                />
+                                            </div>
+                                            <p className="text-xs text-gray-400 mt-1">
+                                                Địa chỉ này sẽ được điền tự động khi thanh toán
+                                            </p>
+                                        </div>
+
                                         <div className='space-y-2 text-left'>
                                             <label className='text-sm font-semibold text-gray-700 ml-1'>{t('checkout.address')}</label>
                                             <div className='relative'>
@@ -308,6 +330,47 @@ const OrdersTab = ({ userInfo }) => {
                                     {status.text}
                                 </span>
                             </div>
+                        </div>
+
+                        {/* Progress bar — chỉ hiện khi không bị hủy */}
+                        {order.orderStatus !== 'cancelled' && (
+                            <div className="mb-4 px-1">
+                                <div className="flex items-center">
+                                    {['pending', 'processing', 'shipping', 'delivered'].map((s, i, arr) => {
+                                        const currentIdx = arr.indexOf(order.orderStatus)
+                                        const isDone = i <= currentIdx
+                                        return (
+                                            <div key={s} className="flex items-center flex-1">
+                                                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${isDone ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-400'
+                                                    }`}>
+                                                    {isDone ? '✓' : i + 1}
+                                                </div>
+                                                {i < arr.length - 1 && (
+                                                    <div className={`flex-1 h-0.5 mx-1 ${i < currentIdx ? 'bg-green-600' : 'bg-gray-200'}`} />
+                                                )}
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                                <div className="flex justify-between text-xs text-gray-400 mt-1.5">
+                                    <span>Chờ XN</span>
+                                    <span>Xử lý</span>
+                                    <span>Đang giao</span>
+                                    <span>Đã giao</span>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Trạng thái thanh toán */}
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${order.paymentStatus === 'paid' ? 'bg-green-100 text-green-700'
+                                    : order.paymentStatus === 'failed' ? 'bg-red-100 text-red-600'
+                                        : 'bg-yellow-100 text-yellow-700'
+                                }`}>
+                                {order.paymentStatus === 'paid' ? '✅ Đã thanh toán'
+                                    : order.paymentStatus === 'failed' ? '❌ TT thất bại'
+                                        : '⏳ Chưa thanh toán'}
+                            </span>
                         </div>
 
                         <div className='space-y-3 mb-6'>
