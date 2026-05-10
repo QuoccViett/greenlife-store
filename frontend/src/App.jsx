@@ -17,6 +17,10 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminUsers from './pages/admin/AdminUsers'
+import LearnPage from './pages/LearnPage'
+import AboutPage from './pages/AboutPage'
+import ContactPage from './pages/ContactPage'
+import ScrollToTop from './components/ScrollToTop'
 
 
 const MainLayout = ({ children }) => (
@@ -44,6 +48,7 @@ function App() {
   return (
     <div className='min-h-screen flex flex-col'>
       <div className='flex-1'>
+        <ScrollToTop />
         <Routes>
 
           <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
@@ -57,6 +62,9 @@ function App() {
           <Route path="/profile" element={<MainLayout><ProfilePage /></MainLayout>} />
           <Route path="/order-success/:id" element={<MainLayout><OrderSuccessPage /></MainLayout>} />
           <Route path="/payment-result" element={<MainLayout><PaymentResultPage /></MainLayout>} />
+          <Route path="/learn" element={<MainLayout><LearnPage /></MainLayout>} />
+          <Route path="/about" element={<MainLayout><AboutPage /></MainLayout>} />
+          <Route path="/contact" element={<MainLayout><ContactPage /></MainLayout>} />
 
           <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
           <Route path='/admin/products' element={<AdminLayout><AdminProducts /></AdminLayout>} />

@@ -3,10 +3,11 @@ import { IconArrowRight, IconLeaf, IconUser, IconChartBar, IconBox, IconEcoHome,
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux"
 import { logout } from "../../store/authSlice"
+import { useLang } from '../../context/LangContext'
 
 
 const AdminSidebar = () => {
-
+    const { lang, toggleLang, t } = useLang()
     const { userInfo } = useSelector(state => state.auth)
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -49,6 +50,12 @@ const AdminSidebar = () => {
                     </div>
                     <span className="text-white font-bold text-lg">GreenLife</span>
                 </Link>
+                <button
+                    onClick={toggleLang}
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-full text-xs font-semibold text-gray-600 hover:border-green-500 hover:text-green-600 transition"
+                >
+                    <span>{lang === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}</span>
+                </button>
             </div>
 
 

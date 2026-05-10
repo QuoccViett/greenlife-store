@@ -4,27 +4,38 @@ import { useState } from 'react'
 import axios from 'axios'
 import { setCredentials } from '../store/authSlice'
 import { useDispatch } from 'react-redux'
+import { useLang } from '../context/LangContext'
 
 
 const API = import.meta.env.VITE_API_URL
 
 const RegisterPage = () => {
     const [error, setError] = useState('')
-    const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
+    const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '', address: '' })
     const [loading, setLoading] = useState(false)
 
     const dispastch = useDispatch()
     const navigate = useNavigate()
+    const { t } = useLang()
 
     const handleSubmit = async e => {
         e.preventDefault()
         setError('')
         if (form.password !== form.confirmPassword) {
-            setError('Passwords do not match')
+            setError(t('auth.error_password_mismatch') || 'Passwords do not match')
             return
         }
         if (form.password.length < 6) {
-            setError('Password must be at least 6 characters')
+            setError(t('auth.error_password_length') || 'Password must be at least 6 characters')
+            return
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(form.email)) {
+            setError('Invalid email format')
+            return
+        }
+        if (!form.address.trim()) {
+            setError('Address is required')
             return
         }
         setLoading(true)
@@ -33,11 +44,12 @@ const RegisterPage = () => {
                 name: form.name,
                 email: form.email,
                 password: form.password,
+                address: form.address,
             })
             dispastch(setCredentials(data))
             navigate('/')
         } catch (err) {
-            setError(err.response?.data?.message || 'Registration failed')
+            setError(err.response?.data?.message || t('auth.error_registration') || 'Registration failed')
         } finally {
             setLoading(false)
         }
@@ -57,8 +69,8 @@ const RegisterPage = () => {
                         </div>
                         <span className='text-green-700 font-medium text-2xl'>GreenLife</span>
                     </Link>
-                    <h1 className='text-2xl font-bold text-gray-800 mt-4'>Create a new account.</h1>
-                    <p className='text-gray-500 text-sm mt-1'>Join the green living community with GreenLife</p>
+                    <h1 className='text-2xl font-bold text-gray-800 mt-4'>{t('auth.register') + '.'}</h1>
+                    <p className='text-gray-500 text-sm mt-1'>{t('auth.register_desc') || 'Join the green living community with GreenLife'}</p>
                 </div>
 
                 <div className='bg-white rounded-2xl shadow-sm border border-gray-100 p-8'>
@@ -70,7 +82,7 @@ const RegisterPage = () => {
 
                     <form onSubmit={handleSubmit} className='space-y-5'>
                         <div>
-                            <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left'>Full name</label>
+                            <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left'>{t('auth.fullname') || 'Full name'}</label>
                             <div className='relative'>
                                 <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
                                     <IconUser className='!w-4 !h-4 text-gray-400' />
@@ -80,7 +92,7 @@ const RegisterPage = () => {
                                     name="name"
                                     value={form.name}
                                     onChange={handleChange}
-                                    placeholder='Enter your full name.' 
+                                    placeholder={t('auth.fullname') || 'Enter your full name.'} 
                                     required
                                     className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition'
                                 />
@@ -88,7 +100,7 @@ const RegisterPage = () => {
                         </div>
 
                         <div>
-                            <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left'>Email</label>
+                            <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left'>{t('auth.email')}</label>
                             <div className='relative'>
                                 <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
                                     <IconUser className='!w-4 !h-4 text-gray-400' />
@@ -98,7 +110,25 @@ const RegisterPage = () => {
                                     name="email"
                                     value={form.email}
                                     onChange={handleChange}
-                                    placeholder='Enter your email.' 
+                                    placeholder={t('auth.email')}
+                                    required
+                                    className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition'
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left'>Address</label>
+                            <div className='relative'>
+                                <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
+                                    <IconUser className='!w-4 !h-4 text-gray-400' />
+                                </div>
+                                <input 
+                                    type="text" 
+                                    name="address"
+                                    value={form.address}
+                                    onChange={handleChange}
+                                    placeholder='Enter your address.' 
                                     required
                                     className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition'
                                 />
@@ -116,7 +146,7 @@ const RegisterPage = () => {
                                     name="password"
                                     value={form.password}
                                     onChange={handleChange}
-                                    placeholder='At least 6 characters'
+                                    placeholder={t('auth.password_placeholder') || 'At least 6 characters'}
                                     required
                                     className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition' 
                                 />
@@ -124,7 +154,7 @@ const RegisterPage = () => {
                         </div>
 
                         <div>
-                            <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left'>Confirm Password</label>
+                            <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left'>{t('auth.confirm_password') || 'Confirm Password'}</label>
                             <div className='relative'>
                                 <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
                                     <IconShield className='!w-4 !h-4 text-gray-400'/>
@@ -134,7 +164,7 @@ const RegisterPage = () => {
                                     name="confirmPassword"
                                     value={form.confirmPassword}
                                     onChange={handleChange}
-                                    placeholder='Confirm password'
+                                    placeholder={t('auth.confirm_password_placeholder') || 'Confirm password'}
                                     required
                                     className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition' 
                                 />
@@ -146,14 +176,14 @@ const RegisterPage = () => {
                             disabled={loading}
                             className='w-full bg-green-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed'
                         >
-                            {loading ? 'Creating account...' : 'Create Account' }
+                            {loading ? (t('auth.registering') || 'Creating account...') : (t('auth.create_account') || 'Create Account') }
                         </button>
                     </form>
 
                     <div className='mt-6 text-center text-sm text-gray-500'>
-                        Already have an account?{' '}
+                        {t('auth.already_have_account') || 'Already have an account?'}{' '}
                         <Link to='/login' className='text-green-600 font-medium hover:underline'>
-                            Login
+                            {t('auth.login')}
                         </Link>
                     </div>
                 </div>

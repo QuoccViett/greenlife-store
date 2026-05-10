@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import { IconArrowRight, IconCart, IconStar, IconTag } from "../components/icons"
 import { addToCart } from '../store/cartSlice'
 import { useDispatch } from "react-redux"
+import { useLang } from '../context/LangContext'
 
 const API = import.meta.env.VITE_API_URL
 
@@ -11,6 +12,7 @@ const ProductDetailPage = () => {
 
     const { id } = useParams()
     const dispatch = useDispatch()
+    const { t } = useLang()
     const navigate = useNavigate()
 
     const [product, setProduct] = useState(null)
@@ -19,8 +21,6 @@ const ProductDetailPage = () => {
     const [selectedImg, setSelectedImg] = useState(0)
     const [quantity, setQuantity] = useState(1)
     const [added, setAdded] = useState(false)
-
-
 
     useEffect(() => {
         const fetch = async () => {
@@ -70,8 +70,10 @@ const ProductDetailPage = () => {
 
     if (!product) return (
         <div className="text-center py-20">
-            <p className="text-gray-400">No Product Found.</p>
-            <Link to='/products' className='text-green-600 text-sm mt-2 inline-block hover:underline'>Back.</Link>
+            <p className="text-gray-400 text-lg font-medium">{t('product.not_found')}</p>
+            <Link to='/products' className='text-green-600 text-sm mt-3 inline-block hover:underline font-medium'>
+                {t('product.return_shop')}
+            </Link>
         </div>
     )
 
@@ -100,29 +102,29 @@ const ProductDetailPage = () => {
                         </>
                     )}
                     <span>/</span>
-                    <span className="text-gray-600 line-clamp-1">{product?.name}</span>
+                    <span className="text-gray-600 line-clamp-1 italic">{product?.name}</span>
                 </div>
             </div>
 
             <div className="flex flex-col md:flex-row gap-8 max-w-7xl mx-auto px-4 py-10">
 
                 <div className="md:w-1/2 flex flex-col gap-3 items-center">
-                    <div className="w-80 h-80 md:w-full md:h-[400px] bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
+                    <div className="w-80 h-80 md:w-full md:h-[400px] bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
                         <img
                             src={images[selectedImg]}
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover transition duration-500 hover:scale-105"
                         />
                     </div>
 
                     {images.length > 1 && (
-                        <div className="flex gap-2 overflow-x-auto mt-2">
+                        <div className="flex gap-2 overflow-x-auto mt-2 no-scrollbar">
                             {images.map((img, i) => (
                                 <button
                                     key={i}
                                     onClick={() => setSelectedImg(i)}
                                     className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition
-                                                    ${selectedImg === i ? 'border-green-600' : 'border-gray-200 hover:border-green-300'}`}
+                                                ${selectedImg === i ? 'border-green-600' : 'border-gray-200 hover:border-green-300'}`}
                                 >
                                     <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
                                 </button>
@@ -131,9 +133,9 @@ const ProductDetailPage = () => {
                     )}
                 </div>
 
-                <div className="md:w-1/2 flex flex-col justify-between">
-                    <div className="space-y-3 text-left">
-                        <h3 className="text-xl md:text-2xl font-semibold text-gray-800 line-clamp-2">{product.name}</h3>
+                <div className="md:w-1/2 flex flex-col justify-start">
+                    <div className="space-y-4 text-left">
+                        <h3 className="text-2xl md:text-3xl font-bold text-gray-800 leading-tight">{product.name}</h3>
 
                         <div className="flex justify-start items-center gap-2 text-sm text-gray-500">
                             <div className="flex items-center gap-0.5">
@@ -141,116 +143,121 @@ const ProductDetailPage = () => {
                                     <IconStar key={i} className={`!w-4 !h-4 ${i < 4 ? 'text-yellow-400' : 'text-gray-300'}`} />
                                 ))}
                             </div>
-                            <span>(4.0) . 12 Evaluate</span>
+                            <span>(4.0) • 12 {t('product.reviews')}</span> {/* Sửa Evaluate thành Reviews */}
                         </div>
 
-                        <p className="text-sm md:text-base text-gray-600 leading-relaxed mt-2 border-t border-gray-100 pt-3">
-                            {product.description || 'The product is eco-friendly, made from sustainable natural materials.'}
-                        </p>
-
-                        <div className="flex justify-start items-center gap-2 text-right mt-4">
+                        <div className="flex justify-start items-center gap-3 mt-4">
                             {product.salePrice ? (
                                 <>
-                                    <span className="text-2xl md:text-3xl font-bold text-green-700">
+                                    <span className="text-3xl font-bold text-green-700">
                                         ${product.salePrice.toLocaleString('en-US')}
                                     </span>
-                                    <span className="text-sm md:text-lg text-gray-400 line-through">
+                                    <span className="text-lg text-gray-400 line-through">
                                         ${product.price.toLocaleString('en-US')}
                                     </span>
-                                    <span className="bg-red-100 text-red-600 text-xs md:text-sm font-semibold px-2 py-0.5 rounded-full">
-                                        -{discount}%
+                                    <span className="bg-red-50 text-red-600 text-xs font-bold px-2 py-1 rounded-md">
+                                        SAVE {discount}%
                                     </span>
                                 </>
                             ) : (
-                                <span className="text-2xl md:text-3xl font-bold text-green-700">
+                                <span className="text-3xl font-bold text-green-700">
                                     ${product.price.toLocaleString('en-US')}
                                 </span>
                             )}
                         </div>
 
+                        <div className="py-4 border-y border-gray-100">
+                            <p className="text-sm md:text-base text-gray-600 leading-relaxed italic">
+                                {product.description || t('product.description')}
+                            </p>
+                        </div>
 
-                    </div>
+                        <div className="flex flex-col gap-2 pt-2">
+                             <div className="flex items-center gap-3">
+                                <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{t('product.quantity')}</span>
+                                <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
+                                    <button 
+                                        onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                                        className="px-3 py-1 text-gray-600 hover:bg-gray-100 transition text-xl"
+                                    >
+                                        −
+                                    </button>
+                                    <span className="px-4 py-1 text-sm font-bold min-w-[3rem] text-center">
+                                        {quantity}
+                                    </span>
+                                    <button 
+                                        onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
+                                        className="px-3 py-1 text-gray-600 hover:bg-gray-100 transition text-xl"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                                {product.stock < 10 && product.stock > 0 && (
+                                    <span className="text-xs text-orange-600 font-medium italic">
+                                        {t('product.only_left', {count: product.stock})}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
 
-                    <div className="flex items-center gap-3 border-t border-gray-100 pt-4">
-                        <span className="text-sm font-medium text-gray-700">Amount: </span>
-                        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-                            <button 
-                                onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                                className="px-3 py-2 text-gray-600 hover:bg-gray-100 transition text-lg font-medium"
+                        <div className="flex justify-start gap-4 pt-6">
+                            <button
+                                onClick={handleAddToCart}
+                                disabled={product.stock === 0}
+                                className={`flex items-center justify-center gap-2 py-3 px-8 rounded-full text-sm font-bold border-2 transition w-full sm:w-auto
+                                            ${added ? 'border-green-600 bg-green-600 text-white' : 'border-green-600 text-green-600 hover:bg-green-50'}
+                                            disabled:opacity-50 disabled:cursor-not-allowed shadow-sm`}
                             >
-                                -
+                                <IconCart className="!w-4 !h-4" />
+                                {added ? t('product.added') : t('product.add_to_cart')}
                             </button>
-                            <span className="px-4 py-2 text-sm font-semibold border-x border-gray-300 min-w-12 text-center">
-                                {quantity}
-                            </span>
-                            <button 
-                                onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                                className="px-3 py-2 text-gray-600 hover:bg-gray-100 transition text-lg font-medium"
+
+                            <button
+                                onClick={handleBuyNow}
+                                disabled={product.stock === 0}
+                                className="flex items-center justify-center gap-2 py-3 px-8 rounded-full text-sm font-bold bg-green-600 text-white hover:bg-green-700 transition w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-green-100"
                             >
-                                +
+                                {product.stock === 0 ? t('product.out_of_stock') : t('product.buy_now')}
+                                <IconArrowRight className="!w-4 !h-4" />
                             </button>
                         </div>
-                    </div>
-
-                    <div className="flex justify-start gap-3">
-                        <button
-                            onClick={handleAddToCart}
-                            disabled={product.stock === 0}
-                            className={`flex items-center gap-2 py-2 px-4 rounded-full text-sm font-semibold border-2 transition
-                                            ${added ? 'border-green-600 bg-green-600 text-white' : 'border-green-600 text-green-600 hover:bg-green-50'}
-                                            disabled:opacity-50 disabled:cursor-not-allowed`}
-                        >
-                            <IconCart className="!w-4 !h-4" />
-                            {added ? 'Added' : 'Add To Cart'}
-                        </button>
-
-                        <button
-                            onClick={handleBuyNow}
-                            disabled={product.stock === 0}
-                            className="flex items-center gap-2 py-2 px-4 rounded-full text-sm font-semibold bg-green-600 text-white hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            Buy Now
-                            <IconArrowRight className="!w-4 !h-4" />
-                        </button>
                     </div>
                 </div>
             </div>
 
-            <section className="bg-gray-50 py-12 border-t border-gray-100">
+            <section className="bg-white py-16 border-t border-gray-100 mt-10">
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-gray-800">Featured Products</h2>
-                        <Link to='/products?featured=true' className="flex items-center gap-1 text-sm text-green-600 font-medium hover:underline">
-                            <span>See more</span>
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-bold text-gray-800 tracking-tight">{t('product.related')}</h2>
+                        <Link to='/products' className="flex items-center gap-1 text-sm text-green-600 font-semibold hover:gap-2 transition-all">
+                            <span>{t('home.view_all')}</span>
                             <IconArrowRight className="!w-4 !h-4" />
                         </Link>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         {featured.map(p => (
-                            <Link key={p._id} to={`/products/${p._id}`} className="group bg-white rounded-2xl border-gray-100 overflow-hidden hover:shadow-md transition">
-                                <div className="aspect-square bg-gray-50 overflow-hidden">
+                            <Link key={p._id} to={`/products/${p._id}`} className="group block">
+                                <div className="aspect-square bg-gray-50 rounded-2xl overflow-hidden mb-3 border border-gray-100 group-hover:shadow-lg transition-all duration-300">
                                     <img
                                         src={p.image || 'https://placehold.co/400x400/e8f5e9/2e7d32?text=GreenLife'}
                                         alt={p.name}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                                        className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
                                     />
                                 </div>
-                                <div className="p-4">
-                                    <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-2">{p.name}</h3>
-                                    <div className="flex items-center gap-2">
-                                        {p.salePrice ? (
-                                            <>
-                                                <span className="text-green-700 font-bold">
-                                                    ${p.salePrice.toLocaleString('en-US')}
-                                                </span>
-                                                <span className="text-gray-400 text-sm line-through">
-                                                    ${p.price.toLocaleString('en-US')}
-                                                </span>
-                                            </>
-                                        ) : (
-                                            <span className="text-green-700 font-bold">${p.price.toLocaleString('en-US')}</span>
-                                        )}
-                                    </div>
+                                <h3 className="text-sm font-semibold text-gray-700 group-hover:text-green-600 transition line-clamp-1 mb-1">{p.name}</h3>
+                                <div className="flex items-center gap-2">
+                                    {p.salePrice ? (
+                                        <>
+                                            <span className="text-green-700 font-bold">
+                                                ${p.salePrice.toLocaleString('en-US')}
+                                            </span>
+                                            <span className="text-gray-400 text-xs line-through">
+                                                ${p.price.toLocaleString('en-US')}
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <span className="text-green-700 font-bold">${p.price.toLocaleString('en-US')}</span>
+                                    )}
                                 </div>
                             </Link>
                         ))}
@@ -258,9 +265,6 @@ const ProductDetailPage = () => {
                 </div>
             </section>
         </div>
-
-
-
     )
 }
 

@@ -1,42 +1,24 @@
-import { useState, useEffect } from "react"
-import { IconSearch } from "../../components/icons"
+import { useState, useEffect, useMemo } from "react"
 import { useSelector } from "react-redux"
 import axios from "axios"
-import { IconChevronDown } from '../../components/icons/index'
+import { IconSearch, IconChevronDown } from "../../components/icons"
+import { useLang } from '../../context/LangContext'
 
 const API = import.meta.env.VITE_API_URL
 
-const statusOption = [
-    {
-        value: 'pending',
-        label: 'Pending',
-        color: 'bg-yellow-100 text-yellow-700',
-    },
-    {
-        value: 'processing',
-        label: 'Processing',
-        color: 'bg-blue-100 text-blue-700',
-    },
-    {
-        value: 'shipping',
-        label: 'Shipping',
-        color: 'bg-purple-100 text-purple-700',
-    },
-    {
-        value: 'delivered',
-        label: 'Delivered',
-        color: 'bg-green-100 text-green-700',
-    },
-    {
-        value: 'cancelled',
-        label: 'Cancelled',
-        color: 'bg-red-100 text-red-700',
-    },
+const statusOptionsBase = [
+    { value: 'pending', color: 'bg-yellow-100 text-yellow-700' },
+    { value: 'processing', color: 'bg-blue-100 text-blue-700' },
+    { value: 'shipping', color: 'bg-purple-100 text-purple-700' },
+    { value: 'delivered', color: 'bg-green-100 text-green-700' },
+    { value: 'cancelled', color: 'bg-red-100 text-red-700' },
 ]
 
 const AdminOrders = () => {
     const { userInfo } = useSelector(state => state.auth)
+    const { t } = useLang()
     const config = { headers: { Authorization: `Bearer ${userInfo?.token}` } }
+
     const [orders, setOrders] = useState([])
     const [search, setSearch] = useState('')
     const [filterStatus, setFilterStatus] = useState('')
@@ -49,7 +31,7 @@ const AdminOrders = () => {
                 const { data } = await axios.get(`${API}/admin/orders`, config)
                 setOrders(data)
             } catch (err) {
-                console.log(err)
+                console.error("Fetch orders failed:", err)
             } finally {
                 setLoading(false)
             }
@@ -62,23 +44,33 @@ const AdminOrders = () => {
             await axios.put(`${API}/admin/orders/${orderID}`, { orderStatus: newStatus }, config)
             setOrders(orders.map(o => o._id === orderID ? { ...o, orderStatus: newStatus } : o))
         } catch (err) {
-            console.error(err)
+            console.error("Update status failed:", err)
         }
     }
 
-    const filtered = orders.filter(o => {
-        const matchSearch = o._id.includes(search) || o.user?.name?.toLowerCase().includes(search.toLowerCase())
-        const matchStatus = filterStatus ? o.orderStatus === filterStatus : true
-        return matchSearch && matchStatus
-    })
+    // Use memoization for performance on larger lists
+    const filteredOrders = useMemo(() => {
+        return orders.filter(o => {
+            const searchTerm = search.toLowerCase()
+            const matchSearch =
+                o._id?.toLowerCase().includes(searchTerm) ||
+                o.user?.name?.toLowerCase().includes(searchTerm)
 
-    const getStatus = (value) => statusOption.find(s => s.value === value) || statusOption[0]
+            const matchStatus = filterStatus ? o.orderStatus === filterStatus : true
+
+            return matchSearch && matchStatus
+        })
+    }, [orders, search, filterStatus])
+
+    const getStatusDetails = (value) => statusOptions.find(s => s.value === value) || statusOptions[0]
+
+    const statusOptions = statusOptionsBase.map(s => ({ ...s, label: t(`admin.status.${s.value}`) }))
 
     return (
         <div className="p-8">
             <div className="mb-8 text-left">
-                <h1 className="text-2xl font-bold text-gray-800">Manage Orders</h1>
-                <p className="text-gray-500 text-sm mt-1">Total: {orders?.length} orders</p>
+                <h1 className="text-2xl font-bold text-gray-800">{t('admin.orders.title')}</h1>
+                <p className="text-gray-500 text-sm mt-1">{t('admin.orders.total', { count: orders?.length })}</p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -90,21 +82,22 @@ const AdminOrders = () => {
                         type="text"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        placeholder="Search By Order ID Or Customer Name..."
-                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-e-gray-500"
+                        placeholder={t('admin.orders.search_placeholder')}
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
                     />
                 </div>
+
                 <div className="relative">
                     <select
                         value={filterStatus}
                         onChange={e => setFilterStatus(e.target.value)}
-                        className="appearance-none w-50 px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 text-gray-700"
+                        className="appearance-none w-48 px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 text-gray-700 bg-white"
                     >
-                        <option value="">All status</option>
-                        {statusOption?.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                        <option value="">{t('admin.orders.all_statuses')}</option>
+                        {statusOptions.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                     </select>
-                    <div className='absolute z-50  top-3 right-4 flex items-center pointer-events-none text-gray-500'>
-                        <IconChevronDown className='!w-4 !h-4' />
+                    <div className='absolute top-3.5 right-4 pointer-events-none text-gray-500'>
+                        <IconChevronDown className='w-4 h-4' />
                     </div>
                 </div>
             </div>
@@ -112,102 +105,112 @@ const AdminOrders = () => {
             <div className="space-y-3">
                 {loading ? (
                     [...Array(5)].map((_, i) => (
-                        <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse h-20"></div>
+                        <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse h-24"></div>
                     ))
-                ) : filtered.length === 0 ? (
+                ) : filteredOrders.length === 0 ? (
                     <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">
-                        No orders found
+                        {t('admin.orders.none')}
                     </div>
                 ) : (
-                    filtered.map(order => {
-                        const status = getStatus(order.orderStatus)
+                    filteredOrders.map(order => {
+                        const status = getStatusDetails(order.orderStatus)
                         const isExpanded = expandedOrder === order._id
                         return (
-                            <div key={order._id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                            <div key={order._id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                                 <div
-                                    className="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition"
+                                    className="flex items-center p-5 cursor-pointer hover:bg-gray-50 transition gap-4"
                                     onClick={() => setExpandedOrder(isExpanded ? null : order._id)}
                                 >
-                                    <div className="flex items-center gap-4 text-left px-1 py-1">
-                                        <div className="me-20 ">
-                                            <p className="text-xs text-gray-400 !mb-2">Order ID</p>
-                                            <p className="font-mono text-sm font-medium">#{order._id.slice(-8).toUpperCase()}</p>
+                                    {/* Chia làm 5 cột đều nhau */}
+                                    <div className="grid grid-cols-5 gap-4 text-left flex-1 items-center">
+                                        {/* Cột 1: ID */}
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">{t('admin.table.order_id')}</p>
+                                            <p className="font-mono text-sm font-medium text-gray-700">#{order._id.slice(-8).toUpperCase()}</p>
                                         </div>
-                                        <div className="me-20 ">
-                                            <p className="text-xs text-gray-400 !mb-2">Customer</p>
-                                            <p className="font-mono text-sm font-medium">{order.user?.name}</p>
+
+                                        {/* Cột 2: Khách hàng */}
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">{t('admin.table.customer')}</p>
+                                            <p className="text-sm font-medium text-gray-700 truncate">{order.user?.name || 'Guest'}</p>
                                         </div>
-                                        <div className="me-20 ">
-                                            <p className="text-xs text-gray-400 !mb-2">Total Amount</p>
-                                            <p className="font-mono text-sm font-medium">${order.totalPrice.toLocaleString('en-US')}</p>
+
+                                        {/* Cột 3: Tổng tiền */}
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">{t('admin.table.total')}</p>
+                                            <p className="text-sm font-bold text-green-600">${order.totalPrice.toLocaleString('en-US')}</p>
                                         </div>
-                                        <div className="me-20 ">
-                                            <p className="text-xs text-gray-400 !mb-2">Order Date</p>
-                                            <p className="font-mono text-sm font-medium">{new Date(order.createdAt).toLocaleDateString('vi-VN')}</p>
+
+                                        {/* Cột 4: Ngày tháng */}
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">{t('admin.table.date')}</p>
+                                            <p className="text-sm text-gray-600">{new Date(order.createdAt).toLocaleDateString('en-US')}</p>
+                                        </div>
+
+                                        {/* Cột 5: Trạng thái (Nằm trong Grid để cố định vị trí) */}
+                                        <div className="flex justify-end">
+                                            <span className={`text-[10px] uppercase font-bold px-3 py-1 rounded-full whitespace-nowrap ${status.color}`}>
+                                                {status.label}
+                                            </span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${status.color}`}>
-                                            {status.label}
-                                        </span>
-                                        <IconChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
 
+                                    {/* Icon mũi tên tách biệt hoàn toàn ở cuối */}
+                                    <div className="flex-shrink-0">
+                                        <IconChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                                     </div>
                                 </div>
 
-
                                 {isExpanded && (
-                                    <div className="border-t border-gray-100">
-                                        <div className="grid sm:grid-cols-2 gap-6">
-                                            <div>
-                                                <div className="space-y-2">
-
-                                                    {order.items.map((item, i) => (
-                                                        <div key={i} className="flex items-center gap-3 ">
-                                                            <img
-                                                                src={item.image || 'https://placehold.co/40x40/e8f5e9/2e7d32?text=GL'}
-                                                                alt={item.name}
-                                                                className="!w-50 !h-50 object-cover rounded-lg ms-4 mb-4 mt-4"
-                                                            />
-                                                            <div className="flex-1 min-w-0 text-left ms-5 ">
-                                                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide !mb-3">Product</p>
-                                                                <p className="text-sm text-gray-700 line-clamp-1 !mb-3">{item.name}</p>
-                                                                <p className="text-xs text-gray-400 !mb-2">Quantity: {item.quantity}</p>
-                                                                <p className="text-xs text-gray-400">Price: ${item.price}</p>
-                                                            </div>
+                                    <div className="border-t border-gray-100 bg-gray-50/50 p-6">
+                                        <div className="grid md:grid-cols-2 gap-8">
+                                            {/* Items List */}
+                                            <div className="space-y-4">
+                                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">{t('admin.orders.items_title')}</h3>
+                                                {order.items.map((item, i) => (
+                                                    <div key={i} className="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-100">
+                                                        <img
+                                                            src={item.image || 'https://placehold.co/60x60/f3f4f6/9ca3af?text=Product'}
+                                                            alt={item.name}
+                                                            className="w-16 h-16 object-cover rounded-lg"
+                                                        />
+                                                        <div className="flex-1 text-left">
+                                                            <p className="text-sm font-semibold text-gray-800">{item.name}</p>
+                                                            <p className="text-xs text-gray-500">{t('admin.orders.item_qty', { qty: item.quantity, price: item.price })}</p>
                                                         </div>
-                                                    ))}
-                                                </div>
+                                                    </div>
+                                                ))}
                                             </div>
 
-                                            <div className="flex items-center justify-center mt-4">
-                                                <div className="text-left">
-                                                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-4 !ms-1 !mb-2">Shipping</p>
-                                                    <div className="text-sm text-gray-600 space-y-1">
-                                                        <p className="!mb-2 !ms-1">Recipient's Full Name:  <span className="font-medium">{order.shippingAddress?.fullname}</span></p>
-                                                        <p className="!mb-2 !ms-1">Phone Number: <span className="font-medium">{order.shippingAddress?.phone}</span></p>
-                                                        <p className="!mb-2 !ms-1">Recipient's Address: <span className="font-medium">{order.shippingAddress?.address}</span></p>
-                                                        <p className="!mb-2 !ms-1">Country: <span className="font-medium">{order.shippingAddress?.city}</span></p>
+                                            {/* Shipping & Actions */}
+                                            <div className="text-left space-y-6">
+                                                <div>
+                                                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{t('admin.orders.shipping_address')}</h3>
+                                                    <div className="text-sm text-gray-600 bg-white p-4 rounded-xl border border-gray-100 space-y-1">
+                                                        <p className="font-bold text-gray-800">{order.shippingAddress?.fullname}</p>
+                                                        <p>{order.shippingAddress?.phone}</p>
+                                                        <p>{order.shippingAddress?.address}</p>
+                                                        <p>{order.shippingAddress?.city}, {order.shippingAddress?.country || 'N/A'}</p>
                                                     </div>
-                                                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide !mb-2 !ms-1">Update Status</p>
-                                                    <div className="relative">
+                                                </div>
+
+                                                <div>
+                                                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{t('admin.orders.update_status')}</h3>
+                                                    <div className="relative max-w-[200px]">
                                                         <select
                                                             value={order.orderStatus}
                                                             onChange={e => handleStatusChange(order._id, e.target.value)}
-                                                            className="appearance-none w-50 !px-4 !py-2.5 !mb-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-green-500"
+                                                            className="appearance-none w-full px-4 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-green-500 bg-white"
                                                         >
-                                                            {statusOption.map(s => (
+                                                            {statusOptions.map(s => (
                                                                 <option key={s.value} value={s.value}>{s.label}</option>
                                                             ))}
                                                         </select>
-
-                                                        <div className='absolute z-50  top-3 right-4 flex items-center pointer-events-none text-gray-500'>
-                                                            <IconChevronDown className='!w-4 !h-4' />
+                                                        <div className='absolute top-2.5 right-3 pointer-events-none text-gray-500'>
+                                                            <IconChevronDown className='w-4 h-4' />
                                                         </div>
                                                     </div>
-
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
