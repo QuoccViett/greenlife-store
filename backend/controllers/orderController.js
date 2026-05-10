@@ -33,10 +33,10 @@ const createOrder = async (req, res) => {
       paymentMethod,
       totalPrice,
     })
-
     try {
-      const user = await User.findById(req.user._id)
-      const emailTo = notifyEmail || user.email
+        const user = await User.findById(req.user._id)
+        const emailTo = notifyEmail || user.email
+        console.log(order)
       await sendOrderConfirmEmail({ to: emailTo, order })
     } catch (emailErr) {
       console.log('Email error (non-critical):', emailErr.message)

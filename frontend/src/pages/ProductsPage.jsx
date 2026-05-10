@@ -121,7 +121,7 @@ const ITEMS_PER_PAGE = 12
 const ProductsPage = () => {
     const { t } = useLang()
     const [searchParams, setSearchParams] = useSearchParams()
-    const [priceRange, setPriceRange] = useState([0, 10000])
+    const [priceRange, setPriceRange] = useState([0, 50])
     const [sortBy, setSortBy] = useState('newest')
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
@@ -163,6 +163,10 @@ const ProductsPage = () => {
         .sort((a, b) => {
             if (sortBy === 'price-asc') return (a.salePrice || a.price) - (b.salePrice || b.price)
             if (sortBy === 'price-desc') return (b.salePrice || b.price) - (a.salePrice || a.price)
+            if (sortBy === 'best-selling') return (b.sold || 0) - (a.sold || 0)
+            if (sortBy === 'popular') return (b.sold || 0) - (a.sold || 0)
+            if (sortBy === 'rating') return (b.rating || 4) - (a.rating || 4)
+            // newest (default)
             return new Date(b.createdAt) - new Date(a.createdAt)
         })
 
@@ -252,23 +256,23 @@ const ProductsPage = () => {
                                                 <span>{t(`product.categories_list.${categoryKeyMap[cat.slug] || 'home'}`) || cat.name}</span>
                                                 {cat.slug !== '' ? (isOPen ? <IconChevronDown className="!w-4 !h-4" /> : <IconChevronRight className="!w-4 !h-4" />) : null}
                                             </button>
-                                                    {cat.sub && (
-                                                        <SubMenu isOpen={isOPen}>
-                                                            {cat.sub.map(subCat => {
-                                                                const isActiveSub = sub === subCat.slug;
-                                                                return (
-                                                                    <li key={subCat.slug}>
-                                                                        <button
-                                                                            onClick={() => setSearchParams({ category: cat.slug, sub: subCat.slug })}
-                                                                            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${isActiveSub ? 'bg-green-600 text-white font-medium' : 'text-gray-600 hover:bg-green-50 hover:text-green-700'}`}
-                                                                        >
-                                                                            {t(`product.subcategories.${subCat.slug}`) || subCat.name}
-                                                                        </button>
-                                                                    </li>
-                                                                )
-                                                            })}
-                                                        </SubMenu>
-                                                    )}
+                                            {cat.sub && (
+                                                <SubMenu isOpen={isOPen}>
+                                                    {cat.sub.map(subCat => {
+                                                        const isActiveSub = sub === subCat.slug;
+                                                        return (
+                                                            <li key={subCat.slug}>
+                                                                <button
+                                                                    onClick={() => setSearchParams({ category: cat.slug, sub: subCat.slug })}
+                                                                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${isActiveSub ? 'bg-green-600 text-white font-medium' : 'text-gray-600 hover:bg-green-50 hover:text-green-700'}`}
+                                                                >
+                                                                    {t(`product.subcategories.${subCat.slug}`) || subCat.name}
+                                                                </button>
+                                                            </li>
+                                                        )
+                                                    })}
+                                                </SubMenu>
+                                            )}
                                         </li>
                                     )
                                 })}
@@ -284,14 +288,14 @@ const ProductsPage = () => {
                                 <input
                                     type="range"
                                     min={0}
-                                    max={10000}
+                                    max={50}
                                     value={priceRange[1]}
                                     onChange={e => setPriceRange([0, Number(e.target.value)])}
                                     className="w-full accent-green-600"
                                 />
                                 <div className="flex justify-between text-xs text-green-700 font-medium">
                                     <span>$0</span>
-                                    <span>{t('product.up_to', {price: `$${priceRange[1]}`})}</span>
+                                    <span>{t('product.up_to', { price: `${priceRange[1]}` })}</span>
                                 </div>
                             </div>
                         </div>
@@ -302,11 +306,14 @@ const ProductsPage = () => {
                                 onChange={e => setSortBy(e.target.value)}
                                 className="appearance-none w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-green-500"
                             >
-                                <option value="newest">{t('product.sort_newest')}</option>
-                                <option value="price-asc">{t('product.sort_price_asc')}</option>
-                                <option value="price-desc">{t('product.sort_price_desc')}</option>
+                                <option value="newest">Mới nhất</option>
+                                <option value="popular">Phổ biến nhất</option>
+                                <option value="best-selling">Bán chạy nhất</option>
+                                <option value="rating">Đánh giá cao</option>
+                                <option value="price-asc">Giá tăng dần</option>
+                                <option value="price-desc">Giá giảm dần</option>
                             </select>
-                                <div className="absolute z-50 top-11 right-4 flex items-center pointer-events-none text-gray-500">
+                            <div className="absolute z-50 top-11 right-4 flex items-center pointer-events-none text-gray-500">
                                 <IconChevronDown className='!w-4 !h-4' />
                             </div>
                         </div>
@@ -325,8 +332,8 @@ const ProductsPage = () => {
                             >
                                 <IconFilter className="!w-4 !h-4" /> {t('product.filter')}
                             </button>
-                            
-                            
+
+
                             <div className="flex border border-gray-300 rounded-lg overflow-hidden">
                                 {[2, 3, 4].map(c => (
                                     <button
@@ -355,7 +362,7 @@ const ProductsPage = () => {
                             <p className="text-gray-300 text-sm">{t('product.try_filters')}</p>
                         </div>
                     )}
-                    
+
 
                     {totalPages > 1 && (
                         <div className="flex justify-center items-center gap-2 mt-10">
@@ -388,7 +395,7 @@ const ProductsPage = () => {
             </div>
 
             {/* Mobile Sidebar (giữ nguyên logic của bạn) */}
-                    {sidebarOpen && (
+            {sidebarOpen && (
                 <div className="fixed inset-0 z-50 lg:hidden">
                     <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)}></div>
                     <div className="absolute right-0 top-0 h-full w-72 bg-white p-6 overflow-y-auto">
