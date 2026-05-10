@@ -1,45 +1,53 @@
-
-
+const { sendOrderConfirmEmail } = require('../utils/sendMail')
+const User = require('../models/User');
 const Order = require('../models/Order')
 const Product = require('../models/Product')
 
 const createOrder = async (req, res) => {
-    try {
-        const { items, shippingAddress, paymentMethod } = req.body
+  try {
+    const { items, shippingAddress, paymentMethod, notifyEmail } = req.body
 
-        if (!items || items.length === 0) return res.status(404).json({message: 'Khong co san pham trong gio hang'})
-        
-        let totalPrice = 0
-        const orderitems = []
+    if (!items || items.length === 0)
+      return res.status(400).json({ message: 'Không có sản phẩm trong đơn hàng' })
 
-        for (const item of items){
-            const product = await Product.findById(item.product)
-            if (!product) return res.status(404).json({message: `Khong tim thay san pham ${item.product}`})
+    let totalPrice = 0
+    const orderItems = []
 
-            orderitems.push({
-                product: product._id,
-                name: product.name,
-                image: product.image,
-                price: product.salePrice || product.price,
-                quantity: item.quantity
-            })
-
-            totalPrice += (product.salePrice || product.price) * item.quantity
-        }
-
-        const order = await Order.create({
-            user: req.user._id,
-            items: orderitems,
-            shippingAddress,
-            paymentMethod,
-            totalPrice,
-        })
-
-        res.status(201).json(order)
-    } catch (error) {
-        res.status(500).json({message: error.message})
+    for (const item of items) {
+      const product = await Product.findById(item.product)
+      if (!product) return res.status(404).json({ message: `Không tìm thấy sản phẩm` })
+      orderItems.push({
+        product: product._id,
+        name: product.name,
+        image: product.image,
+        price: product.salePrice || product.price,
+        quantity: item.quantity,
+      })
+      totalPrice += (product.salePrice || product.price) * item.quantity
     }
+
+    const order = await Order.create({
+      user: req.user._id,
+      items: orderItems,
+      shippingAddress,
+      paymentMethod,
+      totalPrice,
+    })
+
+    try {
+      const user = await User.findById(req.user._id)
+      const emailTo = notifyEmail || user.email
+      await sendOrderConfirmEmail({ to: emailTo, order })
+    } catch (emailErr) {
+      console.log('Email error (non-critical):', emailErr.message)
+    }
+
+    res.status(201).json(order)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
 }
+
 
 const getMyOrders = async (req, res) => {
     try {

@@ -1,5 +1,4 @@
-
-
+const { sendOrderStatusEmail } = require('../utils/sendMail')
 const User = require('../models/User')
 const Order = require('../models/Order')
 const Product = require('../models/Product')
@@ -44,18 +43,34 @@ const getAllOrders = async (req, res) => {
 }
 
 const updateOrderStatus = async (req, res) => {
+  try {
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { orderStatus: req.body.orderStatus },
+      { returnDocument: true }
+    ).populate('user', 'email name')
+
+    if (!order) return res.status(404).json({ message: 'Không tìm thấy đơn hàng' })
+
     try {
-        const orders = await Order.findByIdAndUpdate(
-            req.params.id,
-            { orderStatus: req.body.orderStatus },
-            { returnDocument: 'after' }
-        ) 
-        if (!orders) return res.status(404).json({massage: 'Khong tim thay trong don hang'})
-        res.json(orders)
-    } catch (error) {
-        res.status(500).json({message: error.message})
+      const emailTo = order.user?.email
+      if (emailTo) {
+        await sendOrderStatusEmail({
+          to: emailTo,
+          order,
+          newStatus: req.body.orderStatus
+        })
+      }
+    } catch (emailErr) {
+      console.log('Email error (non-critical):', emailErr.message)
     }
+
+    res.json(order)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
 }
+
 
 const getDashboardStatus = async (req, res) => {
     try { 
