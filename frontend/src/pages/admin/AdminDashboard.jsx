@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom'
 import { IconClipBoardList, IconUser, IconBox, IconDollarSign, IconArrowRight } from "../../components/icons"
 import StatCard from '../../components/admin/StatCard'
 import axios from "axios"
+import { useLang } from '../../context/LangContext'
 
 const API = import.meta.env.VITE_API_URL
 
 const AdminDashboard = () => {
+    const { t } = useLang()
     const { userInfo } = useSelector(state => state.auth)
     const [stats, setStats] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -65,13 +67,13 @@ const AdminDashboard = () => {
     return (
         <div className="p-8">
             <div className="mb-8 text-left">
-                <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
-                <p className="text-gray-500 text-sm mt-1">Welcome back, {userInfo?.name}!</p>
+                <h1 className="text-2xl font-bold text-gray-800">{t('admin.dashboard.title')}</h1>
+                <p className="text-gray-500 text-sm mt-1">{t('admin.dashboard.welcome', { name: userInfo?.name} )}</p>
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
                 <div className="flex flex-wrap items-center gap-4">
-                    <label className="text-sm font-medium text-gray-700">Filter by Date Range:</label>
+                <label className="text-sm font-medium text-gray-700">{t('admin.filter')}</label>
                     <div className="flex items-center gap-2">
                         <input
                             type="date"
@@ -79,7 +81,7 @@ const AdminDashboard = () => {
                             onChange={e => setStartDate(e.target.value)}
                             className="px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-green-500"
                         />
-                        <span className="text-gray-500">to</span>
+                        <span className="text-gray-500">{t('admin.to')}</span>
                         <input
                             type="date"
                             value={endDate}
@@ -110,21 +112,21 @@ const AdminDashboard = () => {
                 </div>
             ) : (
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 text-left">
-                    <StatCard icon={<IconUser className='!w-5 !h-5 text-white' />} label={'Total Users'} value={stats?.totalUsers || 0} color={'bg-blue-500'} />
-                    <StatCard icon={<IconClipBoardList className='!w-5 !h-5 text-white' />} label={'Total Orders'} value={stats?.totalOrders || 0} color={'bg-purple-500'} />
-                    <StatCard icon={<IconBox className='!w-5 !h-5 text-white' />} label={'Products'} value={stats?.totalProducts || 0} color={'bg-green-500'} />
-                    <StatCard icon={<IconDollarSign className='!w-5 !h-5 text-white' />} label={'Total Revenue'} value={`$${(stats?.totalRevenue || 0).toLocaleString('en-US')}`} color={'bg-orange-500'} />
+                    <StatCard icon={<IconUser className='!w-5 !h-5 text-white' />} label={t('admin.stats.users')} value={stats?.totalUsers || 0} color={'bg-blue-500'} />
+                    <StatCard icon={<IconClipBoardList className='!w-5 !h-5 text-white' />} label={t('admin.stats.orders')} value={stats?.totalOrders || 0} color={'bg-purple-500'} />
+                    <StatCard icon={<IconBox className='!w-5 !h-5 text-white' />} label={t('admin.stats.products')} value={stats?.totalProducts || 0} color={'bg-green-500'} />
+                    <StatCard icon={<IconDollarSign className='!w-5 !h-5 text-white' />} label={t('admin.stats.revenue')} value={`$${(stats?.totalRevenue || 0).toLocaleString('en-US')}`} color={'bg-orange-500'} />
                 </div>
             )}
 
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
                 <div className="flex items-center justify-between mb-5">
-                    <h2 className="text-lg font-bold text-gray-800">Recent Orders</h2>
+                    <h2 className="text-lg font-bold text-gray-800">{t('admin.recent_orders.title')}</h2>
                     <Link
                         to={'/admin/orders'}
                         className="flex items-center gap-1 text-sm text-green-600 hover:underline"
                     >
-                        <span>View All Orders</span>
+                        <span>{t('admin.recent_orders.view_all')}</span>
                         <IconArrowRight className="!w-3 !h-3" />
                     </Link>
                 </div>
@@ -136,17 +138,17 @@ const AdminDashboard = () => {
                         ))}
                     </div>
                 ) : recentOrders.length === 0 ? (
-                    <p className="text-center text-gray-400 py-8">No orders found for this period.</p>
+                    <p className="text-center text-gray-400 py-8">{t('admin.table.none')}</p>
                 ) : (
                     <div className="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
                         <table className="w-full text-sm table-fixed">
                             <thead className="bg-gray-100">
                                 <tr className="text-center">
-                                    <th className="px-4 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wide">Order ID</th>
-                                    <th className="px-4 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wide">Customer</th>
-                                    <th className="px-4 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wide ">Total Amount</th>
-                                    <th className="px-4 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wide">Status</th>
-                                    <th className="px-4 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wide">Date</th>
+                                    <th className="px-4 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wide">{t('admin.table.order_id')}</th>
+                                    <th className="px-4 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wide">{t('admin.table.customer')}</th>
+                                    <th className="px-4 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wide ">{t('admin.table.total')}</th>
+                                    <th className="px-4 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wide">{t('admin.table.status')}</th>
+                                    <th className="px-4 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wide">{t('admin.table.date')}</th>
                                 </tr>
                             </thead>
                             <tbody>

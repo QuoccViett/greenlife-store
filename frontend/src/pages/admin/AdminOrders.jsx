@@ -18,7 +18,7 @@ const AdminOrders = () => {
     const { userInfo } = useSelector(state => state.auth)
     const { t } = useLang()
     const config = { headers: { Authorization: `Bearer ${userInfo?.token}` } }
-    
+
     const [orders, setOrders] = useState([])
     const [search, setSearch] = useState('')
     const [filterStatus, setFilterStatus] = useState('')
@@ -52,12 +52,12 @@ const AdminOrders = () => {
     const filteredOrders = useMemo(() => {
         return orders.filter(o => {
             const searchTerm = search.toLowerCase()
-            const matchSearch = 
-                o._id?.toLowerCase().includes(searchTerm) || 
+            const matchSearch =
+                o._id?.toLowerCase().includes(searchTerm) ||
                 o.user?.name?.toLowerCase().includes(searchTerm)
-            
+
             const matchStatus = filterStatus ? o.orderStatus === filterStatus : true
-            
+
             return matchSearch && matchStatus
         })
     }, [orders, search, filterStatus])
@@ -70,7 +70,7 @@ const AdminOrders = () => {
         <div className="p-8">
             <div className="mb-8 text-left">
                 <h1 className="text-2xl font-bold text-gray-800">{t('admin.orders.title')}</h1>
-                <p className="text-gray-500 text-sm mt-1">{t('admin.orders.total', {count: orders?.length})}</p>
+                <p className="text-gray-500 text-sm mt-1">{t('admin.orders.total', { count: orders?.length })}</p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -86,7 +86,7 @@ const AdminOrders = () => {
                         className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
                     />
                 </div>
-                
+
                 <div className="relative">
                     <select
                         value={filterStatus}
@@ -118,32 +118,45 @@ const AdminOrders = () => {
                         return (
                             <div key={order._id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                                 <div
-                                    className="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition"
+                                    className="flex items-center p-5 cursor-pointer hover:bg-gray-50 transition gap-4"
                                     onClick={() => setExpandedOrder(isExpanded ? null : order._id)}
                                 >
-                                    <div className="grid grid-cols-4 gap-8 text-left w-full">
+                                    {/* Chia làm 5 cột đều nhau */}
+                                    <div className="grid grid-cols-5 gap-4 text-left flex-1 items-center">
+                                        {/* Cột 1: ID */}
                                         <div>
                                             <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">{t('admin.table.order_id')}</p>
                                             <p className="font-mono text-sm font-medium text-gray-700">#{order._id.slice(-8).toUpperCase()}</p>
                                         </div>
+
+                                        {/* Cột 2: Khách hàng */}
                                         <div>
                                             <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">{t('admin.table.customer')}</p>
-                                            <p className="text-sm font-medium text-gray-700">{order.user?.name || 'Guest'}</p>
+                                            <p className="text-sm font-medium text-gray-700 truncate">{order.user?.name || 'Guest'}</p>
                                         </div>
+
+                                        {/* Cột 3: Tổng tiền */}
                                         <div>
                                             <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">{t('admin.table.total')}</p>
                                             <p className="text-sm font-bold text-green-600">${order.totalPrice.toLocaleString('en-US')}</p>
                                         </div>
+
+                                        {/* Cột 4: Ngày tháng */}
                                         <div>
                                             <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">{t('admin.table.date')}</p>
                                             <p className="text-sm text-gray-600">{new Date(order.createdAt).toLocaleDateString('en-US')}</p>
                                         </div>
+
+                                        {/* Cột 5: Trạng thái (Nằm trong Grid để cố định vị trí) */}
+                                        <div className="flex justify-end">
+                                            <span className={`text-[10px] uppercase font-bold px-3 py-1 rounded-full whitespace-nowrap ${status.color}`}>
+                                                {status.label}
+                                            </span>
+                                        </div>
                                     </div>
-                                    
-                                    <div className="flex items-center gap-3">
-                                        <span className={`text-[10px] uppercase font-bold px-3 py-1 rounded-full ${status.color}`}>
-                                            {status.label}
-                                        </span>
+
+                                    {/* Icon mũi tên tách biệt hoàn toàn ở cuối */}
+                                    <div className="flex-shrink-0">
                                         <IconChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                                     </div>
                                 </div>
@@ -163,7 +176,7 @@ const AdminOrders = () => {
                                                         />
                                                         <div className="flex-1 text-left">
                                                             <p className="text-sm font-semibold text-gray-800">{item.name}</p>
-                                                            <p className="text-xs text-gray-500">{t('admin.orders.item_qty', {qty: item.quantity, price: item.price})}</p>
+                                                            <p className="text-xs text-gray-500">{t('admin.orders.item_qty', { qty: item.quantity, price: item.price })}</p>
                                                         </div>
                                                     </div>
                                                 ))}

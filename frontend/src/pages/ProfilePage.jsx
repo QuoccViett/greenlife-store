@@ -126,7 +126,7 @@ const ProfilePage = () => {
                     <div className='lg:col-span-3'>
                         {tab === 'profile' && (
                             <div className='bg-white rounded-2xl border border-gray-100 p-8 shadow-sm'>
-                                <div className="mb-8">
+                                <div className="mb-8 text-left">
                                     <h2 className='text-xl font-bold text-gray-800'>{t('profile.title')}</h2>
                                     <p className='text-sm text-gray-400 mt-1'>{t('profile.description')}</p>
                                 </div>
@@ -147,7 +147,7 @@ const ProfilePage = () => {
                                 <form className='space-y-6' onSubmit={handleUpdate}>
                                     <div className="grid md:grid-cols-2 gap-6">
                                         <div className='space-y-2 text-left'>
-                                            <label className='text-sm font-semibold text-gray-700 ml-1'>Email Address</label>
+                                            <label className='text-sm font-semibold text-gray-700 ml-1'>{t('checkout.email')}</label>
                                             <div className='relative'>
                                                 <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
                                                     <IconMail className='!w-4 !h-4 text-gray-400' />
@@ -214,7 +214,7 @@ const ProfilePage = () => {
                                         </div>
                                     </div>
 
-                                    <div className="pt-4 border-t border-gray-50 flex justify-center">
+                                    <div className="pt-4 border-t border-gray-50 flex justify-start">
                                         <button
                                             type='submit'
                                             disabled={loading}
@@ -294,12 +294,12 @@ const OrdersTab = ({ userInfo }) => {
                     <div key={order._id} className='bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow'>
                         <div className='flex flex-wrap items-center justify-between gap-4 mb-6'>
                             <div>
-                                <p className='text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1'>Order ID</p>
+                                <p className='text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1'>{t('profile.orders.order_id')}</p>
                                 <p className='text-sm font-mono font-bold text-gray-700'>#{order._id.slice(-8).toUpperCase()}</p>
                             </div>
                             <div className='flex items-center gap-4 text-right'>
                                 <div className="hidden sm:block">
-                                    <p className='text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1'>Date</p>
+                                    <p className='text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1'>{t('profile.orders.date')}</p>
                                     <p className='text-xs text-gray-600 font-medium'>
                                         {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                     </p>
@@ -320,7 +320,7 @@ const OrdersTab = ({ userInfo }) => {
                                     />
                                     <div className='flex-1 min-w-0'>
                                         <p className='text-sm font-semibold text-gray-800 line-clamp-1'>{item.name}</p>
-                                        <p className='text-xs text-gray-400 font-medium'>Qty: {item.quantity} • ${item.price.toLocaleString('en-US')}</p>
+                                        <p className='text-xs text-gray-400 font-medium'>{t('profile.orders.quantity')} {item.quantity} • ${item.price.toLocaleString('en-US')}</p>
                                     </div>
                                 </div>
                             ))}
@@ -328,16 +328,16 @@ const OrdersTab = ({ userInfo }) => {
 
                         <div className='flex items-center justify-between border-t border-gray-50 pt-4'>
                             <div className='flex items-center gap-2'>
-                                <span className='text-[10px] font-bold text-gray-400 uppercase tracking-widest'>Payment:</span>
+                                <span className='text-[10px] font-bold text-gray-400 uppercase tracking-widest'>{t('profile.orders.payment')}</span>
                                 <span className='text-xs font-bold text-gray-600'>
-                                    {order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Credit Card'}
+                                    {order.paymentMethod === 'cod' ? t('profile.payment.cod') : t('profile.payment.non_cod')}
                                     <span className={`ml-2 px-2 py-0.5 rounded text-[9px] ${order.isPaid ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-                                        {order.isPaid ? 'PAID' : 'PENDING'}
+                                        {order.isPaid ? t('profile.paid') : t('profile.pending')}
                                     </span>
                                 </span>
                             </div>
                             <div className='text-right'>
-                                <span className='text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-0.5'>Total Amount</span>
+                                <span className='text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-0.5'>{t('profile.orders.total')}</span>
                                 <p className='font-black text-green-700 text-lg'>${order.totalPrice.toLocaleString('en-US')}</p>
                             </div>
                         </div>
