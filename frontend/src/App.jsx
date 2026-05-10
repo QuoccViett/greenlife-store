@@ -20,6 +20,7 @@ import AdminUsers from './pages/admin/AdminUsers'
 import LearnPage from './pages/LearnPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
+import ScrollToTop from './components/ScrollToTop'
 
 
 const MainLayout = ({ children }) => (
@@ -47,6 +48,7 @@ function App() {
   return (
     <div className='min-h-screen flex flex-col'>
       <div className='flex-1'>
+        <ScrollToTop />
         <Routes>
 
           <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />

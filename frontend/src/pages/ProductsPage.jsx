@@ -2,6 +2,7 @@ import { useSearchParams } from "react-router-dom"
 import { Link } from 'react-router-dom'
 import { IconFilter, IconSliders, IconArrowRight, IconTag, IconTruck, IconRecycle, IconRefresh, IconShield, IconChevronDown, IconChevronRight } from '../components/icons'
 import { useEffect, useState } from "react"
+import { useLang } from '../context/LangContext'
 import ProductCard from "../components/ProductCard"
 import SkeletonCard from "../components/SkeletonCard"
 import axios from "axios"
@@ -118,6 +119,7 @@ const benefits = [
 const ITEMS_PER_PAGE = 12
 
 const ProductsPage = () => {
+    const { t } = useLang()
     const [searchParams, setSearchParams] = useSearchParams()
     const [priceRange, setPriceRange] = useState([0, 10000])
     const [sortBy, setSortBy] = useState('newest')
@@ -132,6 +134,9 @@ const ProductsPage = () => {
     const search = searchParams.get('search') || ''
     const sub = searchParams.get('sub') || ''
     const banner = categoryBanners[category] || categoryBanners['']
+    const bannerKey = category || 'default'
+    const bannerTitle = t(`product.banners.${bannerKey}.title`)
+    const bannerDesc = t(`product.banners.${bannerKey}.desc`)
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -170,21 +175,37 @@ const ProductsPage = () => {
         4: 'grid-cols-4 sm:grid-cols-3 md:grid-cols-4',
     }
 
+    const categoryKeyMap = {
+        'eco-home-living': 'home',
+        'personal-care': 'personal',
+        'reusable-bags': 'bags',
+        'zero-waste': 'zerowaste',
+        'daily-essentials': 'bottles',
+        '': 'home'
+    }
+
+    const benefitsLocal = [
+        { icon: IconTruck, title: t('benefits.free_shipping'), desc: t('benefits.free_shipping_desc') },
+        { icon: IconRecycle, title: t('benefits.sustainable'), desc: t('benefits.sustainable_desc') },
+        { icon: IconShield, title: t('benefits.secure_payment'), desc: t('benefits.secure_payment_desc') },
+        { icon: IconRefresh, title: t('benefits.easy_returns'), desc: t('benefits.easy_returns_desc') },
+    ]
+
     return (
         <div className="min-h-screen bg-white">
             <section className={`w-full bg-gradient-to-br ${banner.bg} text-white py-12`}>
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex items-center gap-2 text-green-300 text-sm mb-2">
-                        <Link to='/' className='hover:text-white transition'>Home</Link>
+                        <Link to='/' className='hover:text-white transition'>{t('nav.home')}</Link>
                         {!sub ? (
                             <>
                                 <span>/</span>
-                                <span className="text-white">{banner.title}</span>
+                                <span className="text-white">{bannerTitle}</span>
                             </>
                         ) : (
                             <>
                                 <span>/</span>
-                                <Link to={`/products?category=${category}`} className='hover:text-white transition'>{banner.title}</Link>
+                                <Link to={`/products?category=${category}`} className='hover:text-white transition'>{bannerTitle}</Link>
                                 <span>/</span>
                                 {categories.map((cat) => (
                                     cat.sub && cat.sub.map(subItem => (
@@ -197,10 +218,10 @@ const ProductsPage = () => {
                         )}
                     </div>
                     <div className="text-center">
-                        <h1 className="text-3xl font-bold mb-2">{banner.title}</h1>
-                        <p className="text-green-200 text-sm text-center !mb-5">{banner.desc}</p>
+                        <h1 className="text-3xl font-bold mb-2">{bannerTitle}</h1>
+                        <p className="text-green-200 text-sm text-center !mb-5">{bannerDesc}</p>
                         <p className="text-green-300 text-sm mt-2">
-                            {products.length} {products.length > 1 ? 'Products' : 'Product'}
+                            {products.length} {products.length > 1 ? t('product.items_count_plural') : t('product.items_count')}
                         </p>
                     </div>
                 </div>
@@ -212,7 +233,7 @@ const ProductsPage = () => {
                         <div>
                             <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                                 <IconFilter className="!w-4 !h-4 text-green-600" />
-                                Categories
+                                {t('product.categories')}
                             </h3>
                             <ul className="space-y-1">
                                 {categories.map(cat => {
@@ -228,26 +249,26 @@ const ProductsPage = () => {
                                                 className={`w-full px-3 py-2 rounded-lg text-sm transition flex items-center justify-between
                                                     ${isActiveCat && sub === '' ? 'bg-green-600 text-white font-medium' : 'text-gray-600 hover:bg-green-50 hover:text-green-700'}`}
                                             >
-                                                <span>{cat.name}</span>
+                                                <span>{t(`product.categories_list.${categoryKeyMap[cat.slug] || 'home'}`) || cat.name}</span>
                                                 {cat.slug !== '' ? (isOPen ? <IconChevronDown className="!w-4 !h-4" /> : <IconChevronRight className="!w-4 !h-4" />) : null}
                                             </button>
-                                            {cat.sub && (
-                                                <SubMenu isOpen={isOPen}>
-                                                    {cat.sub.map(subCat => {
-                                                        const isActiveSub = sub === subCat.slug;
-                                                        return (
-                                                            <li key={subCat.slug}>
-                                                                <button
-                                                                    onClick={() => setSearchParams({ category: cat.slug, sub: subCat.slug })}
-                                                                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${isActiveSub ? 'bg-green-600 text-white font-medium' : 'text-gray-600 hover:bg-green-50 hover:text-green-700'}`}
-                                                                >
-                                                                    {subCat.name}
-                                                                </button>
-                                                            </li>
-                                                        )
-                                                    })}
-                                                </SubMenu>
-                                            )}
+                                                    {cat.sub && (
+                                                        <SubMenu isOpen={isOPen}>
+                                                            {cat.sub.map(subCat => {
+                                                                const isActiveSub = sub === subCat.slug;
+                                                                return (
+                                                                    <li key={subCat.slug}>
+                                                                        <button
+                                                                            onClick={() => setSearchParams({ category: cat.slug, sub: subCat.slug })}
+                                                                            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${isActiveSub ? 'bg-green-600 text-white font-medium' : 'text-gray-600 hover:bg-green-50 hover:text-green-700'}`}
+                                                                        >
+                                                                            {t(`product.subcategories.${subCat.slug}`) || subCat.name}
+                                                                        </button>
+                                                                    </li>
+                                                                )
+                                                            })}
+                                                        </SubMenu>
+                                                    )}
                                         </li>
                                     )
                                 })}
@@ -257,7 +278,7 @@ const ProductsPage = () => {
                         <div>
                             <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                                 <IconSliders className="!w-4 !h-4 text-green-600" />
-                                Price Range
+                                {t('product.price_range')}
                             </h3>
                             <div>
                                 <input
@@ -270,22 +291,22 @@ const ProductsPage = () => {
                                 />
                                 <div className="flex justify-between text-xs text-green-700 font-medium">
                                     <span>$0</span>
-                                    <span>Up to ${priceRange[1]}</span>
+                                    <span>{t('product.up_to', {price: `$${priceRange[1]}`})}</span>
                                 </div>
                             </div>
                         </div>
                         <div className="relative">
-                            <h3 className="font-semibold text-gray-800 mb-3">Sort By</h3>
+                            <h3 className="font-semibold text-gray-800 mb-3">{t('product.sort_by')}</h3>
                             <select
                                 value={sortBy}
                                 onChange={e => setSortBy(e.target.value)}
                                 className="appearance-none w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-green-500"
                             >
-                                <option value="newest">Newest Arrivals</option>
-                                <option value="price-asc">Price: Low to High</option>
-                                <option value="price-desc">Price: High to Low</option>
+                                <option value="newest">{t('product.sort_newest')}</option>
+                                <option value="price-asc">{t('product.sort_price_asc')}</option>
+                                <option value="price-desc">{t('product.sort_price_desc')}</option>
                             </select>
-                            <div className='absolute z-50 top-11 right-4 flex items-center pointer-events-none text-gray-500'>
+                                <div className="absolute z-50 top-11 right-4 flex items-center pointer-events-none text-gray-500">
                                 <IconChevronDown className='!w-4 !h-4' />
                             </div>
                         </div>
@@ -295,15 +316,17 @@ const ProductsPage = () => {
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-6 gap-4">
                         <p className="text-sm text-gray-500">
-                            Showing <span className="font-medium text-gray-800">{paginated.length}</span> / <span className="font-medium text-gray-800">{filtered.length}</span> Results
+                            {t('product.showing')} <span className="font-medium text-gray-800">{paginated.length}</span> / <span className="font-medium text-gray-800">{filtered.length}</span> {t('product.results')}
                         </p>
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setSidebarOpen(true)}
                                 className="lg:hidden flex items-center gap-1.5 border border-gray-300 px-3 py-1.5 rounded-lg text-sm text-gray-700 hover:bg-green-50 transition"
                             >
-                                <IconFilter className="!w-4 !h-4" /> Filter
+                                <IconFilter className="!w-4 !h-4" /> {t('product.filter')}
                             </button>
+                            
+                            
                             <div className="flex border border-gray-300 rounded-lg overflow-hidden">
                                 {[2, 3, 4].map(c => (
                                     <button
@@ -328,10 +351,11 @@ const ProductsPage = () => {
                         </div>
                     ) : (
                         <div className="text-center py-20">
-                            <p className="text-gray-400 text-lg mb-2">No products found.</p>
-                            <p className="text-gray-300 text-sm">Try adjusting your filters or search keywords.</p>
+                            <p className="text-gray-400 text-lg mb-2">{t('product.not_found')}</p>
+                            <p className="text-gray-300 text-sm">{t('product.try_filters')}</p>
                         </div>
                     )}
+                    
 
                     {totalPages > 1 && (
                         <div className="flex justify-center items-center gap-2 mt-10">
@@ -340,7 +364,7 @@ const ProductsPage = () => {
                                 disabled={page === 1}
                                 className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:border-green-500 disabled:opacity-40 disabled:cursor-not-allowed transition"
                             >
-                                Prev
+                                {t('pagination.prev')}
                             </button>
                             {[...Array(totalPages)].map((_, i) => (
                                 <button
@@ -356,7 +380,7 @@ const ProductsPage = () => {
                                 disabled={page === totalPages}
                                 className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:border-green-500 disabled:opacity-40 disabled:cursor-not-allowed transition"
                             >
-                                Next
+                                {t('pagination.next')}
                             </button>
                         </div>
                     )}
@@ -364,17 +388,17 @@ const ProductsPage = () => {
             </div>
 
             {/* Mobile Sidebar (giữ nguyên logic của bạn) */}
-            {sidebarOpen && (
+                    {sidebarOpen && (
                 <div className="fixed inset-0 z-50 lg:hidden">
                     <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)}></div>
                     <div className="absolute right-0 top-0 h-full w-72 bg-white p-6 overflow-y-auto">
                         <div className="flex items-center justify-between mb-6">
-                            <h3 className="font-semibold text-gray-800">Filter</h3>
-                            <button onClick={() => setSidebarOpen(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+                            <h3 className="font-semibold text-gray-800">{t('product.filter')}</h3>
+                            <button onClick={() => setSidebarOpen(false)} className="text-gray-400 hover:text-gray-600">{t('ui.close')}</button>
                         </div>
                         <div className="space-y-6">
                             <div>
-                                <h4 className="font-medium text-gray-700 mb-3">Category</h4>
+                                <h4 className="font-medium text-gray-700 mb-3">{t('product.categories')}</h4>
                                 <ul className="space-y-1">
                                     {categories.map(cat => (
                                         <li key={cat.slug}>
@@ -382,7 +406,7 @@ const ProductsPage = () => {
                                                 onClick={() => { setSearchParams(cat.slug ? { category: cat.slug } : {}); setSidebarOpen(false) }}
                                                 className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${category === cat.slug ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-green-50'}`}
                                             >
-                                                {cat.name}
+                                                {t(`product.categories_list.${categoryKeyMap[cat.slug] || 'home'}`) || cat.name}
                                             </button>
                                         </li>
                                     ))}
@@ -396,7 +420,7 @@ const ProductsPage = () => {
 
             <section className="bg-green-50 py-8 border-t border-green-100">
                 <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {benefits.map((item, i) => (
+                    {benefitsLocal.map((item, i) => (
                         <div key={i} className="flex items-center gap-3 justify-center">
                             <item.icon className="!w-5 !h-5 text-green-600" />
                             <div>

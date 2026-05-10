@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import { IconArrowRight, IconCart, IconStar, IconTag } from "../components/icons"
 import { addToCart } from '../store/cartSlice'
 import { useDispatch } from "react-redux"
+import { useLang } from '../context/LangContext'
 
 const API = import.meta.env.VITE_API_URL
 
@@ -11,6 +12,7 @@ const ProductDetailPage = () => {
 
     const { id } = useParams()
     const dispatch = useDispatch()
+    const { t } = useLang()
     const navigate = useNavigate()
 
     const [product, setProduct] = useState(null)
@@ -68,9 +70,9 @@ const ProductDetailPage = () => {
 
     if (!product) return (
         <div className="text-center py-20">
-            <p className="text-gray-400 text-lg font-medium">Product Not Found</p>
+            <p className="text-gray-400 text-lg font-medium">{t('product.not_found')}</p>
             <Link to='/products' className='text-green-600 text-sm mt-3 inline-block hover:underline font-medium'>
-                Return to Shop
+                {t('product.return_shop')}
             </Link>
         </div>
     )
@@ -141,7 +143,7 @@ const ProductDetailPage = () => {
                                     <IconStar key={i} className={`!w-4 !h-4 ${i < 4 ? 'text-yellow-400' : 'text-gray-300'}`} />
                                 ))}
                             </div>
-                            <span>(4.0) • 12 Reviews</span> {/* Sửa Evaluate thành Reviews */}
+                            <span>(4.0) • 12 {t('product.reviews')}</span> {/* Sửa Evaluate thành Reviews */}
                         </div>
 
                         <div className="flex justify-start items-center gap-3 mt-4">
@@ -166,13 +168,13 @@ const ProductDetailPage = () => {
 
                         <div className="py-4 border-y border-gray-100">
                             <p className="text-sm md:text-base text-gray-600 leading-relaxed italic">
-                                {product.description || 'This product is thoughtfully crafted from sustainable materials, ensuring a minimal environmental footprint while delivering premium quality.'}
+                                {product.description || t('product.description')}
                             </p>
                         </div>
 
                         <div className="flex flex-col gap-2 pt-2">
                              <div className="flex items-center gap-3">
-                                <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Quantity:</span>
+                                <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{t('product.quantity')}</span>
                                 <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
                                     <button 
                                         onClick={() => setQuantity(q => Math.max(1, q - 1))}
@@ -192,7 +194,7 @@ const ProductDetailPage = () => {
                                 </div>
                                 {product.stock < 10 && product.stock > 0 && (
                                     <span className="text-xs text-orange-600 font-medium italic">
-                                        Only {product.stock} left in stock!
+                                        {t('product.only_left', {count: product.stock})}
                                     </span>
                                 )}
                             </div>
@@ -207,7 +209,7 @@ const ProductDetailPage = () => {
                                             disabled:opacity-50 disabled:cursor-not-allowed shadow-sm`}
                             >
                                 <IconCart className="!w-4 !h-4" />
-                                {added ? 'Item Added!' : 'Add to Cart'}
+                                {added ? t('product.added') : t('product.add_to_cart')}
                             </button>
 
                             <button
@@ -215,7 +217,7 @@ const ProductDetailPage = () => {
                                 disabled={product.stock === 0}
                                 className="flex items-center justify-center gap-2 py-3 px-8 rounded-full text-sm font-bold bg-green-600 text-white hover:bg-green-700 transition w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-green-100"
                             >
-                                {product.stock === 0 ? 'Out of Stock' : 'Buy It Now'}
+                                {product.stock === 0 ? t('product.out_of_stock') : t('product.buy_now')}
                                 <IconArrowRight className="!w-4 !h-4" />
                             </button>
                         </div>
@@ -226,9 +228,9 @@ const ProductDetailPage = () => {
             <section className="bg-white py-16 border-t border-gray-100 mt-10">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-bold text-gray-800 tracking-tight">You May Also Like</h2>
+                        <h2 className="text-2xl font-bold text-gray-800 tracking-tight">{t('product.related')}</h2>
                         <Link to='/products' className="flex items-center gap-1 text-sm text-green-600 font-semibold hover:gap-2 transition-all">
-                            <span>Browse all products</span>
+                            <span>{t('home.view_all')}</span>
                             <IconArrowRight className="!w-4 !h-4" />
                         </Link>
                     </div>

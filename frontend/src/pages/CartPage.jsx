@@ -2,9 +2,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { IconArrowLeft, IconArrowRight, IconCart, IconClose, IconRecycle, IconShield, IconTruck } from '../components/icons'
 import { removeFromCart, updateQuantity, clearCart } from '../store/cartSlice'
+import { useLang } from '../context/LangContext'
 
 const CartPage = () => {
     const dispatch = useDispatch()
+    const { t } = useLang()
     const navigate = useNavigate()
     const { items } = useSelector(state => state.cart)
     const { userInfo } = useSelector(state => state.auth)
@@ -26,13 +28,13 @@ const CartPage = () => {
             <div className='w-20 h-20 bg-green-100 rounded-full flex items-center justify-center'>
                 <IconCart className='!w-10 !h-10 text-green-600'/>
             </div>
-            <h2 className='text-xl font-bold text-gray-800'>Your Cart Is Empty</h2>
-            <p className='text-gray-500'>You haven't added any items to your cart yet.</p>
+            <h2 className='text-xl font-bold text-gray-800'>{t('cart.empty')}</h2>
+            <p className='text-gray-500'>{t('cart.empty_sub')}</p>
             <Link
                 to={'/products'}
                 className='flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-green-700 transition'
             >
-                <span>Continue Shopping</span>
+                <span>{t('cart.continue_shopping')}</span>
                 <IconArrowRight className='!w-4 !h-4'/>
             </Link>
         </div>
@@ -43,10 +45,10 @@ const CartPage = () => {
             <div className='bg-white border-b border-gray-200'>
                 <div className='max-w-7xl mx-auto px-4 py-6'>
                     <h1 className='text-2xl font-bold text-gray-800'>
-                        Shopping Cart
+                        {t('cart.title')}
                     </h1>
                     <p className='text-gray-500 text-sm mt-1'>
-                        {items.length} {items.length === 1 ? 'item' : 'items'} in your cart
+                        {items.length} {items.length === 1 ? t('cart.item_count') : t('cart.items_count')}
                     </p>
                 </div>
             </div>
@@ -126,13 +128,13 @@ const CartPage = () => {
                         <div className='flex items-center justify-between pt-2'>
                             <Link to='/products' className='text-sm text-green-600 hover:underline flex items-center gap-1 font-medium'>
                                 <IconArrowLeft className='!w-4 !h-4 me-1' />
-                                Continue Shopping
+                                {t('cart.continue_shopping')}
                             </Link>
                             <button 
                                 className='text-sm text-red-500 hover:text-red-700 transition font-medium' 
                                 onClick={() => dispatch(clearCart())}
                             >
-                                Clear All Cart
+                                {t('cart.clear_all')}
                             </button>
                         </div>
                     </div>
@@ -140,12 +142,12 @@ const CartPage = () => {
                     {/* Order Summary Side */}
                     <div className='lg:col-span-1'>
                         <div className='bg-white rounded-2xl border border-gray-100 p-6 sticky top-24'>
-                            <h2 className='text-lg font-bold text-gray-800 mb-5'>Order Summary</h2>
+                            <h2 className='text-lg font-bold text-gray-800 mb-5'>{t('cart.summary')}</h2>
 
                             <div className='space-y-3 text-sm'>
                                 <div className='flex justify-between text-gray-600'>
                                     <span>
-                                        Subtotal ({items.reduce((a, i) => a + i.quantity, 0)} items)
+                                        {t('cart.subtotal')} ({items.reduce((a, i) => a + i.quantity, 0)} {items.reduce((a, i) => a + i.quantity, 0) === 1 ? t('cart.item_count') : t('cart.items_count')})
                                     </span>
                                     <span className='font-medium text-gray-800'>
                                         ${subtotal.toLocaleString('en-US')}
@@ -153,9 +155,9 @@ const CartPage = () => {
                                 </div>
                                 
                                 <div className='flex justify-between text-gray-600'>
-                                    <span>Shipping Fee</span>
+                                    <span>{t('cart.shipping')}</span>
                                     {shipping === 0 ? (
-                                        <span className='text-green-600 font-medium'>Free</span>
+                                        <span className='text-green-600 font-medium'>{t('cart.free')}</span>
                                     ) : (
                                         <span className='font-medium text-gray-800'>${shipping}</span>
                                     )}
@@ -163,12 +165,12 @@ const CartPage = () => {
 
                                 {shipping > 0 && (
                                     <p className='text-xs text-gray-400 !mb-4 text-left italic'>
-                                        Spend ${(20 - subtotal).toFixed(2)} more to qualify for Free Shipping
+                                        {t('cart.spend_for_free', {amount: `$${(20 - subtotal).toFixed(2)}`})}
                                     </p>
                                 )}
 
                                 <div className='border-t border-gray-100 pt-3 flex justify-between font-bold text-base'>
-                                    <span>Total Amount</span>
+                                    <span>{t('cart.total')}</span>
                                     <span className='text-green-700'>${total.toLocaleString('en-US')}</span>
                                 </div>
                             </div>
@@ -177,22 +179,22 @@ const CartPage = () => {
                                 onClick={handleCheckout}
                                 className='w-full mt-6 bg-green-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-green-700 transition flex items-center justify-center gap-2 shadow-lg shadow-green-100'
                             >
-                                <span>Proceed to Checkout</span>
+                                <span>{t('cart.checkout')}</span>
                                 <IconArrowRight className='!w-4 !h-4' />
                             </button>
 
                             <div className='mt-6 space-y-3 border-t border-gray-50 pt-5'>
                                 <div className="flex items-center gap-3 text-xs text-gray-500">
                                     <IconShield className="w-4 h-4 text-green-600 flex-shrink-0" />
-                                    <span>Secure & encrypted payments</span>
+                                    <span>{t('cart.secure_note')}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-xs text-gray-500">
                                     <IconTruck className="w-4 h-4 text-green-600 flex-shrink-0" />
-                                    <span>Free Shipping on orders over $20</span>
+                                    <span>{t('benefits.free_shipping_desc')}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-xs text-gray-500">
                                     <IconRecycle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                                    <span>100% Eco-Friendly packaging</span>
+                                    <span>{t('benefits.sustainable_desc')}</span>
                                 </div>
                             </div>
                         </div>

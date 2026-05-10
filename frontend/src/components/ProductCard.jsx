@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import SkeletonCard from './SkeletonCard'
+import { useLang } from '../context/LangContext'
 
 const ProductCard = ({ product = {} }) => {
+    const { t } = useLang()
     if (!product._id) return null
     return (
         <Link
@@ -17,7 +19,7 @@ const ProductCard = ({ product = {} }) => {
             </div>
             <div className='p-4'>
                 <p className='text-sm text-green-600 font-medium mb-1 uppercase tracking-wide'>
-                    {product.category?.name || 'GreenLife'}
+                    {product.category?.name || t('nav.products')}
                 </p>
                 <h3 className='text-sm font-semibold text-gray-800 line-clamp-2 mb-2'>{product.name}</h3>
                 <div className='flex items-center gap-2'>
