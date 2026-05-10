@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { IconArrowRight, IconChevronDown, IconShield, IconTruck, IconUser } from '../components/icons'
+import { IconArrowRight, IconChevronDown, IconMail, IconShield, IconTruck, IconUser } from '../components/icons'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
@@ -57,6 +57,7 @@ const CheckoutPage = () => {
         phone: userInfo?.phone || '',
         address: userInfo?.address || '',
         city: '',
+        notifyEmail: userInfo?.email || '',
     })
     const [useSavedAddress, setUseSavedAddress] = useState(true)
 
@@ -76,6 +77,7 @@ const CheckoutPage = () => {
                 })),
                 shippingAddress: form,
                 paymentMethod,
+                notifyEmail: form.notifyEmail,
             }
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } }
             const { data: order } = await axios.post(`${API}/orders`, orderData, config)
@@ -214,6 +216,28 @@ const CheckoutPage = () => {
                                             <IconChevronDown className='!w-4 !h-4' />
                                         </div>
                                     </div>
+
+                                    <div className="sm:col-span-2 text-left">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                            Email nhận thông báo đơn hàng
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                                <IconMail className="w-4 h-4 text-gray-400" />
+                                            </div>
+                                            <input
+                                                type="email"
+                                                name="notifyEmail"
+                                                value={form.notifyEmail}
+                                                onChange={handleChange}
+                                                placeholder="Nhập email để nhận thông báo đơn hàng..."
+                                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition"
+                                            />
+                                        </div>
+                                        <p className="text-xs text-gray-400 mt-1">
+                                            Chúng tôi sẽ gửi xác nhận đơn hàng và cập nhật trạng thái về email này
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -241,7 +265,7 @@ const CheckoutPage = () => {
                                                 onChange={e => setPaymentMethod(e.target.value)}
                                                 className='accent-green-600 ms-5'
                                             />
-                                                <div className='text-left'>
+                                            <div className='text-left'>
                                                 <p className='text-sm font-semibold text-gray-800'>{t(`checkout.payment.${method.value}.label`)}</p>
                                                 <p className='text-xs text-gray-500'>{t(`checkout.payment.${method.value}.desc`)}</p>
                                             </div>
