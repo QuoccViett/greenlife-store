@@ -9,22 +9,24 @@ export default {
         logout: 'Logout',
         admin: 'Admin',
         cart: 'Cart',
-        profile: {
-            title: 'Account Settings',
-            description: 'Update your personal details and contact information.',
-            updated_success: 'Profile updated successfully!',
-            update_failed: 'Failed to update profile',
-            email_immutable: '* Email cannot be modified',
-            save_changes: 'Save Changes',
-            saving: 'Saving...'
-        },
-        orders: {
-            none_title: 'No orders yet',
-            none_desc: "Looks like you haven't made any purchases yet.",
-            start_shopping: 'Start Shopping'
-        },
         search_placeholder: 'Search For Products...',
         search: 'Search',
+    },
+    profile: {
+        title: 'Account Settings',
+        description: 'Update your personal details and contact information.',
+        updated_success: 'Profile updated successfully!',
+        update_failed: 'Failed to update profile',
+        email_immutable: '* Email cannot be modified',
+        save_changes: 'Save Changes',
+        saving: 'Saving...',
+        personal_info: 'Personal Information',
+        my_orders: 'My Orders'
+    },
+    orders: {
+        none_title: 'No orders yet',
+        none_desc: "Looks like you haven't made any purchases yet.",
+        start_shopping: 'Start Shopping'
     },
     home: {
         hero_badge: 'Eco-Friendly Selection',

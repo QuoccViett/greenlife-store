@@ -238,6 +238,7 @@ const ProfilePage = () => {
 }
 
 const OrdersTab = ({ userInfo }) => {
+    const { t } = useLang();
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
 

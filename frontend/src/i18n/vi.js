@@ -75,7 +75,9 @@ export default {
         update_failed: 'Cập nhật hồ sơ thất bại',
         email_immutable: '* Email không thể sửa đổi',
         save_changes: 'Lưu thay đổi',
-        saving: 'Đang lưu...'
+        saving: 'Đang lưu...',
+        personal_info: 'Thông tin cá nhân',
+        my_orders: 'Đơn hàng của tôi'
     },
     orders: {
         none_title: 'Chưa có đơn hàng',
