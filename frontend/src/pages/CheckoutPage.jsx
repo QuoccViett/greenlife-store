@@ -11,22 +11,22 @@ const payment = [
     {
         value: 'cod',
         label: 'Cash on Delivery (COD)',
-        desc: 'Pay with cash on delivery',
+        desc: 'Pay with cash upon delivery',
     },
     {
         value: 'vnpay',
         label: 'VNPay',
-        desc: 'Pay with VNPay (sandbox)',
+        desc: 'Pay via VNPay gateway (sandbox)',
     },
     {
         value: 'momo',
         label: 'MoMo',
-        desc: 'Pay with MoMo wallet (sandbox)',
+        desc: 'Pay with MoMo e-wallet (sandbox)',
     },
     {
         value: 'visa',
         label: 'VISA',
-        desc: 'Pay with Visa',
+        desc: 'Pay with Visa/Mastercard',
     },
 ]
 
@@ -50,8 +50,6 @@ const CheckoutPage = () => {
     const shipping = subtotal >= 20 ? 0 : 5
     const total = subtotal + shipping
 
-
-
     const [form, setForm] = useState({
         fullname: userInfo?.name || '',
         phone: userInfo?.phone || '',
@@ -64,12 +62,7 @@ const CheckoutPage = () => {
         e.preventDefault()
         setError('')
         if (!form.fullname || !form.phone || !form.address || !form.city) {
-            setError('Please fill in all the shipping information')
-            return
-        }
-        const phoneRegex = /^[0-9]{10,11}$/
-        if (!phoneRegex.test(form.phone.replace(/\s/g, ''))) {
-            setError('Invalid phone number format (10-11 digits)')
+            setError('Please fill in all required shipping information')
             return
         }
         setLoading(true)
@@ -93,14 +86,14 @@ const CheckoutPage = () => {
                 }, config)
                 window.location.href = data.paymentUrl
             } else {
-                setTimeout(() => {    // delay nhỏ cho Redux update xong
+                // Short delay to ensure Redux state is updated
+                setTimeout(() => {
                     navigate(`/order-success/${order._id}`)
                 }, 50)
             }
 
-
         } catch (err) {
-            setError(err.response?.data?.message || 'Order failed, please try again')
+            setError(err.response?.data?.message || 'Order process failed, please try again')
         } finally {
             setLoading(false)
         }
@@ -108,18 +101,14 @@ const CheckoutPage = () => {
 
     const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value })
 
-
     useEffect(() => {
         if (items.length === 0) {
             navigate('/cart')
         }
     }, [items, navigate])
 
-
     return (
         <div className='min-h-screen bg-gray-50'>
-
-
             <div className='bg-white border-b border-gray-200'>
                 <div className='max-w-7xl mx-auto px-4 py-6'>
                     <div className='flex items-center gap-2 text-sm text-gray-400 mb-2'>
@@ -134,13 +123,11 @@ const CheckoutPage = () => {
             <div className='max-w-7xl mx-auto px-4 py-8'>
                 <form onSubmit={handleSubmit}>
                     <div className='grid lg:grid-cols-3 gap-8'>
-
                         <div className='lg:col-span-2 space-y-6'>
-
                             <div className='bg-white rounded-2xl border border-gray-100 p-6'>
                                 <h2 className='text-lg font-bold text-green-800 mb-5 flex items-center gap-2'>
                                     <IconTruck className='!w-5 !h-5 text-green-600' />
-                                    Shipping information
+                                    Shipping Information
                                 </h2>
 
                                 {error && (
@@ -150,7 +137,6 @@ const CheckoutPage = () => {
                                 )}
 
                                 <div className='grid sm:grid-cols-2 gap-4 mt-4'>
-
                                     <div className='sm:col-span-2'>
                                         <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left ms-3'>Recipient's Full Name</label>
                                         <div className='relative'>
@@ -162,7 +148,7 @@ const CheckoutPage = () => {
                                                 name='fullname'
                                                 value={form.fullname}
                                                 onChange={handleChange}
-                                                placeholder="Enter Recipient's Full Name"
+                                                placeholder="Enter full name"
                                                 required
                                                 className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition'
                                             />
@@ -180,44 +166,15 @@ const CheckoutPage = () => {
                                                 name='phone'
                                                 value={form.phone}
                                                 onChange={handleChange}
-                                                placeholder="Enter Phone Number"
+                                                placeholder="Enter phone number"
                                                 required
                                                 className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition'
                                             />
                                         </div>
                                     </div>
 
-
                                     <div className='sm:col-span-2'>
-                                        <label className='block text-sm font-medium text-gray-700 mb-3 text-left ms-3'>Shipping Address</label>
-                                        
-                                        {userInfo?.address && (
-                                            <div className='flex gap-4 mb-4'>
-                                                <label className={`flex items-center gap-2 border-2 rounded-lg cursor-pointer p-3 flex-1 transition ${useSavedAddress ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}>
-                                                    <input
-                                                        type='radio'
-                                                        name='addressType'
-                                                        value='saved'
-                                                        checked={useSavedAddress}
-                                                        onChange={() => { setUseSavedAddress(true); setForm({ ...form, address: userInfo.address }) }}
-                                                        className='accent-green-600'
-                                                    />
-                                                    <span className='text-sm text-gray-700'>Use saved address</span>
-                                                </label>
-                                                <label className={`flex items-center gap-2 border-2 rounded-lg cursor-pointer p-3 flex-1 transition ${!useSavedAddress ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}>
-                                                    <input
-                                                        type='radio'
-                                                        name='addressType'
-                                                        value='new'
-                                                        checked={!useSavedAddress}
-                                                        onChange={() => { setUseSavedAddress(false); setForm({ ...form, address: '' }) }}
-                                                        className='accent-green-600'
-                                                    />
-                                                    <span className='text-sm text-gray-700'>Enter new address</span>
-                                                </label>
-                                            </div>
-                                        )}
-
+                                        <label className='block text-sm font-medium text-gray-700 mb-1.5 text-left ms-3'>Detailed Address</label>
                                         <div className='relative'>
                                             <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
                                                 <IconUser className='!-4 !h-4 text-gray-400' />
@@ -227,7 +184,7 @@ const CheckoutPage = () => {
                                                 name='address'
                                                 value={form.address}
                                                 onChange={handleChange}
-                                                placeholder="Enter Recipient's Address"
+                                                placeholder="Street name, building, house number..."
                                                 required
                                                 disabled={useSavedAddress && !!userInfo?.address}
                                                 className='w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition disabled:bg-gray-100 disabled:text-gray-500'
@@ -236,7 +193,7 @@ const CheckoutPage = () => {
                                     </div>
 
                                     <div className='text-left relative'>
-                                        <label className='ms-3 text-gray-700 text-sm font-medium'>Country</label>
+                                        <label className='ms-3 text-gray-700 text-sm font-medium'>Country/Region</label>
                                         <select
                                             name='city'
                                             value={form.city}
@@ -244,19 +201,13 @@ const CheckoutPage = () => {
                                             required
                                             className='w-full mt-1.5 px-4 py-3 appearance-none border border-gray-300 rounded-xl outline-none focus:border-gray-500 transition text-gray-700'
                                         >
-                                            <option value="">
-                                                Select Country
-                                            </option>
+                                            <option value="">Select Country</option>
                                             {countries.map(country => (
-                                                <option
-                                                    key={country}
-                                                    value={country}
-                                                >
+                                                <option key={country} value={country}>
                                                     {country}
                                                 </option>
                                             ))}
                                         </select>
-
                                         <div className='absolute inset-y-0 z-50 top-7 right-4 flex items-center pointer-events-none text-gray-500'>
                                             <IconChevronDown className='!w-4 !h-4' />
                                         </div>
@@ -300,7 +251,7 @@ const CheckoutPage = () => {
 
                         <div className='lg:col-span-1'>
                             <div className='bg-white rounded-2xl border border-gray-100 p-6 sticky top-24'>
-                                <h2 className='text-lg font-bold text-gray-800 !mb-5'>Your Order</h2>
+                                <h2 className='text-lg font-bold text-gray-800 !mb-5'>Order Summary</h2>
 
                                 <div className='space-y-3 max-h-64 overflow-y-auto mb-5'>
                                     {items.map(item => (
@@ -312,7 +263,7 @@ const CheckoutPage = () => {
                                             />
                                             <div className='flex-1 min-w-0'>
                                                 <p className='text-xs font-medium text-gray-800 line-clamp-2 text-left'>{item.name}</p>
-                                                <p className='text-xs text-gray-500 !mt-0.5 text-left '>Amount: {item.quantity}</p>
+                                                <p className='text-xs text-gray-500 !mt-0.5 text-left '>Qty: {item.quantity}</p>
                                                 <p className='text-xs font-bold text-green-700 !mt-0.5 text-left'>
                                                     ${((item.salePrice || item.price) * item.quantity).toLocaleString('en-US')}
                                                 </p>
@@ -323,17 +274,13 @@ const CheckoutPage = () => {
 
                                 <div className='space-y-2 text-sm border-t border-gray-100 pt-4'>
                                     <div className='flex justify-between text-gray-600'>
-                                        <span>
-                                            Sutotal
-                                        </span>
-                                        <span>
-                                            ${subtotal.toLocaleString('en-US')}
-                                        </span>
+                                        <span>Subtotal</span>
+                                        <span>${subtotal.toLocaleString('en-US')}</span>
                                     </div>
                                     <div className='flex justify-between text-gray-600'>
                                         <span>Shipping</span>
                                         {shipping === 0 ? (
-                                            <span className='text-green-600 font-medium'>Free Shipping</span>
+                                            <span className='text-green-600 font-medium'>Free</span>
                                         ) : (
                                             <span className='font-medium'>${shipping}</span>
                                         )}
@@ -350,7 +297,7 @@ const CheckoutPage = () => {
                                     className='w-full mt-6 bg-green-600 text-white py-3 rounded-xl font-semibold text-sm hover:bg-green-700 
                                                 transition disabled:opacity-60 flex items-center justify-center gap-2'
                                 >
-                                    {loading ? 'Placing your order...' : (
+                                    {loading ? 'Processing...' : (
                                         <>
                                             <span>Place Order</span>
                                             <IconArrowRight className='!w-4 !h-4 mt-0.5' />
@@ -360,7 +307,7 @@ const CheckoutPage = () => {
 
                                 <div className='mt-4 flex items-center gap-2 text-xs text-gray-400 justify-center'>
                                     <IconShield className='!w-3.5 !h-3.5 text-green-500' />
-                                    <span>Your information is fully secured</span>
+                                    <span>Secure SSL Encryption</span>
                                 </div>
                             </div>
                         </div>
