@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const connectDB = require("./config/db.js");
-// const router = require("./routes");
 
 const app = express();
 
@@ -11,11 +10,7 @@ connectDB();
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://greenlife-store.vercel.app",
-      /\.vercel\.app$/,
-    ],
+    origin: ["http://localhost:5173", "https://greenlife-store.vercel.app", /\.vercel\.app$/],
     credentials: true,
   }),
 );

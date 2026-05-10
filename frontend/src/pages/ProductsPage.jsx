@@ -1,122 +1,171 @@
-import { useSearchParams } from "react-router-dom"
-import { Link } from 'react-router-dom'
-import { IconFilter, IconSliders, IconArrowRight, IconTag, IconTruck, IconRecycle, IconRefresh, IconShield, IconChevronDown, IconChevronRight } from '../components/icons'
-import { useEffect, useState } from "react"
-import { useLang } from '../context/LangContext'
-import ProductCard from "../components/ProductCard"
-import SkeletonCard from "../components/SkeletonCard"
-import axios from "axios"
-import SubMenu from "../components/SubMenu"
+import { useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
+import {
+  IconFilter,
+  IconSliders,
+  IconArrowRight,
+  IconTag,
+  IconTruck,
+  IconRecycle,
+  IconRefresh,
+  IconShield,
+  IconChevronDown,
+  IconChevronRight,
+} from "../components/icons";
+import { useEffect, useState } from "react";
+import ProductCard from "../components/ProductCard";
+import SkeletonCard from "../components/SkeletonCard";
+import axios from "axios";
+import SubMenu from "../components/SubMenu";
 
-const API = import.meta.env.VITE_API_URL
+const API = import.meta.env.VITE_API_URL;
 
 const categories = [
-    {
-        name: 'All Products',
-        slug: ''
-    },
-    {
-        name: 'Eco Home & Living',
-        slug: 'eco-home-living',
-        sub: [
-            { name: 'Bamboo Products', slug: 'bamboo-products' },
-            { name: 'Kitchen Essentials', slug: 'kitchen-tools' }, // Đổi "Tools" thành "Essentials" nghe cao cấp hơn
-            { name: 'Natural Cleaning', slug: 'cleaning-supplies' }, // "Natural Cleaning" tạo cảm giác sạch và an toàn
-        ]
-    },
-    {
-        name: 'Personal Care',
-        slug: 'personal-care',
-        sub: [
-            { name: 'Organic Skincare', slug: 'skincare' }, // Thêm "Organic" để nhấn mạnh tính chất eco
-            { name: 'Natural Soaps', slug: 'soap' },
-            { name: 'Shampoo Bars', slug: 'shampoo-bars' },
-        ]
-    },
-    {
-        name: 'Reusable Bags',
-        slug: 'reusable-bags',
-        sub: [
-            { name: 'Tote Bags', slug: 'tote-bags' },
-            { name: 'Shopping Bags', slug: 'shopping-bags' },
-        ]
-    },
-    {
-        name: 'Zero Waste',
-        slug: 'zero-waste',
-        sub: [
-            { name: 'Eco Straws', slug: 'straws' },
-            { name: 'Sustainable Wraps', slug: 'food-wraps' },
-            { name: 'Eco Storage', slug: 'storage' },
-        ]
-    },
-    {
-        name: 'Daily Essentials',
-        slug: 'daily-essentials',
-        sub: [
-            { name: 'Reusable Bottles', slug: 'water-bottles' },
-            { name: 'Lunch Boxes', slug: 'lunch-boxes' },
-        ]
-    },
-]
+  {
+    name: "All Products",
+    slug: "",
+  },
+  {
+    name: "Eco Home & Living",
+    slug: "eco-home-living",
+    sub: [
+      {
+        name: "Bamboo Products",
+        slug: "bamboo-products",
+      },
+      {
+        name: "Kitchen Tools",
+        slug: "kitchen-tools",
+      },
+      {
+        name: "Cleaning Supplies",
+        slug: "cleaning-supplies",
+      },
+    ],
+  },
+  {
+    name: "Personal Care",
+    slug: "personal-care",
+    sub: [
+      {
+        name: "Skincare",
+        slug: "skincare",
+      },
+      {
+        name: "Soap",
+        slug: "soap",
+      },
+      {
+        name: "Shampoo Bars",
+        slug: "shampoo-bars",
+      },
+    ],
+  },
+  {
+    name: "Reusable Bags",
+    slug: "reusable-bags",
+    sub: [
+      {
+        name: "Tote Bags",
+        slug: "tote-bags",
+      },
+      {
+        name: "Shopping Bags",
+        slug: "shopping-bags",
+      },
+    ],
+  },
+  {
+    name: "Zero Waste",
+    slug: "zero-waste",
+    sub: [
+      {
+        name: "Straws",
+        slug: "straws",
+      },
+      {
+        name: "Food Wraps",
+        slug: "food-wraps",
+      },
+      {
+        name: "Storage",
+        slug: "storage",
+      },
+    ],
+  },
+  {
+    name: "Daily Essentials",
+    slug: "daily-essentials",
+    sub: [
+      {
+        name: "Water Bottles",
+        slug: "water-bottles",
+      },
+      {
+        name: "Lunch Boxes",
+        slug: "lunch-boxes",
+      },
+    ],
+  },
+];
 
 const categoryBanners = {
-    'eco-home-living': {
-        title: 'Eco Home & Living',
-        desc: 'Sustainable bamboo products, kitchen essentials, and natural home care items for a greener space.',
-        bg: 'from-green-800 to-green-600'
-    },
-    'personal-care': {
-        title: 'Personal Care',
-        desc: 'Organic skincare, handcrafted soaps, and plastic-free hygiene alternatives for your daily routine.',
-        bg: 'from-teal-800 to-teal-600'
-    },
-    'reusable-bags': {
-        title: 'Reusable Bags',
-        desc: 'Stylish and durable eco-friendly bags designed to reduce single-use plastic waste.',
-        bg: 'from-emerald-800 to-emerald-600'
-    },
-    'zero-waste': {
-        title: 'Zero Waste Lifestyle',
-        desc: 'Everything you need to eliminate waste: from eco-straws to sustainable food storage solutions.',
-        bg: 'from-lime-800 to-lime-600'
-    },
-    'daily-essentials': {
-        title: 'Daily Essentials',
-        desc: 'Your perfect on-the-go companions: reusable water bottles and eco-conscious lunch boxes.',
-        bg: 'from-cyan-800 to-cyan-600'
-    },
-    '': {
-        title: 'Our Collection', // Đổi "All Products" thành "Our Collection" nghe tinh tế hơn
-        desc: 'Explore our full range of sustainable products curated for a conscious lifestyle.',
-        bg: 'from-green-800 to-green-600'
-    },
-}
+  "eco-home-living": {
+    title: "Eco Home & Living",
+    desc: "Eco-friendly bamboo products, kitchen utensils, and personal hygiene items.",
+    bg: "from-green-800 to-green-600",
+  },
+  "personal-care": {
+    title: "Personal Care",
+    desc: "Natural skincare products, soaps, and shampoos.",
+    bg: "from-teal-800 to-teal-600",
+  },
+  "reusable-bags": {
+    title: "Reusable Bags",
+    desc: "Reusable tote bags and shopping bags designed for durability and style.",
+    bg: "from-emerald-800 to-emerald-600",
+  },
+  "zero-waste": {
+    title: "Zero Waste",
+    desc: "Eco-friendly straws, reusable food wraps, and zero-waste containers.",
+    bg: "from-lime-800 to-lime-600",
+  },
+  "daily-essentials": {
+    title: "Daily Essentials",
+    desc: "Reusable water bottles and lunch boxes for daily life",
+    bg: "from-cyan-800 to-cyan-600",
+  },
+  "": {
+    title: "All Products",
+    desc: "Explore the complete collection of green products at GreenLife Store.",
+    bg: "from-green-800 to-green-600",
+  },
+};
 
 const benefits = [
-    {
-        icon: IconTruck,
-        title: 'Free Shipping',
-        desc: 'Orders over $300' // Sửa lỗi chính tả "Oreder"
-    },
-    {
-        icon: IconRecycle,
-        title: 'Eco-Friendly',
-        desc: '100% Sustainable' // Đổi desc để không bị lặp chữ với title
-    },
-    {
-        icon: IconShield,
-        title: 'Secure Payment',
-        desc: 'VNPay, MoMo & Cards'
-    },
-    {
-        icon: IconRefresh,
-        title: 'Easy Returns',
-        desc: 'Within 7 days'
-    },
-]
+  {
+    icon: IconTruck,
+    title: "Free Shipping",
+    desc: "Oreder over 300$",
+  },
+  {
+    icon: IconRecycle,
+    title: "100% Eco-Friendly",
+    desc: "Eco-Friendly",
+  },
+  {
+    icon: IconShield,
+    title: "Secure Payment",
+    desc: "VNPay & MoMo",
+  },
+  {
+    icon: IconRefresh,
+    title: "Easy Returns",
+    desc: "Within 7 Days",
+  },
+];
 
-const ITEMS_PER_PAGE = 12
+const ITEMS_PER_PAGE = 12;
 
 const ProductsPage = () => {
     const { t } = useLang()
@@ -130,33 +179,30 @@ const ProductsPage = () => {
     const [cols, setCols] = useState(4)
     const [openCat, setOpenCat] = useState(null)
 
-    const category = searchParams.get('category') || ''
-    const search = searchParams.get('search') || ''
-    const sub = searchParams.get('sub') || ''
-    const banner = categoryBanners[category] || categoryBanners['']
-    const bannerKey = category || 'default'
-    const bannerTitle = t(`product.banners.${bannerKey}.title`)
-    const bannerDesc = t(`product.banners.${bannerKey}.desc`)
+  const category = searchParams.get("category") || "";
+  const search = searchParams.get("search") || "";
+  const sub = searchParams.get("sub") || "";
+  const banner = categoryBanners[category] || categoryBanners[""];
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            setLoading(true)
-            try {
-                let url = `${API}/products?`
-                if (category) url += `category=${category}&`
-                if (sub) url += `sub=${sub}&`
-                if (search) url += `search=${search}&`
-                const res = await axios.get(url)
-                setProducts(res.data)
-                setPage(1)
-            } catch (err) {
-                console.log(err)
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchProducts()
-    }, [category, sub, search])
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        let url = `${API}/products?`;
+        if (category) url += `category=${category}&`;
+        if (sub) url += `sub=${sub}&`;
+        if (search) url += `search=${search}&`;
+        const res = await axios.get(url);
+        setProducts(res.data);
+        setPage(1);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, [category, sub, search]);
 
     const filtered = products
         .filter(p => (p.salePrice || p.price) >= priceRange[0] && (p.salePrice || p.price) <= priceRange[1])
@@ -170,66 +216,57 @@ const ProductsPage = () => {
             return new Date(b.createdAt) - new Date(a.createdAt)
         })
 
-    const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
-    const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
+  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
 
-    const gridClass = {
-        2: 'grid-cols-2',
-        3: 'grid-cols-3 sm:grid-cols-3',
-        4: 'grid-cols-4 sm:grid-cols-3 md:grid-cols-4',
-    }
+  const gridClass = {
+    2: "grid-cols-2",
+    3: "grid-cols-3 sm:grid-cols-3",
+    4: "grid-cols-4 sm:grid-cols-3 md:grid-cols-4",
+  };
 
-    const categoryKeyMap = {
-        'eco-home-living': 'home',
-        'personal-care': 'personal',
-        'reusable-bags': 'bags',
-        'zero-waste': 'zerowaste',
-        'daily-essentials': 'bottles',
-        '': 'home'
-    }
+  return (
+    <div className="min-h-screen bg-white">
+      <section className={`w-full bg-gradient-to-br ${banner.bg} text-white py-12`}>
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center gap-2 text-green-300 text-sm mb-2">
+            {}
+            <Link to="/" className="hover:text-white transition">
+              Home
+            </Link>
+            {!sub ? (
+              <>
+                <span>/</span>
+                <span className="text-white">{banner.title}</span>
+              </>
+            ) : (
+              <>
+                <span>/</span>
+                <Link to={`/products?category=${category}`} className="hover:text-white transition">
+                  {banner.title}
+                </Link>
+                <span>/</span>
+                {categories.map(
+                  (cat) =>
+                    cat.sub &&
+                    cat.sub.map((subItem) => (
+                      <span key={subItem.slug} className="text-white">
+                        {sub === subItem.slug ? subItem.name : ""}
+                      </span>
+                    )),
+                )}
+              </>
+            )}
+          </div>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold mb-2">{banner.title}</h1>
 
-    const benefitsLocal = [
-        { icon: IconTruck, title: t('benefits.free_shipping'), desc: t('benefits.free_shipping_desc') },
-        { icon: IconRecycle, title: t('benefits.sustainable'), desc: t('benefits.sustainable_desc') },
-        { icon: IconShield, title: t('benefits.secure_payment'), desc: t('benefits.secure_payment_desc') },
-        { icon: IconRefresh, title: t('benefits.easy_returns'), desc: t('benefits.easy_returns_desc') },
-    ]
+            <p className="text-green-200 text-sm text-center !mb-5">{banner.desc}</p>
 
-    return (
-        <div className="min-h-screen bg-white">
-            <section className={`w-full bg-gradient-to-br ${banner.bg} text-white py-12`}>
-                <div className="max-w-7xl mx-auto px-4">
-                    <div className="flex items-center gap-2 text-green-300 text-sm mb-2">
-                        <Link to='/' className='hover:text-white transition'>{t('nav.home')}</Link>
-                        {!sub ? (
-                            <>
-                                <span>/</span>
-                                <span className="text-white">{bannerTitle}</span>
-                            </>
-                        ) : (
-                            <>
-                                <span>/</span>
-                                <Link to={`/products?category=${category}`} className='hover:text-white transition'>{bannerTitle}</Link>
-                                <span>/</span>
-                                {categories.map((cat) => (
-                                    cat.sub && cat.sub.map(subItem => (
-                                        <span key={subItem.slug} className="text-white">
-                                            {sub === subItem.slug ? subItem.name : ''}
-                                        </span>
-                                    ))
-                                ))}
-                            </>
-                        )}
-                    </div>
-                    <div className="text-center">
-                        <h1 className="text-3xl font-bold mb-2">{bannerTitle}</h1>
-                        <p className="text-green-200 text-sm text-center !mb-5">{bannerDesc}</p>
-                        <p className="text-green-300 text-sm mt-2">
-                            {products.length} {products.length > 1 ? t('product.items_count_plural') : t('product.items_count')}
-                        </p>
-                    </div>
-                </div>
-            </section>
+            <p className="text-green-300 text-sm mt-2">{products.length} Product</p>
+          </div>
+        </div>
+      </section>
 
             <div className="max-w-7xl mx-auto px-4 py-10 flex gap-8">
                 <aside className="hidden lg:block w-64 shrink-0">
@@ -275,9 +312,26 @@ const ProductsPage = () => {
                                             )}
                                         </li>
                                     )
-                                })}
-                            </ul>
-                        </div>
+                                  }
+                                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition 
+                                                                ${
+                                                                  isActiveSub
+                                                                    ? "bg-green-600 text-white font-medium"
+                                                                    : "text-gray-600 hover:bg-green-50 hover:text-green-700"
+                                                                }
+                                                                `}>
+                                  {subCat.name}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </SubMenu>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
 
                         <div>
                             <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
@@ -364,35 +418,24 @@ const ProductsPage = () => {
                     )}
 
 
-                    {totalPages > 1 && (
-                        <div className="flex justify-center items-center gap-2 mt-10">
-                            <button
-                                onClick={() => setPage(p => Math.max(1, p - 1))}
-                                disabled={page === 1}
-                                className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:border-green-500 disabled:opacity-40 disabled:cursor-not-allowed transition"
-                            >
-                                {t('pagination.prev')}
-                            </button>
-                            {[...Array(totalPages)].map((_, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => setPage(i + 1)}
-                                    className={`w-9 h-9 rounded-lg text-sm font-medium transition ${page === i + 1 ? 'bg-green-600 text-white' : 'border border-gray-300 text-gray-600 hover:border-green-500'}`}
-                                >
-                                    {i + 1}
-                                </button>
-                            ))}
-                            <button
-                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                disabled={page === totalPages}
-                                className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:border-green-500 disabled:opacity-40 disabled:cursor-not-allowed transition"
-                            >
-                                {t('pagination.next')}
-                            </button>
-                        </div>
-                    )}
-                </div>
+          {loading ? (
+            <div className={`grid ${gridClass[cols]} gap-4`}>
+              {[...Array(8)].map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
             </div>
+          ) : paginated.length > 0 ? (
+            <div className={`grid ${gridClass[cols]} gap-4`}>
+              {paginated.map((p) => (
+                <ProductCard key={p._id} product={p} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <p className="text-gray-400 text-lg mb-2">No product found.</p>
+              <p className="text-gray-300 text-sm">Try searching with a different keyword.</p>
+            </div>
+          )}
 
             {/* Mobile Sidebar (giữ nguyên logic của bạn) */}
             {sidebarOpen && (
@@ -423,23 +466,43 @@ const ProductsPage = () => {
                         </div>
                     </div>
                 </div>
-            )}
-
-            <section className="bg-green-50 py-8 border-t border-green-100">
-                <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {benefitsLocal.map((item, i) => (
-                        <div key={i} className="flex items-center gap-3 justify-center">
-                            <item.icon className="!w-5 !h-5 text-green-600" />
-                            <div>
-                                <p className="text-sm font-semibold text-gray-800">{item.title}</p>
-                                <p className="text-xs text-gray-500">{item.desc}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-700 mb-3">Sort</h4>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full border-gray-300 rounded-lg px-3 py-2 text-sm outline-none">
+                  <option value="newest">Newest</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
-    )
-}
+      )}
 
-export default ProductsPage
+      <section className="bg-green-50 py-8 border-t border-green-100">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {benefits.map((item, i) => {
+            const Icon = item.icon;
+            return (
+              <div key={i} className="flex items-center gap-3 justify-center">
+                <span className="text-2xl">
+                  <Icon />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">{item.title}</p>
+                  <p className="text-sm text-gray-500">{item.desc}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default ProductsPage;
