@@ -3,13 +3,16 @@ import { IconCheck, IconClose, IconPen, IconPlus, IconSearch, IconTrash, IconChe
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { useLang } from '../../context/LangContext'
+import AdminFilter from '../../components/admin/AdminFilter'
 
 const API = import.meta.env.VITE_API_URL
 
 const AdminProducts = () => {
     const { userInfo } = useSelector(state => state.auth)
     const config = { headers: { Authorization: `Bearer ${userInfo?.token}` } }
-
+    const [filterCategory, setFilterCategory] = useState('')
+    const [filterStock, setFilterStock] = useState('')
+    const [filterFeatured, setFilterFeatured] = useState('')
     const { t } = useLang()
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
@@ -110,14 +113,26 @@ const AdminProducts = () => {
         }
     }
 
-    const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+    const filtered = products.filter(p => {
+        const matchSearch = p.name.toLowerCase().includes(search.toLowerCase())
+        const matchCategory = filterCategory ? p.category?._id === filterCategory : true
+        const matchStock = filterStock === 'out' ? p.stock === 0
+            : filterStock === 'low' ? p.stock > 0 && p.stock <= 5
+                : filterStock === 'in' ? p.stock > 5
+                    : true
+        const matchFeatured = filterFeatured === 'true' ? p.isFeatured === true
+            : filterFeatured === 'false' ? p.isFeatured === false
+                : true
+        return matchSearch && matchCategory && matchStock && matchFeatured
+    })
+
 
     return (
         <div className="p-8">
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">{t('admin.products.title')}</h1>
-                    <p className="text-gray-500 text-sm mt-1 text-left">{t('admin.products.total', {count: products.length})}</p>
+                    <p className="text-gray-500 text-sm mt-1 text-left">{t('admin.products.total', { count: products.length })}</p>
                 </div>
                 <button
                     onClick={openCreate}
@@ -128,17 +143,45 @@ const AdminProducts = () => {
                 </button>
             </div>
 
-            <div className="relative mb-6 max-w-sm">
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                    <IconSearch className="w-4 h-4 text-gray-400" />
-                </div>
-                <input type="text"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    placeholder={t('admin.products.search_placeholder')}
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl outline-none focus:border-green-500 transition"
-                />
-            </div>
+            <AdminFilter
+                search={search}
+                onSearch={setSearch}
+                searchPlaceholder={t('admin.products.search_placeholder')}
+                dropdowns={[
+                    {
+                        value: filterCategory,
+                        onChange: setFilterCategory,
+                        placeholder: 'All Categories',
+                        options: categories.map(c => ({ value: c._id, label: c.name }))
+                    },
+                    {
+                        value: filterStock,
+                        onChange: setFilterStock,
+                        placeholder: 'All Stock',
+                        options: [
+                            { value: 'in', label: 'In Stock (>5)' },
+                            { value: 'low', label: 'Low Stock (1-5)' },
+                            { value: 'out', label: 'Out of Stock' },
+                        ]
+                    },
+                    {
+                        value: filterFeatured,
+                        onChange: setFilterFeatured,
+                        placeholder: 'All Products',
+                        options: [
+                            { value: 'true', label: 'Featured' },
+                            { value: 'false', label: 'Not Featured' },
+                        ]
+                    }
+                ]}
+                showReset={!!(search || filterCategory || filterStock || filterFeatured)}
+                onReset={() => {
+                    setSearch('')
+                    setFilterCategory('')
+                    setFilterStock('')
+                    setFilterFeatured('')
+                }}
+            />
 
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden text-left">
                 {loading ? (
@@ -172,7 +215,7 @@ const AdminProducts = () => {
                                                 />
                                                 <div>
                                                     <p className="font-medium text-gray-800">{product.name}</p>
-                                                    <p className="text-xs text-gray-500">{t('admin.products.items_sold', {count: product.sold || 0})}</p>
+                                                    <p className="text-xs text-gray-500">{t('admin.products.items_sold', { count: product.sold || 0 })}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -192,8 +235,8 @@ const AdminProducts = () => {
                                         <td className="px-6 py-4">
                                             <span className={`text-xs font-medium px-2.5 py-1 rounded-full
                                                 ${product.stock > 10 ? 'bg-green-100 text-green-700'
-                                                : product.stock > 0 ? 'bg-yellow-100 text-yellow-700'
-                                                : 'bg-red-100 text-red-600'}`}>
+                                                    : product.stock > 0 ? 'bg-yellow-100 text-yellow-700'
+                                                        : 'bg-red-100 text-red-600'}`}>
                                                 {product.stock > 0 ? `${product.stock} ${t('admin.products.in_stock')}` : t('admin.products.out_of_stock')}
                                             </span>
                                         </td>

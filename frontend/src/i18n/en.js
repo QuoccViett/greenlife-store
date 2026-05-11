@@ -16,7 +16,23 @@ export default {
             update_failed: 'Failed to update profile',
             email_immutable: '* Email cannot be modified',
             save_changes: 'Save Changes',
-            saving: 'Saving...'
+            saving: 'Saving...',
+            payment: {
+                cod: 'Cash Upon Diliver',
+                paid: 'Paided',
+            },
+            pending: 'Pending',
+            processing: 'Processing',
+            shipping: 'Shipping',
+            delivered: 'Delivered',
+            cancelled: 'Cancelled',
+            orders: {
+            payment: 'Payment: ',
+            order_id: 'Order_ID',
+            total: 'Total',
+            date: 'Date',
+            quantity: 'Quantity'
+        }
         },
         orders: {
             none_title: 'No orders yet',
@@ -470,7 +486,14 @@ export default {
             no_phone: 'No phone',
             current_admin: 'Current Admin',
             role_user: 'User',
-            role_admin: 'Admin'
+            role_admin: 'Admin',
+            table: {
+                user: 'User Name',
+                contact: 'Contact',
+                joined: 'Date',
+                access_lv: 'User Authorization',
+                action: 'Action'
+            }
         }
     },
     learn: {
