@@ -78,6 +78,22 @@ export default {
         saving: 'Đang lưu...',
         personal_info: 'Thông tin cá nhân',
         my_orders: 'Đơn hàng của tôi',
+        payment: {
+            cod: 'Cash Upon Diliver',
+            non_cod: 'Paided',
+        },
+        pending: 'Chờ xác nhận',
+        processing: 'Đang xử lý',
+        shipping: 'Đang giao',
+        delivered: 'Đã giao',
+        cancelled: 'Đã hủy',
+        orders: {
+            payment: 'Thanh toán: ',
+            order_id: 'Mã đơn hàng',
+            total: 'Tổng cộng',
+            date: 'Ngày',
+            quantity: 'Quantity'
+        }
     },
     orders: {
         none_title: 'Chưa có đơn hàng',
@@ -339,7 +355,7 @@ export default {
             sub: 'Tất cả những điều bạn cần biết về lối sống thân thiện với môi trường'
         },
         cta: { title: 'Sẵn sàng bắt đầu hành trình xanh?', desc: 'Khám phá bộ sưu tập sản phẩm thân thiện môi trường được tuyển chọn tại GreenLife Store', shop: 'Bắt đầu mua sắm' },
-        
+
 
         momo: {
             label: 'MoMo',
@@ -468,8 +484,8 @@ export default {
         form_message_placeholder: 'Chúng tôi có thể giúp gì cho bạn?',
         sending: 'Đang gửi...',
         send_message: 'Gửi tin nhắn',
-        fl:'Theo dõi chúng tôi',
-        find_us: 'Tìm chúng tôi tại Quận 1', 
+        fl: 'Theo dõi chúng tôi',
+        find_us: 'Tìm chúng tôi tại Quận 1',
         add: 'Hồ Chí Minh'
     }
     ,

@@ -196,6 +196,13 @@ const seedDB = async () => {
                 description: 'Set of eco-friendly wooden cooking utensils.',
                 price: 22,
                 stock: 70,
+
+
+
+
+
+
+                
                 image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600',
                 category: getCat('eco-home-living'),
                 sub: getSub('kitchen-tools'),
