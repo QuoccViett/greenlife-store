@@ -52,7 +52,7 @@ const AdminSidebar = () => {
                 </Link>
                 <button
                     onClick={toggleLang}
-                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-full text-xs font-semibold text-gray-600 hover:border-green-500 hover:text-green-600 transition"
+                    className="sm:flex items-center gap-1.5 px-3 py-1.5 border rounded-full text-xs font-semibold border-green-500 text-green-600 transition"
                 >
                     <span>{lang === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}</span>
                 </button>

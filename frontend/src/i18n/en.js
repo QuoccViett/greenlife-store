@@ -222,6 +222,7 @@ export default {
         full_name: 'Full Name',
         phone: 'Phone Number',
         address: 'Address',
+        email: 'Email',
         city: 'City / Province',
         error_fill: 'Please fill in all required shipping information',
         select_country: 'Select Country',
@@ -246,7 +247,8 @@ export default {
     },
     auth: {
         welcome: 'Welcome back',
-        login: 'Log in',
+        login: 'Login',
+        logout: 'Logout',
         register: 'Register',
         email: 'Email',
         password: 'Password',
@@ -370,6 +372,8 @@ export default {
     }
     ,
     admin: {
+        filter: 'Filter',
+        to: 'to',
         dashboard: {
             title: 'Dashboard',
             welcome: 'Welcome back, {name}!'
@@ -442,7 +446,7 @@ export default {
         ,
         orders: {
             title: 'Order Management',
-            total: 'Total: {count} orders found',
+            total: 'Total: {count} orders',
             search_placeholder: 'Search by ID or Customer...',
             all_statuses: 'All Statuses',
             none: 'No orders match your criteria.',
@@ -541,5 +545,16 @@ export default {
             sub: 'Everything you need to know about eco-friendly living'
         },
         cta: { title: 'Ready to Start Your Green Journey?', desc: 'Explore our curated collection of eco-friendly products at GreenLife Store', shop: 'Start Shopping' }
+    },
+    profile: {
+        title: 'Account Settings',
+        description: 'Update your personal details and contact information.',
+        updated_success: 'Profile updated successfully!',
+        update_failed: 'Failed to update profile. Please try again.',
+        email_immutable: '* Email address cannot be modified',
+        save_changes: 'Save Change',
+        saving: 'Saving...',
+        personal_info: 'Personal Information',
+        my_orders: 'My Orders',
     },
 }

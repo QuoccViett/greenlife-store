@@ -75,7 +75,9 @@ export default {
         update_failed: 'Cập nhật hồ sơ thất bại',
         email_immutable: '* Email không thể sửa đổi',
         save_changes: 'Lưu thay đổi',
-        saving: 'Đang lưu...'
+        saving: 'Đang lưu...',
+        personal_info: 'Thông tin cá nhân',
+        my_orders: 'Đơn hàng của tôi',
     },
     orders: {
         none_title: 'Chưa có đơn hàng',
@@ -222,6 +224,7 @@ export default {
         full_name: 'Họ và tên',
         phone: 'Số điện thoại',
         address: 'Địa chỉ',
+        email: 'Email',
         city: 'Tỉnh / Thành phố',
         error_fill: 'Vui lòng điền đầy đủ thông tin giao hàng bắt buộc',
         select_country: 'Chọn quốc gia',
@@ -350,6 +353,7 @@ export default {
     auth: {
         welcome: 'Chào mừng trở lại',
         login: 'Đăng nhập',
+        logout: 'Đăng xuất',
         register: 'Đăng ký',
         email: 'Email',
         password: 'Mật khẩu',
@@ -358,8 +362,7 @@ export default {
         copyright: '© 2025 GreenLife Store. Sống xanh mỗi ngày.',
         login_desc: 'Đăng nhập để tiếp tục mua sắm những sản phẩm yêu thích',
         forgot: 'Quên mật khẩu?',
-        logging: 'Đang đăng nhập...'
-        ,
+        logging: 'Đang đăng nhập...',
         registering: 'Đang tạo tài khoản...',
         register_desc: 'Tham gia cộng đồng sống xanh cùng GreenLife',
         error_password_mismatch: 'Mật khẩu không khớp',
@@ -471,6 +474,8 @@ export default {
     }
     ,
     admin: {
+        filter: 'Lọc',
+        to: 'đến',
         dashboard: {
             title: 'Bảng điều khiển',
             welcome: 'Chào mừng trở lại, {name}!'

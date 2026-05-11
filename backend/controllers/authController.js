@@ -13,7 +13,7 @@ const register = async (req, res) => {
     if (userExits) return res.status(400).json({ message: "Email da ton tai" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashedPassword });
+    const user = await User.create({ name, email, password: hashedPassword, address });
 
     res.status(201).json({
       _id: user._id,
