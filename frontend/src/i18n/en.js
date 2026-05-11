@@ -9,37 +9,22 @@ export default {
         logout: 'Logout',
         admin: 'Admin',
         cart: 'Cart',
+        profile: {
+            title: 'Account Settings',
+            description: 'Update your personal details and contact information.',
+            updated_success: 'Profile updated successfully!',
+            update_failed: 'Failed to update profile',
+            email_immutable: '* Email cannot be modified',
+            save_changes: 'Save Changes',
+            saving: 'Saving...'
+        },
+        orders: {
+            none_title: 'No orders yet',
+            none_desc: "Looks like you haven't made any purchases yet.",
+            start_shopping: 'Start Shopping'
+        },
         search_placeholder: 'Search For Products...',
         search: 'Search',
-    },
-    profile: {
-        title: 'Account Settings',
-        description: 'Update your personal details and contact information.',
-        updated_success: 'Profile updated successfully!',
-        update_failed: 'Failed to update profile',
-        email_immutable: '* Email cannot be modified',
-        save_changes: 'Save Changes',
-        saving: 'Saving...',
-        paid: 'Paid',
-        pending: 'Pending',
-        personal_info: 'Personal Information',
-        my_orders: 'My Orders',
-        orders: {
-            order_id: 'Order ID',
-            date: 'Date',
-            payment: 'Payment:',
-            total: 'Total Amount',
-            quantity: 'Quantity:'
-        },
-        payment: {
-            cod: 'Cash on Delivery',
-            non_cod: 'Credit Card'
-        }
-    },
-    orders: {
-        none_title: 'No orders yet',
-        none_desc: "Looks like you haven't made any purchases yet.",
-        start_shopping: 'Start Shopping'
     },
     home: {
         hero_badge: 'Eco-Friendly Selection',
@@ -120,8 +105,9 @@ export default {
             home: 'Eco Home & Living',
             personal: 'Personal Care',
             bags: 'Reusable Bags',
-            zerowaste: 'Zero Waste Kits',
-            bottles: 'Bottles & Tumblers',
+            zerowaste: 'Zero Waste Lifestyle',
+            bottles: 'Daily Essentials',
+            default: 'Our Collection',
         }
         ,
         items_count: 'item',
@@ -239,7 +225,6 @@ export default {
         city: 'City / Province',
         error_fill: 'Please fill in all required shipping information',
         select_country: 'Select Country',
-        email: 'Email',
         payment: {
             cod: {
                 label: 'Cash on Delivery (COD)',
@@ -262,7 +247,6 @@ export default {
     auth: {
         welcome: 'Welcome back',
         login: 'Log in',
-        logout: 'Logout',
         register: 'Register',
         email: 'Email',
         password: 'Password',
@@ -386,17 +370,15 @@ export default {
     }
     ,
     admin: {
-        filter: 'Filter by Date Range:',
-        to: 'to',
         dashboard: {
-            title: 'Dashboard Overview',
+            title: 'Dashboard',
             welcome: 'Welcome back, {name}!'
         },
         stats: {
-            users: 'Total Users',
-            orders: 'Total Orders',
-            products: 'Total Products',
-            revenue: 'Total Revenue'
+            users: 'Users',
+            orders: 'Orders',
+            products: 'Products',
+            revenue: 'Revenue'
         },
         charts: {
             revenue_7_days: 'Revenue (7 days)',
@@ -406,7 +388,7 @@ export default {
         },
         recent_orders: {
             title: 'Recent Orders',
-            view_all: 'View All Orders'
+            view_all: 'View All'
         },
         table: {
             order_id: 'Order ID',
@@ -414,8 +396,7 @@ export default {
             total: 'Total',
             payment: 'Payment',
             status: 'Status',
-            date: 'Date',
-            none: 'No orders found for this period.'
+            date: 'Date'
         },
         payment: {
             paid: 'Paid',
@@ -485,13 +466,7 @@ export default {
             no_phone: 'No phone',
             current_admin: 'Current Admin',
             role_user: 'User',
-            role_admin: 'Admin',
-            table: {
-                user: 'user',
-                contact: 'contact',
-                joined: 'joined',
-                access_lv: 'access lever',
-            }
+            role_admin: 'Admin'
         }
     },
     learn: {

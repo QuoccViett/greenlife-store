@@ -20,12 +20,12 @@ const API = import.meta.env.VITE_API_URL;
 
 // Mapping slug sang key dịch thuật (tránh lỗi categoryKeyMap is not defined)
 const categoryKeyMap = {
-    "": "home",
-    "eco-home-living": "eco_home",
-    "personal-care": "personal_care",
+    "": "default",
+    "eco-home-living": "home",
+    "personal-care": "personal",
     "reusable-bags": "bags",
-    "zero-waste": "zero_waste",
-    "daily-essentials": "essentials"
+    "zero-waste": "zerowaste",
+    "daily-essentials": "bottles"
 };
 
 const categories = [
@@ -76,43 +76,19 @@ const categories = [
 ];
 
 const categoryBanners = {
-    "eco-home-living": {
-        title: "Eco Home & Living",
-        desc: "Eco-friendly bamboo products, kitchen utensils, and personal hygiene items.",
-        bg: "from-green-800 to-green-600",
-    },
-    "personal-care": {
-        title: "Personal Care",
-        desc: "Natural skincare products, soaps, and shampoos.",
-        bg: "from-teal-800 to-teal-600",
-    },
-    "reusable-bags": {
-        title: "Reusable Bags",
-        desc: "Reusable tote bags and shopping bags designed for durability and style.",
-        bg: "from-emerald-800 to-emerald-600",
-    },
-    "zero-waste": {
-        title: "Zero Waste",
-        desc: "Eco-friendly straws, reusable food wraps, and zero-waste containers.",
-        bg: "from-lime-800 to-lime-600",
-    },
-    "daily-essentials": {
-        title: "Daily Essentials",
-        desc: "Reusable water bottles and lunch boxes for daily life",
-        bg: "from-cyan-800 to-cyan-600",
-    },
-    "": {
-        title: "All Products",
-        desc: "Explore the complete collection of green products at GreenLife Store.",
-        bg: "from-green-800 to-green-600",
-    },
+    "eco-home-living": { bg: "from-green-800 to-green-600" },
+    "personal-care": { bg: "from-teal-800 to-teal-600" },
+    "reusable-bags": { bg: "from-emerald-800 to-emerald-600" },
+    "zero-waste": { bg: "from-lime-800 to-lime-600" },
+    "daily-essentials": { bg: "from-cyan-800 to-cyan-600" },
+    "": { bg: "from-green-800 to-green-600" },
 };
 
 const benefits = [
-    { icon: IconTruck, title: 'Free Shipping', desc: 'Orders over $300' },
-    { icon: IconRecycle, title: 'Eco-Friendly', desc: '100% Sustainable' },
-    { icon: IconShield, title: 'Secure Payment', desc: 'VNPay, MoMo & Cards' },
-    { icon: IconRefresh, title: 'Easy Returns', desc: 'Within 7 days' },
+    { icon: IconTruck, titleKey: 'benefits.free_shipping', descKey: 'benefits.free_shipping_desc' },
+    { icon: IconRecycle, titleKey: 'benefits.sustainable', descKey: 'benefits.sustainable_desc' },
+    { icon: IconShield, titleKey: 'benefits.secure_payment', descKey: 'benefits.secure_payment_desc' },
+    { icon: IconRefresh, titleKey: 'benefits.easy_returns', descKey: 'benefits.easy_returns_desc' },
 ];
 
 const ITEMS_PER_PAGE = 12;
@@ -133,6 +109,7 @@ const ProductsPage = () => {
     const search = searchParams.get("search") || "";
     const sub = searchParams.get("sub") || "";
     const banner = categoryBanners[category] || categoryBanners[""];
+    const bannerKey = category || 'default';
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -180,22 +157,22 @@ const ProductsPage = () => {
             <section className={`w-full bg-gradient-to-br ${banner.bg} text-white py-12`}>
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex items-center gap-2 text-green-300 text-sm mb-4">
-                        <Link to="/" className="hover:text-white transition">Home</Link>
+                        <Link to="/" className="hover:text-white transition">{t('nav.home')}</Link>
                         <span>/</span>
                         {!sub ? (
-                            <span className="text-white">{banner.title}</span>
+                            <span className="text-white">{t(`product.banners.${bannerKey}.title`)}</span>
                         ) : (
                             <>
-                                <Link to={`/products?category=${category}`} className="hover:text-white transition">{banner.title}</Link>
+                                <Link to={`/products?category=${category}`} className="hover:text-white transition">{t(`product.banners.${bannerKey}.title`)}</Link>
                                 <span>/</span>
-                                <span className="text-white">{sub}</span>
+                                <span className="text-white">{t(`product.subcategories.${sub}`) || sub}</span>
                             </>
                         )}
                     </div>
                     <div className="text-center">
-                        <h1 className="text-3xl font-bold mb-2">{banner.title}</h1>
-                        <p className="text-green-200 text-sm mb-5">{banner.desc}</p>
-                        <p className="text-green-300 text-sm">{products.length} Products</p>
+                        <h1 className="text-3xl font-bold mb-2">{t(`product.banners.${bannerKey}.title`)}</h1>
+                        <p className="text-green-200 text-sm mb-5">{t(`product.banners.${bannerKey}.desc`)}</p>
+                        <p className="text-green-300 text-sm">{products.length} {t('product.items_count_plural')}</p>
                     </div>
                 </div>
             </section>
@@ -235,7 +212,7 @@ const ProductsPage = () => {
                                                                 onClick={() => setSearchParams({ category: cat.slug, sub: subCat.slug })}
                                                                 className={`w-full text-left px-4 py-1.5 text-sm transition ${sub === subCat.slug ? 'text-green-600 font-bold' : 'text-gray-500 hover:text-green-600'}`}
                                                             >
-                                                                {subCat.name}
+                                                                {t(`product.subcategories.${subCat.slug}`) || subCat.name}
                                                             </button>
                                                         </li>
                                                     ))}
@@ -309,7 +286,7 @@ const ProductsPage = () => {
                     <div className="absolute right-0 top-0 h-full w-72 bg-white p-6 overflow-y-auto">
                         <div className="flex justify-between mb-6">
                             <h3 className="font-bold">{t('product.filter')}</h3>
-                            <button onClick={() => setSidebarOpen(false)}>Close</button>
+                            <button onClick={() => setSidebarOpen(false)}>{t('ui.close')}</button>
                         </div>
                         <div className="space-y-6">
                             {categories.map(cat => (
@@ -317,7 +294,7 @@ const ProductsPage = () => {
                                     onClick={() => { setSearchParams(cat.slug ? { category: cat.slug } : {}); setSidebarOpen(false); }}
                                     className={`block w-full text-left py-2 ${category === cat.slug ? 'text-green-600 font-bold' : ''}`}
                                 >
-                                    {cat.name}
+                                    {t(`product.categories_list.${categoryKeyMap[cat.slug]}`) || cat.name}
                                 </button>
                             ))}
                         </div>
@@ -334,8 +311,8 @@ const ProductsPage = () => {
                             <div key={i} className="flex items-center gap-3">
                                 <Icon className="w-8 h-8 text-green-600" />
                                 <div>
-                                    <p className="text-sm font-bold text-gray-800">{item.title}</p>
-                                    <p className="text-xs text-gray-500">{item.desc}</p>
+                                    <p className="text-sm font-bold text-gray-800">{t(item.titleKey)}</p>
+                                    <p className="text-xs text-gray-500">{t(item.descKey)}</p>
                                 </div>
                             </div>
                         );

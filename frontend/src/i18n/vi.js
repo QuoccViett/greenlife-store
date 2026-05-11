@@ -75,22 +75,7 @@ export default {
         update_failed: 'Cập nhật hồ sơ thất bại',
         email_immutable: '* Email không thể sửa đổi',
         save_changes: 'Lưu thay đổi',
-        saving: 'Đang lưu...',
-        paid: 'Đã thanh toán',
-        pending: 'Đang gửi',
-        personal_info: 'Thông tin cá nhân',
-        my_orders: 'Đơn hàng của tôi',
-        orders: {
-            order_id: 'Mã đơn hàng',
-            date: 'Ngày',
-            payment: 'Thanh toán:',
-            total: 'Tổng tiền',
-            quantity: 'Số Lượng:'
-        },
-        payment: {
-            cod: 'Thanh toán khi nhận hàng',
-            non_cod: 'Thẻ tín dụng'
-        }
+        saving: 'Đang lưu...'
     },
     orders: {
         none_title: 'Chưa có đơn hàng',
@@ -120,8 +105,9 @@ export default {
             home: 'Nhà cửa & Đời sống',
             personal: 'Chăm sóc cá nhân',
             bags: 'Túi sử dụng nhiều lần',
-            zerowaste: 'Bộ sản phẩm Zero Waste',
-            bottles: 'Bình nước & Ly sứ',
+            zerowaste: 'Zero Waste',
+            bottles: 'Nhu yếu phẩm',
+            default: 'Bộ sưu tập của chúng tôi'
         }
         ,
         items_count: 'sản phẩm',
@@ -239,7 +225,6 @@ export default {
         city: 'Tỉnh / Thành phố',
         error_fill: 'Vui lòng điền đầy đủ thông tin giao hàng bắt buộc',
         select_country: 'Chọn quốc gia',
-        email: 'Email',
         payment: {
             cod: {
                 label: 'Thanh toán khi nhận hàng (COD)',
@@ -365,7 +350,6 @@ export default {
     auth: {
         welcome: 'Chào mừng trở lại',
         login: 'Đăng nhập',
-        logout: 'Đăng xuất',
         register: 'Đăng ký',
         email: 'Email',
         password: 'Mật khẩu',
@@ -487,17 +471,15 @@ export default {
     }
     ,
     admin: {
-        filter: 'Lọc theo ngày',
-        to: 'đến',
         dashboard: {
             title: 'Bảng điều khiển',
             welcome: 'Chào mừng trở lại, {name}!'
         },
         stats: {
-            users: 'Tỏng người dùng',
-            orders: 'Tổng đơn hàng',
-            products: 'Tổng sản phẩm',
-            revenue: 'Tổng doanh thu'
+            users: 'Người dùng',
+            orders: 'Đơn hàng',
+            products: 'Sản phẩm',
+            revenue: 'Doanh thu'
         },
         charts: {
             revenue_7_days: 'Doanh thu (7 ngày)',
@@ -510,13 +492,12 @@ export default {
             view_all: 'Xem tất cả'
         },
         table: {
-            order_id: 'Mã đơn hàng',
+            order_id: 'Mã đơn',
             customer: 'Khách hàng',
             total: 'Tổng tiền',
             payment: 'Thanh toán',
             status: 'Trạng thái',
-            date: 'Ngày',
-            none: 'Không tìm thấy đơn đặt hàng nào trong khoảng thời gian này.'
+            date: 'Ngày'
         },
         payment: {
             paid: 'Đã thanh toán',
@@ -587,13 +568,7 @@ export default {
             no_phone: 'Chưa có số điện thoại',
             current_admin: 'Quản trị hiện tại',
             role_user: 'Người dùng',
-            role_admin: 'Quản trị',
-            table: {
-                user: 'người dùng',
-                contact: 'liên hệ',
-                joined: 'ngày tham gia',
-                access_lv: 'quyền truy cập',
-            }
+            role_admin: 'Quản trị'
         }
     }
 }
