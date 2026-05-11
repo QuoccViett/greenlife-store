@@ -14,7 +14,7 @@ const RegisterPage = () => {
     const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '', address: '' })
     const [loading, setLoading] = useState(false)
 
-    const dispastch = useDispatch()
+    const dispatch = useDispatch()
     const navigate = useNavigate()
     const { t } = useLang()
 
@@ -46,7 +46,7 @@ const RegisterPage = () => {
                 password: form.password,
                 address: form.address,
             })
-            dispastch(setCredentials(data))
+            dispatch(setCredentials(data))
             navigate('/login')
         } catch (err) {
             setError(err.response?.data?.message || t('auth.error_registration') || 'Registration failed')

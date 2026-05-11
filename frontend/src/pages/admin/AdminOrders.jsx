@@ -112,7 +112,7 @@ const AdminOrders = () => {
                 {/* Thống kê theo trạng thái đơn */}
                 {advStats && (
                     <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4">
-                        <p className="text-sm font-semibold text-gray-700 mb-3">Số đơn theo trạng thái</p>
+                        <p className="text-sm font-semibold text-gray-700 !mb-3">Số đơn theo trạng thái</p>
                         <div className="flex flex-wrap gap-3">
                             {Object.entries(advStats.byOrderStatus).map(([status, count]) => {
                                 const s = statusOptions.find(o => o.value === status)
