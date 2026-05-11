@@ -8,7 +8,7 @@ const generateToken = (id) => {
 
 const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, address } = req.body;
     const userExits = await User.findOne({ email });
     if (userExits) return res.status(400).json({ message: "Email da ton tai" });
 
@@ -21,6 +21,7 @@ const register = async (req, res) => {
       email: user.email,
       role: user.role,
       token: generateToken(user._id),
+      address: user.address
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
