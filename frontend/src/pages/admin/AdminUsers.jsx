@@ -3,6 +3,7 @@ import { useSelector } from "react-redux"
 import { IconSearch, IconUser, IconShield, IconChevronDown } from "../../components/icons"
 import axios from "axios"
 import { useLang } from '../../context/LangContext'
+import AdminFilter from '../../components/admin/AdminFilter'
 
 const API = import.meta.env.VITE_API_URL
 
@@ -10,7 +11,8 @@ const AdminUsers = () => {
     const { userInfo } = useSelector(state => state.auth)
     const config = { headers: { Authorization: `Bearer ${userInfo?.token}` } }
     const { t } = useLang()
-
+    const [filterRole, setFilterRole] = useState('')
+    const [filterStatus, setFilterStatus] = useState('')
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
@@ -32,11 +34,17 @@ const AdminUsers = () => {
     // Optimized search logic covering both name and email
     const filteredUsers = useMemo(() => {
         const query = search.toLowerCase().trim()
-        return users.filter(u =>
-            u.name?.toLowerCase().includes(query) ||
-            u.email?.toLowerCase().includes(query)
-        )
-    }, [users, search])
+        return users.filter(u => {
+            const matchSearch =
+                u.name?.toLowerCase().includes(query) ||
+                u.email?.toLowerCase().includes(query)
+            const matchRole = filterRole ? u.role === filterRole : true
+            const matchStatus = filterStatus === 'active' ? u.isActive !== false
+                : filterStatus === 'locked' ? u.isActive === false
+                    : true
+            return matchSearch && matchRole && matchStatus
+        })
+    }, [users, search, filterRole, filterStatus])
 
     const handleRoleChange = async (userId, newRole) => {
         try {
@@ -78,18 +86,37 @@ const AdminUsers = () => {
                 </p>
             </div>
 
-            <div className="relative mb-6 max-w-sm">
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                    <IconSearch className="w-4 h-4 text-gray-400" />
-                </div>
-                <input
-                    type="text"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    placeholder={t('admin.users.search_placeholder')}
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 transition-all"
-                />
-            </div>
+            <AdminFilter
+                search={search}
+                onSearch={setSearch}
+                searchPlaceholder={t('admin.users.search_placeholder')}
+                dropdowns={[
+                    {
+                        value: filterRole,
+                        onChange: setFilterRole,
+                        placeholder: 'All Roles',
+                        options: [
+                            { value: 'user', label: 'User' },
+                            { value: 'admin', label: 'Admin' },
+                        ]
+                    },
+                    {
+                        value: filterStatus,
+                        onChange: setFilterStatus,
+                        placeholder: 'All Status',
+                        options: [
+                            { value: 'active', label: 'Active' },
+                            { value: 'locked', label: 'Locked' },
+                        ]
+                    }
+                ]}
+                showReset={!!(search || filterRole || filterStatus)}
+                onReset={() => {
+                    setSearch('')
+                    setFilterRole('')
+                    setFilterStatus('')
+                }}
+            />
 
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                 {loading ? (
@@ -111,19 +138,19 @@ const AdminUsers = () => {
                                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('admin.users.table.contact')}</th>
                                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('admin.users.table.joined')}</th>
                                     <th className="text-right px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('admin.users.table.access_lv')}</th>
-                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">Thao tác</th>
+                                    <th className="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('admin.users.table.action')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {filteredUsers.map(user => (
                                     <tr key={user._id} className="hover:bg-gray-50/50 transition">
-                                        <td className="px-6 py-4">
-                                            <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${user.isActive !== false ? 'bg-green-100' : 'bg-red-100'
+                                        <td className="px-3 py-4 flex items-center gap-3">
+                                            <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${user.isActive !== false ? 'bg-green-100' : 'bg-red-100'
                                                 }`}>
-                                                <IconUser className={`w-4 h-4 ${user.isActive !== false ? 'text-green-600' : 'text-red-400'}`} />
+                                                <IconUser className={`!w-4 !h-4 ${user.isActive !== false ? 'text-green-600' : 'text-red-400'}`} />
                                             </div>
-                                            <div>
-                                                <p className="font-medium text-gray-800">{user.name}</p>
+                                            <div className="flex flex-col justify-center">
+                                                <p className="font-semibold text-gray-800 leading-none">{user.name}</p>
                                                 {user.isActive === false && (
                                                     <span className="text-xs text-red-500 font-medium">Đã khóa</span>
                                                 )}

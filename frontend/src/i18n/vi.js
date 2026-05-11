@@ -589,7 +589,14 @@ export default {
             no_phone: 'Chưa có số điện thoại',
             current_admin: 'Quản trị hiện tại',
             role_user: 'Người dùng',
-            role_admin: 'Quản trị'
+            role_admin: 'Quản trị',
+            table: {
+                user: 'Tên người dùng',
+                contact: 'Liên hệ ',
+                joined: 'Ngày tạo',
+                access_lv: 'Phân quyền',
+                action: 'Thao tác'
+            }
         }
     }
 }

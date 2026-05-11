@@ -3,6 +3,7 @@ import { useSelector } from "react-redux"
 import axios from "axios"
 import { IconSearch, IconChevronDown } from "../../components/icons"
 import { useLang } from '../../context/LangContext'
+import AdminFilter from '../../components/admin/AdminFilter'
 
 const API = import.meta.env.VITE_API_URL
 
@@ -78,10 +79,15 @@ const AdminOrders = () => {
                 o.user?.name?.toLowerCase().includes(searchTerm)
 
             const matchStatus = filterStatus ? o.orderStatus === filterStatus : true
+            const matchPayment = filterPayment ? o.paymentStatus === filterPayment : true
 
-            return matchSearch && matchStatus
+            const orderDate = new Date(o.createdAt)
+            const matchDateFrom = dateFrom ? orderDate >= new Date(dateFrom) : true
+            const matchDateTo = dateTo ? orderDate <= new Date(new Date(dateTo).setHours(23, 59, 59, 999)) : true
+
+            return matchSearch && matchStatus && matchPayment && matchDateFrom && matchDateTo
         })
-    }, [orders, search, filterStatus])
+    }, [orders, search, filterStatus, filterPayment, dateFrom, dateTo])
 
     const getStatusDetails = (value) => statusOptions.find(s => s.value === value) || statusOptions[0]
 
@@ -127,80 +133,41 @@ const AdminOrders = () => {
                 )}
             </div>
 
-            {/* <div className="flex flex-col sm:flex-row gap-3 mb-6">
-                <div className="relative flex-1 max-w-sm">
-                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                        <IconSearch className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        placeholder={t('admin.orders.search_placeholder')}
-                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
-                    />
-                </div>
-
-                <div className="relative">
-                    <select
-                        value={filterStatus}
-                        onChange={e => setFilterStatus(e.target.value)}
-                        className="appearance-none w-48 px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 text-gray-700 bg-white"
-                    >
-                        <option value="">{t('admin.orders.all_statuses')}</option>
-                        {statusOptions.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-                    </select>
-                    <div className='absolute top-3.5 right-4 pointer-events-none text-gray-500'>
-                        <IconChevronDown className='w-4 h-4' />
-                    </div>
-                </div>
-            </div> */}
-
-
-            <div className="flex flex-wrap gap-3 mb-6">
-                <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-                    className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
-                />
-                <span className="self-center text-gray-400 text-sm">đến</span>
-                <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
-                    className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
-                />
-                <div className="relative">
-
-                    <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-                        className="px-6 py-2.5 border appearance-none border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 text-gray-700"
-                    >
-                        <option value="">Tất cả trạng thái đơn</option>
-                        {statusOptions.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-                    </select>
-                    <div className='absolute inset-y-0 z-50 top-0 right-2 flex items-center pointer-events-none text-gray-500'>
-                        <IconChevronDown className='!w-3 !h-3' />
-                    </div>
-                </div>
-                <div className="relative">
-
-                    <select value={filterPayment} onChange={e => setFilterPayment(e.target.value)}
-                        className="px-6 py-2.5 border appearance-none border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 text-gray-700"
-                    >
-                        <option value="">Tất cả thanh toán</option>
-                        <option value="pending">Chưa thanh toán</option>
-                        <option value="paid">Đã thanh toán</option>
-                        <option value="failed">Thất bại</option>
-                    </select>
-                    <div className='absolute inset-y-0 z-50 top-0 right-2 flex items-center pointer-events-none text-gray-500'>
-                        <IconChevronDown className='!w-3 !h-3' />
-                    </div>
-                </div>
-                <div className="relative flex-1 min-w-48">
-                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                        <IconSearch className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-                        placeholder="Tìm mã đơn hoặc tên khách..."
-                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
-                    />
-                </div>
-            </div>
+            <AdminFilter
+                search={search}
+                onSearch={setSearch}
+                searchPlaceholder="Search by order ID or customer name..."
+                dateFrom={dateFrom}
+                dateTo={dateTo}
+                onDateFrom={setDateFrom}
+                onDateTo={setDateTo}
+                dropdowns={[
+                    {
+                        value: filterStatus,
+                        onChange: setFilterStatus,
+                        placeholder: 'All Order Status',
+                        options: statusOptions.map(s => ({ value: s.value, label: s.label }))
+                    },
+                    {
+                        value: filterPayment,
+                        onChange: setFilterPayment,
+                        placeholder: 'All Payment Status',
+                        options: [
+                            { value: 'pending', label: 'Unpaid' },
+                            { value: 'paid', label: 'Paid' },
+                            { value: 'failed', label: 'Failed' },
+                        ]
+                    }
+                ]}
+                showReset={!!(search || dateFrom || dateTo || filterStatus || filterPayment)}
+                onReset={() => {
+                    setSearch('')
+                    setDateFrom('')
+                    setDateTo('')
+                    setFilterStatus('')
+                    setFilterPayment('')
+                }}
+            />
             <div className="space-y-3">
                 {loading ? (
                     [...Array(5)].map((_, i) => (

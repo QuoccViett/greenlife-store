@@ -5,6 +5,7 @@ import { IconClipBoardList, IconUser, IconBox, IconDollarSign, IconArrowRight } 
 import StatCard from '../../components/admin/StatCard'
 import axios from "axios"
 import { useLang } from '../../context/LangContext'
+import AdminFilter from '../../components/admin/AdminFilter'
 
 const API = import.meta.env.VITE_API_URL
 
@@ -69,36 +70,18 @@ const AdminDashboard = () => {
         <div className="p-8">
             <div className="mb-8 text-left">
                 <h1 className="text-2xl font-bold text-gray-800">{t('admin.dashboard.title')}</h1>
-                <p className="text-gray-500 text-sm mt-1">{t('admin.dashboard.welcome', { name: userInfo?.name} )}</p>
+                <p className="text-gray-500 text-sm mt-1">{t('admin.dashboard.welcome', { name: userInfo?.name })}</p>
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
-                <div className="flex flex-wrap items-center gap-4">
-                <label className="text-sm font-medium text-gray-700">{t('admin.filter')}</label>
-                    <div className="flex items-center gap-2">
-                        <input
-                            type="date"
-                            value={startDate}
-                            onChange={e => setStartDate(e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-green-500"
-                        />
-                        <span className="text-gray-500">{t('admin.to')}</span>
-                        <input
-                            type="date"
-                            value={endDate}
-                            onChange={e => setEndDate(e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-green-500"
-                        />
-                    </div>
-                    {(startDate || endDate) && (
-                        <button
-                            onClick={() => { setStartDate(''); setEndDate('') }}
-                            className="text-sm text-green-600 hover:underline"
-                        >
-                            Reset filters
-                        </button>
-                    )}
-                </div>
+                <AdminFilter
+                    dateFrom={startDate}
+                    dateTo={endDate}
+                    onDateFrom={setStartDate}
+                    onDateTo={setEndDate}
+                    showReset={!!(startDate || endDate)}
+                    onReset={() => { setStartDate(''); setEndDate('') }}
+                />
             </div>
 
             {loading ? (

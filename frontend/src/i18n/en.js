@@ -486,7 +486,14 @@ export default {
             no_phone: 'No phone',
             current_admin: 'Current Admin',
             role_user: 'User',
-            role_admin: 'Admin'
+            role_admin: 'Admin',
+            table: {
+                user: 'User Name',
+                contact: 'Contact',
+                joined: 'Date',
+                access_lv: 'User Authorization',
+                action: 'Action'
+            }
         }
     },
     learn: {
