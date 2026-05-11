@@ -66,7 +66,7 @@ const CheckoutPage = () => {
     const handleSubmit = async e => {
         e.preventDefault()
         setError('')
-        if (!form.fullname || !form.phone || !form.address || !form.city) {
+        if (!form.fullName || !form.phone || !form.address || !form.city) {
             setError('Please fill in all required shipping information')
             return
         }

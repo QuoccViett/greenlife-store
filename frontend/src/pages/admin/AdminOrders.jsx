@@ -99,7 +99,7 @@ const AdminOrders = () => {
                             { label: 'Tổng đơn', value: advStats.totalOrders, color: 'bg-blue-50 text-blue-700' },
                             { label: 'Tổng doanh thu', value: `$${advStats.totalRevenue.toLocaleString('en-US')}`, color: 'bg-green-50 text-green-700' },
                             { label: 'Đã thanh toán', value: `$${advStats.revenueByStatus.paid.toLocaleString('en-US')}`, color: 'bg-purple-50 text-purple-700' },
-                            { label: 'Đơn đã hủy', value: `$${advStats.revenueByStatus?.cancelled.toLocaleString('en-US')}`, color: 'bg-red-50 text-red-700' },
+                            { label: 'Tổng tiền đơn đã hủy', value: `$${advStats.revenueByStatus?.cancelled.toLocaleString('en-US')}`, color: 'bg-red-50 text-red-700' },
                         ].map((s, i) => (
                             <div key={i} className={`rounded-2xl p-4 ${s.color}`}>
                                 <p className="text-2xl font-bold">{s.value}</p>
