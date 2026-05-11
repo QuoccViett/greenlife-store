@@ -196,7 +196,7 @@ const ProfilePage = () => {
                                             </div>
                                         </div>
 
-                                        <div>
+                                        {/* <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1.5">
                                                 Địa chỉ giao hàng mặc định
                                             </label>
@@ -216,7 +216,7 @@ const ProfilePage = () => {
                                             <p className="text-xs text-gray-400 mt-1">
                                                 Địa chỉ này sẽ được điền tự động khi thanh toán
                                             </p>
-                                        </div>
+                                        </div> */}
 
                                         <div className='space-y-2 text-left'>
                                             <label className='text-sm font-semibold text-gray-700 ml-1'>{t('checkout.address')}</label>

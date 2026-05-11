@@ -99,7 +99,7 @@ const AdminOrders = () => {
                             { label: 'Tổng đơn', value: advStats.totalOrders, color: 'bg-blue-50 text-blue-700' },
                             { label: 'Tổng doanh thu', value: `$${advStats.totalRevenue.toLocaleString('en-US')}`, color: 'bg-green-50 text-green-700' },
                             { label: 'Đã thanh toán', value: `$${advStats.revenueByStatus.paid.toLocaleString('en-US')}`, color: 'bg-purple-50 text-purple-700' },
-                            { label: 'Đơn hủy', value: advStats.byOrderStatus.cancelled, color: 'bg-red-50 text-red-700' },
+                            { label: 'Đơn đã hủy', value: `$${advStats.revenueByStatus?.cancelled.toLocaleString('en-US')}`, color: 'bg-red-50 text-red-700' },
                         ].map((s, i) => (
                             <div key={i} className={`rounded-2xl p-4 ${s.color}`}>
                                 <p className="text-2xl font-bold">{s.value}</p>
@@ -113,7 +113,7 @@ const AdminOrders = () => {
                 {advStats && (
                     <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4">
                         <p className="text-sm font-semibold text-gray-700 mb-3">Số đơn theo trạng thái</p>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-3">
                             {Object.entries(advStats.byOrderStatus).map(([status, count]) => {
                                 const s = statusOptions.find(o => o.value === status)
                                 return (
@@ -165,20 +165,32 @@ const AdminOrders = () => {
                 <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
                     className="px-3 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500"
                 />
-                <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-                    className="px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 text-gray-700"
-                >
-                    <option value="">Tất cả trạng thái đơn</option>
-                    {statusOptions.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-                </select>
-                <select value={filterPayment} onChange={e => setFilterPayment(e.target.value)}
-                    className="px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 text-gray-700"
-                >
-                    <option value="">Tất cả thanh toán</option>
-                    <option value="pending">Chưa thanh toán</option>
-                    <option value="paid">Đã thanh toán</option>
-                    <option value="failed">Thất bại</option>
-                </select>
+                <div className="relative">
+
+                    <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
+                        className="px-6 py-2.5 border appearance-none border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 text-gray-700"
+                    >
+                        <option value="">Tất cả trạng thái đơn</option>
+                        {statusOptions.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                    </select>
+                    <div className='absolute inset-y-0 z-50 top-0 right-2 flex items-center pointer-events-none text-gray-500'>
+                        <IconChevronDown className='!w-3 !h-3' />
+                    </div>
+                </div>
+                <div className="relative">
+
+                    <select value={filterPayment} onChange={e => setFilterPayment(e.target.value)}
+                        className="px-6 py-2.5 border appearance-none border-gray-300 rounded-xl text-sm outline-none focus:border-green-500 text-gray-700"
+                    >
+                        <option value="">Tất cả thanh toán</option>
+                        <option value="pending">Chưa thanh toán</option>
+                        <option value="paid">Đã thanh toán</option>
+                        <option value="failed">Thất bại</option>
+                    </select>
+                    <div className='absolute inset-y-0 z-50 top-0 right-2 flex items-center pointer-events-none text-gray-500'>
+                        <IconChevronDown className='!w-3 !h-3' />
+                    </div>
+                </div>
                 <div className="relative flex-1 min-w-48">
                     <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                         <IconSearch className="w-4 h-4 text-gray-400" />
@@ -285,8 +297,8 @@ const AdminOrders = () => {
                                                 <div className="flex items-center gap-2 mb-4">
                                                     <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Thanh toán:</p>
                                                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${order.paymentStatus === 'paid' ? 'bg-green-100 text-green-700'
-                                                            : order.paymentStatus === 'failed' ? 'bg-red-100 text-red-600'
-                                                                : 'bg-yellow-100 text-yellow-700'
+                                                        : order.paymentStatus === 'failed' ? 'bg-red-100 text-red-600'
+                                                            : 'bg-yellow-100 text-yellow-700'
                                                         }`}>
                                                         {order.paymentStatus === 'paid' ? 'Đã thanh toán'
                                                             : order.paymentStatus === 'failed' ? 'Thất bại'
