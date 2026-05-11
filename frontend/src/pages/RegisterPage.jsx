@@ -47,7 +47,7 @@ const RegisterPage = () => {
                 address: form.address,
             })
             dispastch(setCredentials(data))
-            navigate('/')
+            navigate('/login')
         } catch (err) {
             setError(err.response?.data?.message || t('auth.error_registration') || 'Registration failed')
         } finally {
