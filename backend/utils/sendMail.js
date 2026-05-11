@@ -50,15 +50,15 @@ const sendOrderConfirmEmail = async ({ to, order }) => {
         <!-- Order info -->
         <div style="background:#f9fafb;border-radius:12px;padding:16px;margin-bottom:24px">
           <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-            <span style="color:#6b7280;font-size:13px">Order ID</span>
+            <span style="color:#6b7280;font-size:13px">Order ID: </span>
             <span style="font-family:monospace;font-weight:600;color:#374151">#${order._id.toString().slice(-8).toUpperCase()}</span>
           </div>
           <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-            <span style="color:#6b7280;font-size:13px">Payment Method</span>
+            <span style="color:#6b7280;font-size:13px">Payment Method: </span>
             <span style="font-weight:600;color:#374151">${order.paymentMethod.toUpperCase()}</span>
           </div>
           <div style="display:flex;justify-content:space-between">
-            <span style="color:#6b7280;font-size:13px">Shipping Address</span>
+            <span style="color:#6b7280;font-size:13px">Shipping Address: </span>
             <span style="font-weight:600;color:#374151;text-align:right;max-width:200px">
               ${order.shippingAddress.address}, ${order.shippingAddress.city}
             </span>
