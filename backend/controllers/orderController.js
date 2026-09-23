@@ -1,97 +1,119 @@
-const Order = require("../models/Order");
-const Product = require("../models/Product");
-const User = require("../models/User"); // LỖI 1: Thêm require User
-const { sendOrderConfirmEmail } = require("../utils/sendMail"); // LỖI 2: Thêm require mail util
+const Order = require('../models/Order');
+const Product = require('../models/Product');
 
-const createOrder = async (req, res) => {
+// 1. Tạo đơn hàng mới
+exports.createOrder = async (req, res) => {
   try {
-    // LỖI 3: Lấy thêm notifyEmail từ req.body
-    const { items, shippingAddress, paymentMethod, notifyEmail } = req.body;
-
-    if (!items || items.length === 0)
-      return res.status(404).json({ message: "Khong co san pham trong gio hang" });
-
-    let totalPrice = 0;
-    const orderItems = []; // Thống nhất dùng chữ I viết hoa
-
-    for (const item of items) {
-      const product = await Product.findById(item.product);
-      if (!product)
-        return res.status(404).json({ message: `Khong tim thay san pham ${item.product}` });
-
-      if (product.stock < item.quantity) {
-        return res.status(400).json({
-          message: `Sản phẩm "${product.name}" chỉ còn ${product.stock} trong kho`
-        })
-      }
-
-      orderItems.push({
-        product: product._id,
-        name: product.name,
-        image: product.image,
-        price: product.salePrice || product.price,
-        quantity: item.quantity,
-      });
-
-      totalPrice += (product.salePrice || product.price) * item.quantity;
-    }
-
-    const order = await Order.create({
-      user: req.user._id,
-      items: orderItems, // Đã sửa khớp tên biến
+    const {
+      orderItems,
       shippingAddress,
       paymentMethod,
-      totalPrice,
-    })
+      itemsPrice,
+      shippingPrice,
+      totalPrice
+    } = req.body;
 
-    // Cập nhật kho hàng
+    if (!orderItems || orderItems.length === 0) {
+      return res.status(400).json({ success: false, message: 'Đơn hàng chưa có sản phẩm nào' });
+    }
+
+    // Lấy thông tin giá vốn hiện tại từ database gán vào order items
+    const itemsWithCostPrice = await Promise.all(
+      orderItems.map(async (item) => {
+        const product = await Product.findById(item.product);
+        return {
+          ...item,
+          costPrice: product ? (product.costPrice || 0) : 0
+        };
+      })
+    );
+
+    const order = new Order({
+      user: req.user._id,
+      orderItems: itemsWithCostPrice,
+      shippingAddress,
+      paymentMethod,
+      itemsPrice,
+      shippingPrice,
+      totalPrice
+    });
+
+    const createdOrder = await order.save();
+
+    // Giảm tồn kho sản phẩm
     for (const item of orderItems) {
       await Product.findByIdAndUpdate(item.product, {
-        $inc: { stock: -item.quantity, sold: item.quantity }
-      })
-    }
-    
-    // Gửi email xác nhận
-    try {
-      const user = await User.findById(req.user._id);
-      // Nếu khách nhập email thông báo riêng thì dùng, không thì dùng email tài khoản
-      const emailTo = notifyEmail || user.email; 
-      
-      if (emailTo) {
-        await sendOrderConfirmEmail({ to: emailTo, order });
-      }
-    } catch (emailErr) {
-      console.log('Email error (non-critical):', emailErr.message);
+        $inc: { stock: -item.quantity }
+      });
     }
 
-    res.status(201).json(order);
+    res.status(201).json({ success: true, order: createdOrder });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-const getMyOrders = async (req, res) => {
+// 2. Lấy chi tiết 1 đơn hàng theo ID
+exports.getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).populate('user', 'name email');
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng' });
+    }
+
+    res.json({ success: true, order });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// 3. Lấy danh sách đơn hàng của người dùng đang đăng nhập
+exports.getMyOrders = async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
-    res.json(orders);
+    res.json({ success: true, count: orders.length, orders });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-const getOrderById = async (req, res) => {
+// 4. Lấy toàn bộ danh sách đơn hàng (Dành cho Admin)
+exports.getOrders = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).populate("user", "name email");
-    if (!order) return res.status(404).json({ message: "Khong tim thay don hang" });
-
-    // Kiểm tra quyền xem đơn hàng
-    if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== "admin")
-      return res.status(403).json({ message: "Khong co quyen xem don hang" });
-
-    res.json(order);
+    const orders = await Order.find()
+      .populate('user', 'id name email')
+      .sort({ createdAt: -1 });
+    res.json({ success: true, count: orders.length, orders });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-module.exports = { createOrder, getMyOrders, getOrderById };
+// 5. Cập nhật trạng thái đơn hàng (Dành cho Admin)
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng' });
+    }
+
+    order.orderStatus = status;
+
+    if (status === 'delivered') {
+      order.deliveredAt = Date.now();
+      // Nếu là thanh toán COD thì tự động ghi nhận đã thu tiền
+      if (order.paymentMethod === 'COD') {
+        order.paymentStatus = 'paid';
+        order.paidAt = Date.now();
+      }
+    }
+
+    await order.save();
+    res.json({ success: true, order });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

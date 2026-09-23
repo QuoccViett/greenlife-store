@@ -33,6 +33,8 @@ app.use("/api/orders", require("./routes/orderRoutes.js"));
 app.use("/api/cart", require("./routes/cartRoutes.js"));
 app.use("/api/admin", require("./routes/adminRoutes.js"));
 app.use("/api/payment", require("./routes/paymentRoutes.js"));
+app.use('/api/suppliers', require('./routes/supplierRoutes'));
+app.use('/api/purchases', require('./routes/purchaseRoutes'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server chạy tại port ${PORT}`));
