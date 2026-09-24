@@ -1,19 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const {
-  getPurchaseOrders,
-  getPurchaseOrderById,
-  createPurchaseOrder
-} = require('../controllers/purchaseController');
+const express = require('express')
+const router = express.Router()
+const { createPurchase, getPurchases, getPurchaseById } = require('../controllers/purchaseController')
+const { protect, adminOnly } = require('../middleware/authMiddleware')
 
-const { protect, admin, adminOnly } = require('../middleware/authMiddleware');
-const requireAdmin = admin || adminOnly;
+router.use(protect, adminOnly)
+router.get('/', getPurchases)
+router.get('/:id', getPurchaseById)
+router.post('/', createPurchase)
 
-router.route('/')
-  .get(protect, requireAdmin, getPurchaseOrders)
-  .post(protect, requireAdmin, createPurchaseOrder);
-
-router.route('/:id')
-  .get(protect, requireAdmin, getPurchaseOrderById);
-
-module.exports = router;
+module.exports = router

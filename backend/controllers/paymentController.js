@@ -3,6 +3,7 @@
 const moment = require('moment-timezone')
 const crypto = require('crypto')
 const Order = require('../models/Order')
+const { restockOrder } = require('../utils/stock')
 
 const sortObject = (obj) => {
     const sorted = {}
@@ -85,6 +86,7 @@ const vnpayReturn = async (req, res) => {
             res.json({ code: '00', message: 'Thanh toan thanh cong', orderId })
         } else {
             await Order.findByIdAndUpdate(orderId, { orderStatus: 'cancelled', paymentStatus: 'failed' })
+            await restockOrder(orderId)
             res.json({ code: responseCode, message: 'Thanh toan that bai', orderId })
         }
     } catch (err) {

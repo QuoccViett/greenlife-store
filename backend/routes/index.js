@@ -8,6 +8,7 @@ router.use("/orders", require("./orderRoutes"));
 router.use("/cart", require("./cartRoutes"));
 router.use("/admin", require("./adminRoutes"));
 router.use("/payment", require("./paymentRoutes"));
-router.use('/api/suppliers', require('./routes/supplierRoutes'));
-router.use('/api/purchases', require('./routes/purchaseRoutes'));
+router.use("/suppliers", require("./supplierRoutes"));
+router.use("/purchases", require("./purchaseRoutes"));
+
 module.exports = router;

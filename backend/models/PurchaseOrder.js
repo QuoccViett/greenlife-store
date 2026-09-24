@@ -1,62 +1,28 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-const purchaseOrderItemSchema = new mongoose.Schema({
-  product: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true
-  },
-  productName: {
-    type: String,
-    required: true
-  },
-  quantity: {
-    type: Number,
-    required: true,
-    min: [1, 'Số lượng nhập phải lớn hơn 0']
-  },
-  importPrice: {
-    type: Number,
-    required: true,
-    min: [0, 'Giá nhập không được âm']
-  },
-  totalPrice: {
-    type: Number,
-    required: true
-  }
-});
+// Một dòng hàng trên phiếu nhập. importPrice là giá NCC quy định, ghi trên phiếu.
+const purchaseItemSchema = new mongoose.Schema({
+    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+    name: { type: String, required: true },
+    quantity: { type: Number, required: true, min: 1 },
+    importPrice: { type: Number, required: true, min: 0 },
+})
 
 const purchaseOrderSchema = new mongoose.Schema({
-  code: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  supplier: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Supplier',
-    required: [true, 'Nhà cung cấp là bắt buộc']
-  },
-  items: [purchaseOrderItemSchema],
-  totalAmount: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  importDate: {
-    type: Date,
-    default: Date.now
-  },
-  note: {
-    type: String,
-    trim: true
-  },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }
-}, {
-  timestamps: true
-});
+    code: { type: String, unique: true },
+    supplier: { type: mongoose.Schema.Types.ObjectId, ref: 'Supplier', required: true },
+    supplierName: { type: String },
+    items: {
+        type: [purchaseItemSchema],
+        validate: v => Array.isArray(v) && v.length > 0,
+    },
+    totalAmount: { type: Number, required: true, min: 0 },
+    importDate: { type: Date, default: Date.now },
+    note: { type: String },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+}, { timestamps: true })
 
-module.exports = mongoose.model('PurchaseOrder', purchaseOrderSchema);
+purchaseOrderSchema.index({ importDate: -1 })
+purchaseOrderSchema.index({ supplier: 1, importDate: -1 })
+
+module.exports = mongoose.model('PurchaseOrder', purchaseOrderSchema)

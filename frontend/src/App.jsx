@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import Footer from './components/Footer'
 import Navbar from './components/Navbar'
@@ -17,12 +17,12 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminUsers from './pages/admin/AdminUsers'
+import AdminSuppliers from './pages/admin/AdminSuppliers'
+import AdminPurchases from './pages/admin/AdminPurchases'
 import LearnPage from './pages/LearnPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import ScrollToTop from './components/ScrollToTop'
-import AdminSuppliers from './pages/admin/AdminSuppliers';
-import AdminPurchases from './pages/admin/AdminPurchases';
 
 
 const MainLayout = ({ children }) => (
@@ -72,8 +72,8 @@ function App() {
           <Route path='/admin/products' element={<AdminLayout><AdminProducts /></AdminLayout>} />
           <Route path="/admin/orders" element={<AdminLayout><AdminOrders /></AdminLayout>} />
           <Route path="/admin/users" element={<AdminLayout><AdminUsers /></AdminLayout>} />
-          <Route path="/admin/suppliers" element={<AdminSuppliers />} />
-          <Route path="/admin/purchases" element={<AdminPurchases />} />
+          <Route path="/admin/suppliers" element={<AdminLayout><AdminSuppliers /></AdminLayout>} />
+          <Route path="/admin/purchases" element={<AdminLayout><AdminPurchases /></AdminLayout>} />
         </Routes>
       </div>
     </div>

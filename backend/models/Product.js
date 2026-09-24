@@ -1,53 +1,25 @@
-const mongoose = require('mongoose');
+
+
+const mongoose = require('mongoose')
 
 const productSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Tên sản phẩm là bắt buộc'],
-    trim: true
-  },
-  description: {
-    type: String,
-    required: [true, 'Mô tả sản phẩm là bắt buộc']
-  },
-  price: {
-    type: Number,
-    required: [true, 'Giá bán là bắt buộc'],
-    min: [0, 'Giá bán không được âm']
-  },
-  costPrice: {
-    type: Number,
-    default: 0,
-    min: [0, 'Giá vốn không được âm']
-  },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
-    required: [true, 'Danh mục là bắt buộc']
-  },
-  stock: {
-    type: Number,
-    required: [true, 'Số lượng kho là bắt buộc'],
-    min: [0, 'Số lượng kho không được âm'],
-    default: 0
-  },
-  images: [{
-    type: String
-  }],
-  featured: {
-    type: Boolean,
-    default: false
-  },
-  isEco: {
-    type: Boolean,
-    default: true
-  },
-  ratings: {
-    average: { type: Number, default: 0 },
-    count: { type: Number, default: 0 }
-  }
-}, {
-  timestamps: true
-});
+    name: { type: String, required: true },
+    description: { type: String },
+    price: { type: Number, required: true },
+    salePrice: { type: Number },
+    // Giá vốn bình quân gia quyền - tự cập nhật mỗi lần nhập hàng
+    costPrice: { type: Number, default: 0 },
+    stock: { type: Number, default: 0 },
+    image: { type: String },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', default: null },
+    sub: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
+    isFeatured: {type: Boolean, default: false},
+    sold: { type: Number, default: 0 },
+}, { timestamps: true })
 
-module.exports = mongoose.model('Product', productSchema);
+productSchema.index({ category: 1, createdAt: -1 })
+productSchema.index({ sub: 1 })
+productSchema.index({ isFeatured: 1 })
+productSchema.index({ name: 1 })
+
+module.exports = mongoose.model('Product', productSchema)

@@ -236,29 +236,30 @@
 // }
 
 // export default HomePage;
-
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import axios from 'axios'
 import {
     IconTruck, IconRecycle, IconShield, IconRefresh,
     IconEcoHome, IconPersonalCare, IconBag, IconZeroWaste,
     IconBottle, IconArrowRight, IconLeaf,
     IconMail
-} from '../components/icons';
-import { useLang } from '../context/LangContext';
-import ProductCard from '../components/ProductCard';
-import SkeletonCard from '../components/SkeletonCard';
+} from '../components/icons'
+import { useLang } from '../context/LangContext'
+import ProductCard from '../components/ProductCard'
+import SkeletonCard from '../components/SkeletonCard'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API = import.meta.env.VITE_API_URL
+
+// benefits and categories will be built inside component using translations
 
 const HomePage = () => {
-    const { t } = useLang();
+    const { t } = useLang()
 
-    const [ loading, setLoading ] = useState(true);
-    const [ featured, setFeatured ] = useState([]);
-    const [newest, setNewest] = useState([]);
-    const [email, setEmail] = useState('');
+    const [ loading, setLoading ] = useState(true)
+    const [ featured, setFeatured ] = useState([])
+    const [newest, setNewest] = useState([])
+    const [email, setEmail] = useState('')
  
     useEffect(()=>{
         const fetchProducts = async () => {
@@ -266,28 +267,24 @@ const HomePage = () => {
                 const [featuredRes, newestRes] = await Promise.all([
                     axios.get(`${API}/products?featured=true`),
                     axios.get(`${API}/products`),
-                ]);
-
-                const featData = Array.isArray(featuredRes.data) ? featuredRes.data : [];
-                const newData = Array.isArray(newestRes.data) ? newestRes.data : [];
-
-                setFeatured(featData.slice(0, 4));
-                setNewest(newData.slice(0, 8));
+                ])
+                setFeatured(featuredRes.data.slice(0, 4))
+                setNewest(newestRes.data.slice(0, 8))
             } catch (err) {
-                console.error("Lỗi trang chủ:", err);
+                console.error(err)
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
-        };
-        fetchProducts();
-    }, []);
+        }
+        fetchProducts()
+    }, [])
 
     const benefits = [
         { icon: IconTruck, title: t('benefits.free_shipping'), desc: t('benefits.free_shipping_desc') },
         { icon: IconRecycle, title: t('benefits.sustainable'), desc: t('benefits.sustainable_desc') },
         { icon: IconShield, title: t('benefits.secure_payment'), desc: t('benefits.secure_payment_desc') },
         { icon: IconRefresh, title: t('benefits.easy_returns'), desc: t('benefits.easy_returns_desc') },
-    ];
+    ]
 
     const categories = [
         { name: t('product.categories_list.home'), slug: 'eco-home-living', icon: IconEcoHome, desc: t('home.sub_ecohome_living') },
@@ -295,7 +292,7 @@ const HomePage = () => {
         { name: t('product.categories_list.bags'), slug: 'reusable-bags', icon: IconBag, desc: t('home.sub_reusable_bags') },
         { name: t('product.categories_list.zerowaste'), slug: 'zero-waste', icon: IconZeroWaste, desc: t('home.sub_zero_waste') },
         { name: t('product.categories_list.bottles'), slug: 'daily-essentials', icon: IconBottle, desc: t('home.sub_daily_essentials') },
-    ];
+    ]
 
     return(
         <div className="min-h-screen bg-white">
@@ -457,7 +454,7 @@ const HomePage = () => {
                 <h2 className='text-2xl font-bold text-gray-800 mb-2'>{t('home.newsletter')}</h2>
                 <p className='text-gray-500 text-sm !mb-5'>{t('home.newsletter_sub')}</p>
                 <form
-                    onSubmit={e => {e.preventDefault(); setEmail(''); }}
+                    onSubmit={e => {e.preventDefault(); setEmail('') }}
                     className='flex max-w-md mx-auto border border-gray-300 rounded-full overflow-hidden focus-within:border-green-500 transition'
                 >
                     <input
@@ -473,7 +470,7 @@ const HomePage = () => {
             </section>
 
         </div>
-    );
-};
+    )
+}
 
 export default HomePage;
