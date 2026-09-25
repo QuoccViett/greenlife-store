@@ -23,6 +23,7 @@ const AdminProducts = () => {
         description: '',
         price: '',
         salePrice: '',
+        costPrice: '',
         stock: '',
         image: '',
         category: '',
@@ -59,7 +60,7 @@ const AdminProducts = () => {
 
     const openCreate = () => {
         setEditProduct(null)
-        setForm({ name: '', description: '', price: '', salePrice: '', stock: '', image: '', category: '', isFeatured: false })
+        setForm({ name: '', description: '', price: '', salePrice: '', costPrice: '', stock: '', image: '', category: '', isFeatured: false })
         setShowModal(true)
     }
 
@@ -70,6 +71,7 @@ const AdminProducts = () => {
             description: product.description || '',
             price: product.price,
             salePrice: product.salePrice || '',
+            costPrice: product.costPrice || '',
             stock: product.stock,
             image: product.image || '',
             category: product.category?._id || '',
@@ -96,6 +98,7 @@ const AdminProducts = () => {
                 ...form,
                 price: Number(form.price),
                 salePrice: form.salePrice ? Number(form.salePrice) : null,
+                costPrice: form.costPrice ? Number(form.costPrice) : 0,
                 stock: Number(form.stock),
             }
 
@@ -198,6 +201,7 @@ const AdminProducts = () => {
                                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">{t('admin.products.table.product')}</th>
                                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">{t('admin.products.table.category')}</th>
                                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">{t('admin.products.table.price')}</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Giá vốn</th>
                                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">{t('admin.products.table.stock')}</th>
                                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">{t('admin.products.table.featured')}</th>
                                     <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-right">{t('admin.products.table.actions')}</th>
@@ -232,6 +236,7 @@ const AdminProducts = () => {
                                                 <p className="font-semibold text-gray-700">${product.price}</p>
                                             )}
                                         </td>
+                                        <td className="px-6 py-4 text-gray-600">{product.costPrice ? `$${product.costPrice}` : '—'}</td>
                                         <td className="px-6 py-4">
                                             <span className={`text-xs font-medium px-2.5 py-1 rounded-full
                                                 ${product.stock > 10 ? 'bg-green-100 text-green-700'
@@ -327,6 +332,19 @@ const AdminProducts = () => {
                                         className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none"
                                     />
                                 </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5">Giá vốn / Cost ($)</label>
+                                <input
+                                    type="number"
+                                    value={form.costPrice}
+                                    min={0}
+                                    step="0.01"
+                                    onChange={e => setForm({ ...form, costPrice: e.target.value })}
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm outline-none"
+                                />
+                                <p className="text-xs text-gray-400 mt-1">Tự cập nhật (bình quân gia quyền) mỗi khi tạo phiếu nhập. Chỉ nhập tay cho hàng tồn có sẵn.</p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">

@@ -11,46 +11,66 @@ const createOrder = async (req, res) => {
     if (!items || items.length === 0)
       return res.status(404).json({ message: "Khong co san pham trong gio hang" });
 
+    // Trừ kho NGUYÊN TỬ: chỉ trừ khi còn đủ hàng -> không bán vượt tồn khi nhiều người mua cùng lúc.
+    // Giá bán & giá vốn luôn lấy từ DB (không tin giá client gửi lên).
     let totalPrice = 0;
-    const orderItems = []; // Thống nhất dùng chữ I viết hoa
+    const orderItems = [];
+    const reserved = []; // để hoàn lại nếu có dòng không đủ hàng
+
+    const rollback = async () => {
+      for (const r of reserved) {
+        await Product.updateOne({ _id: r.product }, { $inc: { stock: r.quantity, sold: -r.quantity } });
+      }
+    };
 
     for (const item of items) {
-      const product = await Product.findById(item.product);
-      if (!product)
-        return res.status(404).json({ message: `Khong tim thay san pham ${item.product}` });
-
-      if (product.stock < item.quantity) {
-        return res.status(400).json({
-          message: `Sản phẩm "${product.name}" chỉ còn ${product.stock} trong kho`
-        })
+      const quantity = Number(item.quantity);
+      if (!Number.isInteger(quantity) || quantity < 1) {
+        await rollback();
+        return res.status(400).json({ message: "Số lượng không hợp lệ" });
       }
 
+      const product = await Product.findOneAndUpdate(
+        { _id: item.product, stock: { $gte: quantity } },
+        { $inc: { stock: -quantity, sold: quantity } },
+        { new: false } // lấy bản trước khi trừ để đọc giá/giá vốn
+      );
+
+      if (!product) {
+        await rollback();
+        const exists = await Product.findById(item.product).select("name stock").lean();
+        return exists
+          ? res.status(400).json({ message: `Sản phẩm "${exists.name}" chỉ còn ${exists.stock} trong kho` })
+          : res.status(404).json({ message: `Khong tim thay san pham ${item.product}` });
+      }
+
+      reserved.push({ product: product._id, quantity });
+      const unitPrice = product.salePrice || product.price;
       orderItems.push({
         product: product._id,
         name: product.name,
         image: product.image,
-        price: product.salePrice || product.price,
-        quantity: item.quantity,
+        price: unitPrice,
+        costPrice: product.costPrice || 0, // snapshot giá vốn tại thời điểm bán
+        quantity,
       });
-
-      totalPrice += (product.salePrice || product.price) * item.quantity;
+      totalPrice += unitPrice * quantity;
     }
 
-    const order = await Order.create({
-      user: req.user._id,
-      items: orderItems, // Đã sửa khớp tên biến
-      shippingAddress,
-      paymentMethod,
-      totalPrice,
-    })
-
-    // Cập nhật kho hàng
-    for (const item of orderItems) {
-      await Product.findByIdAndUpdate(item.product, {
-        $inc: { stock: -item.quantity, sold: item.quantity }
-      })
+    let order;
+    try {
+      order = await Order.create({
+        user: req.user._id,
+        items: orderItems,
+        shippingAddress,
+        paymentMethod,
+        totalPrice,
+      });
+    } catch (err) {
+      await rollback();
+      throw err;
     }
-    
+
     // Gửi email xác nhận
     try {
       const user = await User.findById(req.user._id);
@@ -72,7 +92,7 @@ const createOrder = async (req, res) => {
 
 const getMyOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
+    const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 }).lean();
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -6,6 +6,8 @@ const Category = require('./models/Category')
 const Order = require('./models/Order')
 const Product = require('./models/Product')
 const User = require('./models/User')
+const Supplier = require('./models/Supplier')
+const PurchaseOrder = require('./models/PurchaseOrder')
 const bcrypt = require('bcryptjs')
 
 const categories = [
@@ -114,6 +116,8 @@ const seedDB = async () => {
         await Product.deleteMany()
         await User.deleteMany()
         await Order.deleteMany()
+        await Supplier.deleteMany()
+        await PurchaseOrder.deleteMany()
         console.log('Cleared old data')
 
         const createdCategories = await Category.insertMany(categories)
@@ -717,7 +721,15 @@ const seedDB = async () => {
 
         ]
 
-        await Product.insertMany(products)
+        // Giá vốn mẫu = 60% giá bán để dashboard có số liệu lợi nhuận ngay
+        await Product.insertMany(products.map(p => ({
+            ...p,
+            costPrice: p.costPrice ?? Math.round(p.price * 0.6 * 100) / 100,
+        })))
+        await Supplier.insertMany([
+            { name: 'Eco Bamboo Co.', phone: '0281234567', email: 'sales@ecobamboo.vn', address: 'Bình Dương' },
+            { name: 'GreenSource Vietnam', phone: '0287654321', email: 'contact@greensource.vn', address: 'TP. Hồ Chí Minh' },
+        ])
         console.log(`Created ${products.length} products`)
         console.log('Seeding completed!')
         process.exit(0)

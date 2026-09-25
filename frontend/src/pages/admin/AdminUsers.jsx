@@ -48,7 +48,7 @@ const AdminUsers = () => {
 
     const handleRoleChange = async (userId, newRole) => {
         try {
-            await axios.put(`${API}/admin/users/${userId}`, { role: newRole }, config)
+            await axios.put(`${API}/admin/users/${userId}/role`, { role: newRole }, config)
             setUsers(prev => prev.map(u => u._id === userId ? { ...u, role: newRole } : u))
         } catch (err) {
             console.error("Failed to update role:", err)

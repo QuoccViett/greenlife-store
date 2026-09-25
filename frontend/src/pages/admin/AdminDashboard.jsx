@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { Link } from 'react-router-dom'
-import { IconClipBoardList, IconUser, IconBox, IconDollarSign, IconArrowRight } from "../../components/icons"
+import { IconClipBoardList, IconUser, IconBox, IconDollarSign, IconArrowRight, IconChartBar } from "../../components/icons"
 import StatCard from '../../components/admin/StatCard'
 import axios from "axios"
 import { useLang } from '../../context/LangContext'
@@ -10,7 +10,9 @@ import AdminFilter from '../../components/admin/AdminFilter'
 const API = import.meta.env.VITE_API_URL
 
 const AdminDashboard = () => {
-    const { t } = useLang()
+    const { t, lang } = useLang()
+    const L = (vi, en) => (lang === 'vi' ? vi : en)
+    const money = n => `${(n || 0) < 0 ? '-' : ''}$${Math.abs(n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 })}`
     const { userInfo } = useSelector(state => state.auth)
     const [stats, setStats] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -27,7 +29,6 @@ const AdminDashboard = () => {
                 const dateParams = startDate && endDate
                     ? `?startDate=${startDate}&endDate=${endDate}`
                     : ''
-                console.log('Token:', userInfo?.token)
                 const [statsRes, ordersRes] = await Promise.all([
                     axios.get(`${API}/admin/stats${dateParams}`, config),
                     axios.get(`${API}/admin/orders`, config),
@@ -102,6 +103,60 @@ const AdminDashboard = () => {
                     <StatCard icon={<IconDollarSign className='!w-5 !h-5 text-white' />} label={t('admin.stats.revenue')} value={`$${(stats?.totalRevenue || 0).toLocaleString('en-US')}`} color={'bg-orange-500'} />
                 </div>
             )}
+
+            {!loading && (() => {
+                const rev = stats?.totalRevenue || 0
+                const cogs = stats?.costOfGoodsSold || 0
+                const profit = stats?.grossProfit || 0
+                const cogsPct = rev > 0 ? Math.min(100, Math.max(0, (cogs / rev) * 100)) : 0
+                const profitPct = rev > 0 ? Math.max(0, 100 - cogsPct) : 0
+                return (
+                    <div className="mb-8 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-left">
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-5">
+                            <div>
+                                <h2 className="text-lg font-bold text-gray-800">{L('Doanh thu & Lợi nhuận', 'Revenue & Profit')}</h2>
+                                <p className="text-xs text-gray-400 mt-0.5">{L('Tính trên các đơn đã thanh toán, không tính đơn đã hủy', 'Based on paid, non-cancelled orders')}</p>
+                            </div>
+                            <Link to="/admin/purchases" className="text-sm text-green-600 hover:underline flex items-center gap-1">
+                                {L('Xem nhập hàng', 'View purchases')} <IconArrowRight className="!w-3 !h-3" />
+                            </Link>
+                        </div>
+
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            <StatCard icon={<IconDollarSign className='!w-5 !h-5 text-white' />} color="bg-orange-500"
+                                label={L('Doanh thu bán hàng', 'Sales revenue')} value={money(rev)} />
+                            <StatCard icon={<IconBox className='!w-5 !h-5 text-white' />} color="bg-red-500"
+                                label={L('Chi phí nhập hàng', 'Purchase cost')} value={money(stats?.totalImportCost)}
+                                sub={L(`${stats?.purchaseCount || 0} phiếu nhập`, `${stats?.purchaseCount || 0} receipts`)} />
+                            <StatCard icon={<IconDollarSign className='!w-5 !h-5 text-white' />} color="bg-sky-500"
+                                label={L('Tiền còn lại (DT − Nhập hàng)', 'Cash left (Rev − Purchases)')} value={money(stats?.netCash)}
+                                valueClass={(stats?.netCash || 0) < 0 ? 'text-red-600' : 'text-gray-800'} />
+                            <StatCard icon={<IconChartBar className='!w-5 !h-5 text-white' />} color="bg-emerald-600"
+                                label={L('Lợi nhuận gộp', 'Gross profit')} value={money(profit)}
+                                sub={L(`Biên lợi nhuận ${stats?.profitMargin || 0}%`, `Margin ${stats?.profitMargin || 0}%`)}
+                                valueClass={profit < 0 ? 'text-red-600' : 'text-emerald-700'} />
+                        </div>
+
+                        <div className="mt-6">
+                            <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                                <span>{L('Cơ cấu doanh thu', 'Revenue breakdown')}</span>
+                                <span>{L('Giá vốn', 'COGS')} {money(cogs)} · {L('Lợi nhuận', 'Profit')} {money(profit)}</span>
+                            </div>
+                            <div className="h-3 rounded-full bg-gray-100 overflow-hidden flex">
+                                <div className="bg-gray-400 h-full transition-all" style={{ width: `${cogsPct}%` }} title={L('Giá vốn hàng bán', 'Cost of goods sold')} />
+                                <div className="bg-emerald-500 h-full transition-all" style={{ width: `${profitPct}%` }} title={L('Lợi nhuận gộp', 'Gross profit')} />
+                            </div>
+                            <div className="flex gap-4 mt-2 text-[11px] text-gray-500">
+                                <span className="flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-gray-400 inline-block" />{L('Giá vốn hàng bán', 'Cost of goods sold')}</span>
+                                <span className="flex items-center gap-1.5"><i className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" />{L('Lợi nhuận gộp', 'Gross profit')}</span>
+                            </div>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-4">
+                            {L('Lợi nhuận gộp = Σ (giá bán − giá vốn) × số lượng đã bán. Giá vốn tính bình quân gia quyền theo các phiếu nhập.', 'Gross profit = Σ (sale price − cost) × quantity sold. Cost is a weighted average of purchase receipts.')}
+                        </p>
+                    </div>
+                )
+            })()}
 
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
                 <div className="flex items-center justify-between mb-5">

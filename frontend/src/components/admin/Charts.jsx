@@ -86,7 +86,7 @@ const MonthlyRevenueChart = ({ data }) => {
 const TopProductsChart = ({ data }) => {
     const { t } = useLang();
 
-    const chartData = data.slice(0, 5).map((product, index) => ({
+    const chartData = data.slice(0, 5).map((product) => ({
         name: product.name.length > 20 ? product.name.substring(0, 20) + '...' : product.name,
         sold: product.totalSold,
         revenue: product.totalRevenue

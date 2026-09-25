@@ -17,6 +17,8 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminUsers from './pages/admin/AdminUsers'
+import AdminSuppliers from './pages/admin/AdminSuppliers'
+import AdminPurchases from './pages/admin/AdminPurchases'
 import LearnPage from './pages/LearnPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
@@ -70,6 +72,8 @@ function App() {
           <Route path='/admin/products' element={<AdminLayout><AdminProducts /></AdminLayout>} />
           <Route path="/admin/orders" element={<AdminLayout><AdminOrders /></AdminLayout>} />
           <Route path="/admin/users" element={<AdminLayout><AdminUsers /></AdminLayout>} />
+          <Route path="/admin/suppliers" element={<AdminLayout><AdminSuppliers /></AdminLayout>} />
+          <Route path="/admin/purchases" element={<AdminLayout><AdminPurchases /></AdminLayout>} />
         </Routes>
       </div>
     </div>
